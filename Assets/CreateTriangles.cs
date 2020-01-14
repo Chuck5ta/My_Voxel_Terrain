@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CreateTriangles : MonoBehaviour
 {
+    public Material triangleMaterial;
+
     void CreateTriangle(Vector3 voxel0, Vector3 voxel1, Vector3 voxel2)
     {
         print("Creating triangle");
@@ -43,6 +42,8 @@ public class CreateTriangles : MonoBehaviour
         meshFilter.mesh = mesh;
         // display the triangle
         MeshRenderer renderer = triangle.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        // set the triangle's material
+        renderer.material = triangleMaterial;
 
     }
 
