@@ -2,14 +2,18 @@
 
 public class CreateTriangles : MonoBehaviour
 {
-    void CreateTriangle(Vector3 voxel0, Vector3 voxel1, Vector3 voxel2, Color meshColour)
+    private float Xaxis = 0f; // defaulted to the centre of the world
+    private float Yaxis = 0f; // defaulted to the centre of the world
+    private float Zaxis = 0f; // defaulted to the centre of the world
+
+    void CreateTriangle(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Color meshColour)
     {
         print("Creating triangle");
         Mesh mesh = new Mesh();
         mesh.name = "Triangle"; // MAKE THIS UNIQUE!!!
 
         // define the actual shape/primitive - 3 vertices = triangle, 4 vertices = square/quad
-        Vector3[] newVertices = new Vector3[] { voxel0, voxel1, voxel2 };
+        Vector3[] newVertices = new Vector3[] { vertex0, vertex1, vertex2 };
 
         //all possible UVs
         Vector2 uv00 = new Vector2(0f, 0f);
@@ -36,37 +40,37 @@ public class CreateTriangles : MonoBehaviour
     void CreatePyramid()
     {
         // X Y Z axis
-        // triangle voxel 1
-        Vector3 voxel0 = new Vector3(-0.5f, 0f, 0.5f);
-        // triangle voxel 2
-        Vector3 voxel1 = new Vector3(0.5f, 0f, 0.5f);
-        // triangle voxel 3
-        Vector3 voxel2 = new Vector3(0.5f, 0f, -0.5f);
-        CreateTriangle(voxel0, voxel1, voxel2, Color.blue); // up - order of the coords = direction of the normals
+        // triangle vertex 1
+        Vector3 vertex0 = new Vector3(Xaxis - 0.5f, Yaxis, Zaxis + 0.5f);
+        // triangle vertex 2
+        Vector3 vertex1 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis + 0.5f);
+        // triangle vertex 3
+        Vector3 vertex2 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis - 0.5f);
+        CreateTriangle(vertex0, vertex1, vertex2, Color.blue); // up - order of the coords = direction of the normals
                                                             // up facing face - facing up towards positive Y axis
         // triangle voxel 1
-        voxel0 = new Vector3(-0.5f, 0f, 0.5f);
-        // triangle voxel 2
-        voxel1 = new Vector3(0.5f, 0f, 0.5f);
-        // triangle voxel 3
-        voxel2 = new Vector3(0.5f, -1f, -1f);
-        CreateTriangle(voxel2, voxel1, voxel0, Color.red); // forwards/front facing face - facing towards positive Z axis
+        vertex0 = new Vector3(Xaxis - 0.5f, Yaxis, Zaxis + 0.5f);
+        // triangle vertex 2
+        vertex1 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis + 0.5f);
+        // triangle vertex 3
+        vertex2 = new Vector3(Xaxis + 0.5f, Yaxis - 1f, Zaxis - 1f);
+        CreateTriangle(vertex2, vertex1, vertex0, Color.red); // forwards/front facing face - facing towards positive Z axis
 
-        // triangle voxel 1
-        voxel0 = new Vector3(-0.5f, 0f, 0.5f);
-        // triangle voxel 2
-        voxel1 = new Vector3(0.5f, -1f, -1f);
-        // triangle voxel 3
-        voxel2 = new Vector3(0.5f, 0f, -0.5f);
-        CreateTriangle(voxel1, voxel0, voxel2, Color.cyan); // back facing face - facing towards negative Z axis
+        // triangle vertex 1
+        vertex0 = new Vector3(Xaxis - 0.5f, Yaxis, Zaxis + 0.5f);
+        // triangle vertex 2
+        vertex1 = new Vector3(Xaxis + 0.5f, Yaxis - 1f, Zaxis - 1f);
+        // triangle vertex 3
+        vertex2 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis - 0.5f);
+        CreateTriangle(vertex1, vertex0, vertex2, Color.cyan); // back facing face - facing towards negative Z axis
 
-        // triangle voxel 1
-        voxel0 = new Vector3(0.5f, -1f, -1f);
-        // triangle voxel 2
-        voxel1 = new Vector3(0.5f, 0f, 0.5f);
-        // triangle voxel 3
-        voxel2 = new Vector3(0.5f, 0f, -0.5f);
-        CreateTriangle(voxel2, voxel1, voxel0, Color.green); // right facing face - facing towards positive X axis
+        // triangle vertex 1
+        vertex0 = new Vector3(Xaxis + 0.5f, Yaxis - 1f, Zaxis - 1f);
+        // triangle vertex 2
+        vertex1 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis + 0.5f);
+        // triangle vertex 3
+        vertex2 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis - 0.5f);
+        CreateTriangle(vertex2, vertex1, vertex0, Color.green); // right facing face - facing towards positive X axis
     }
 
     // Start is called before the first frame update
