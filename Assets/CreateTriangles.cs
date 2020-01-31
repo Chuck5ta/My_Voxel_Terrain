@@ -20,7 +20,7 @@ public class CreateTriangles : MonoBehaviour
     {
         print("Creating triangle");
         Mesh mesh = new Mesh();
-        mesh.name = "Triangle"; // MAKE THIS UNIQUE!!!
+   //     mesh.name = "Triangle"; // MAKE THIS UNIQUE!!! 
 
         // define the actual shape/primitive - 3 vertices = triangle, 4 vertices = square/quad
         Vector3[] newVertices = new Vector3[] { vertex1, vertex2, vertex3 };
@@ -46,13 +46,42 @@ public class CreateTriangles : MonoBehaviour
         MeshRenderer renderer = triangle.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
         renderer.material.color = meshColour;
     }
-    
+
+    // Make a quad mesh out of 2 triangles
+    void CombineTriangles()
+    {
+        // combine all children meshes (triangles)
+
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+        int i = 0;
+        // Total triangles = meshFilters.Length
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            i++;
+        }
+
+        // Create a new mesh (quad) on the parent object
+        MeshFilter quad = (MeshFilter)this.gameObject.AddComponent(typeof(MeshFilter));
+        quad.mesh.CombineMeshes(combine);
+
+        // Create a renderer for the parent (quad mesh)
+        MeshRenderer renderer = this.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        renderer.material.color = Color.green;
+
+        // Delete all children (triangle meshes)
+        foreach (Transform triangle in this.transform)
+        {
+            Destroy(triangle.gameObject);
+        }
+    }
+
     // A quad is made out of 2 triangles
     void CreateQuad(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Color meshColour)
     {
         print("Creating quad");
-        Mesh mesh = new Mesh();
-        mesh.name = "Quad"; // MAKE THIS UNIQUE!!!
 
         // create 1st triangle
         CreateTriangle(vertex1, vertex2, vertex3, Color.blue);
@@ -69,45 +98,8 @@ public class CreateTriangles : MonoBehaviour
         // so, yes we should combine the triangles into a quad mesh
 
         // COMBINE HERE
+        CombineTriangles();
     }
-
-    /* INEFFICIENT - far better to use quads - far less geometry required
-    void CreatePyramid()
-    {
-        // X Y Z axis
-        // triangle vertex 1
-        Vector3 vertex0 = new Vector3(Xaxis - 0.5f, Yaxis, Zaxis + 0.5f);
-        // triangle vertex 2
-        Vector3 vertex1 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis + 0.5f);
-        // triangle vertex 3
-        Vector3 vertex2 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis - 0.5f);
-        CreateTriangle(vertex0, vertex1, vertex2, Color.blue); // up - order of the coords = direction of the normals
-                                                            // up facing face - facing up towards positive Y axis
-        // triangle voxel 1
-        vertex0 = new Vector3(Xaxis - 0.5f, Yaxis, Zaxis + 0.5f);
-        // triangle vertex 2
-        vertex1 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis + 0.5f);
-        // triangle vertex 3
-        vertex2 = new Vector3(Xaxis + 0.5f, Yaxis - 1f, Zaxis - 1f);
-        CreateTriangle(vertex2, vertex1, vertex0, Color.red); // forwards/front facing face - facing towards positive Z axis
-
-        // triangle vertex 1
-        vertex0 = new Vector3(Xaxis - 0.5f, Yaxis, Zaxis + 0.5f);
-        // triangle vertex 2
-        vertex1 = new Vector3(Xaxis + 0.5f, Yaxis - 1f, Zaxis - 1f);
-        // triangle vertex 3
-        vertex2 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis - 0.5f);
-        CreateTriangle(vertex1, vertex0, vertex2, Color.cyan); // back facing face - facing towards negative Z axis
-
-        // triangle vertex 1
-        vertex0 = new Vector3(Xaxis + 0.5f, Yaxis - 1f, Zaxis - 1f);
-        // triangle vertex 2
-        vertex1 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis + 0.5f);
-        // triangle vertex 3
-        vertex2 = new Vector3(Xaxis + 0.5f, Yaxis, Zaxis - 0.5f);
-        CreateTriangle(vertex2, vertex1, vertex0, Color.green); // right facing face - facing towards positive X axis
-    }
-    */
 
     // Start is called before the first frame update
     void Start()
