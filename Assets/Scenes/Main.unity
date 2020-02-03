@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 536830022}
   - component: {fileID: 536830023}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: TerrainQuad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5130bbbb132e196499ac7ba40a0e67ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quadMaterial: {fileID: 2100000, guid: 3609a5a572aa0b245aa4fa7d738fe665, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,8 +332,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.015148014, y: -0.9689648, z: 0.061417796, w: 0.23896779}
-  m_LocalPosition: {x: 0.9171088, y: 0.104711056, z: 1.6676273}
+  m_LocalRotation: {x: 0.17880587, y: -0.13502744, z: 0.024714759, w: 0.9742614}
+  m_LocalPosition: {x: 1.1483428, y: 1.2596195, z: -2.933032}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
