@@ -4,6 +4,7 @@ using UnityEngine;
 public class Chunk : MonoBehaviour
 {
     public Material quadMaterial;
+    public Quad[,,] chunkData; // 3D array to hold information on all of the quads
 
     [SerializeField] int lengthX = 1;
     [SerializeField] int lengthY = 1;
@@ -17,15 +18,26 @@ public class Chunk : MonoBehaviour
      */
     IEnumerator BuildChunk(int sizeX, int sizeY, int sizeZ)
     {
+        chunkData = new Quad[sizeX, sizeY, sizeZ];
+
+        // create quads
         for (int x = 0; x < sizeX; x++)
             for (int y = 0; y < sizeY; y++)
                 for (int z = 0; z < sizeZ; z++)
                 {
                     Vector3 pos = new Vector3(x, y, z);
-                    Quad q = new Quad(pos, this.gameObject, quadMaterial);
-                    q.Draw();
+                    chunkData[x,y,z] = new Quad(pos, this.gameObject, quadMaterial);
+                }
+
+        // draw quads
+        for (int x = 0; x < sizeX; x++)
+            for (int y = 0; y < sizeY; y++)
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    chunkData[x,y,z].Draw();
                     yield return null;
                 }
+
         CombineQuads();
     }
 
