@@ -35,8 +35,8 @@ public class Chunk : MonoBehaviour
                 for (int z = 0; z < sizeZ; z++)
                 {
                     chunkData[x,y,z].Draw();
-                    yield return null;
                 }
+        yield return null; // yield must be included in an IEnumerator function
 
         CombineQuads();
     }

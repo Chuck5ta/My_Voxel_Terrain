@@ -73,8 +73,9 @@ public class Quad
         quad.transform.parent = parent.transform;
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
-        MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        renderer.material = quadMaterial;
+        // uncomment for viewing each quad as it is created
+     //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+     //   renderer.material = quadMaterial;
     }
 
     // Kick off creating the quad mesh
@@ -106,6 +107,5 @@ public class Quad
     // Update is called once per frame
     void Update()
     {
-
     }
 }
