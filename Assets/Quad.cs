@@ -33,11 +33,14 @@ public class Quad
     {
         this.parent = parent;
         this.position = position;
-        this.quadMaterial = material;
+        quadMaterial = material;
     }
 
-    public void CreateQuad(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Vector3 vertex4, Color meshColour)
+    public void CreateQuad(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Vector3 vertex4)
     {
+        // position = location within the chunk
+        // vertices = location of each vertex of the quad within the game world
+
         Mesh mesh = new Mesh();
         mesh.name = "Quad_" + position.x + "_" + position.y + "_" + position.z;
 
@@ -91,13 +94,13 @@ public class Quad
 
         // Initial triangle vertices coordinates (at the centre of the world)
         // Flat and facing up
-        Vector3 vertex1 = new Vector3(Xaxis, Yaxis, Zaxis + 1f);     //top-left
+        Vector3 vertex1 = new Vector3(Xaxis, Yaxis, Zaxis + 1f);      //top-left
         Vector3 vertex2 = new Vector3(Xaxis + 1f, Yaxis, Zaxis + 1f); //top-right
-        Vector3 vertex3 = new Vector3(Xaxis, Yaxis, Zaxis);          //bottom-left
-        Vector3 vertex4 = new Vector3(Xaxis + 1f, Yaxis, Zaxis);     //bottom-right
+        Vector3 vertex3 = new Vector3(Xaxis, Yaxis, Zaxis);           //bottom-left
+        Vector3 vertex4 = new Vector3(Xaxis + 1f, Yaxis, Zaxis);      //bottom-right
 
         // best to build the world up in quads?
-        CreateQuad(vertex1, vertex2, vertex3, vertex4, Color.blue);
+        CreateQuad(vertex1, vertex2, vertex3, vertex4);
     }
 
     // Update is called once per frame

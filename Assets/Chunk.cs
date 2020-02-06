@@ -4,7 +4,11 @@ using UnityEngine;
 public class Chunk : MonoBehaviour
 {
     public Material quadMaterial;
-    
+
+    [SerializeField] int lengthX = 1;
+    [SerializeField] int lengthY = 1;
+    [SerializeField] int lengthZ = 1;
+
     /* 
      * chunk size (in the x, y, and z directions)
      * Set y to 0
@@ -13,12 +17,10 @@ public class Chunk : MonoBehaviour
      */
     IEnumerator BuildChunk(int sizeX, int sizeY, int sizeZ)
     {
-        print("Building");
         for (int x = 0; x < sizeX; x++)
             for (int y = 0; y < sizeY; y++)
                 for (int z = 0; z < sizeZ; z++)
                 {
-                    print("Creating quad");
                     Vector3 pos = new Vector3(x, y, z);
                     Quad q = new Quad(pos, this.gameObject, quadMaterial);
                     q.Draw();
@@ -43,6 +45,12 @@ public class Chunk : MonoBehaviour
             i++;
         }
 
+        // Delete all children (quad meshes)
+        foreach (Transform childMesh in this.transform)
+        {
+            Destroy(childMesh.gameObject);
+        }
+
         // Create a new mesh (quad) on the parent object
         MeshFilter mf = (MeshFilter)this.gameObject.AddComponent(typeof(MeshFilter));
         mf.mesh.CombineMeshes(combine);
@@ -50,19 +58,13 @@ public class Chunk : MonoBehaviour
         // Create a renderer for the parent (quad mesh)
         MeshRenderer renderer = this.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
         renderer.material = quadMaterial;
-
-        // Delete all children (quad meshes)
-        foreach (Transform quad in this.transform)
-        {
-            Destroy(quad.gameObject);
-        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
         // 10 quads by 10 quads terrain
-        StartCoroutine(BuildChunk(10, 1, 10));
+        StartCoroutine(BuildChunk(lengthX, lengthY, lengthZ));
     }
 
     // Update is called once per frame
