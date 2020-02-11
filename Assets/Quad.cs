@@ -42,7 +42,7 @@ public class Quad
         // vertices = location of each vertex of the quad within the game world
 
         Mesh mesh = new Mesh();
-        mesh.name = "Quad_" + position.x + "_" + position.y + "_" + position.z;
+        mesh.name = "Quad_" + position.x + "_" + position.z;
 
         Vector3[] vertices = new Vector3[4];
         vertices[0] = vertex1; //top-left
@@ -66,7 +66,7 @@ public class Quad
         Vector3[] normals = new Vector3[4] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
         mesh.normals = normals;
 
-    //    mesh.RecalculateBounds();
+        mesh.RecalculateBounds();
 
         GameObject quad = new GameObject("Quad");
         quad.transform.position = position;
@@ -74,8 +74,8 @@ public class Quad
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
         // uncomment for viewing each quad as it is created
-     //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-     //   renderer.material = quadMaterial;
+        MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        renderer.material = quadMaterial;
     }
 
     // Kick off creating the quad mesh
