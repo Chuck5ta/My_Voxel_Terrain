@@ -2,7 +2,7 @@
 
 /*
  * 31 JAN 2020
- * Build the terrain out of quads, each made out of 2 triangles
+ * Build the terrain out of quads (a quad will be made up of 2 triangles in the game world)
  *  
  * I don't think this needs cubes or any 3D objects for the terrain. You just alter the vertex coordinates and rerender?
  * May need to add remove geometry (triangles or quads)

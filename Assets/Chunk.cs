@@ -8,9 +8,10 @@ public class Chunk : MonoBehaviour
                               // I may have to build the world in blocks, if this quad attempt does not work out,
                               // then chunkData will become a 3D array
 
-    public int chunkLengthX = 4; // these don't seem to be used based on the actual value (not 10 x 10 x 10)
+    public int chunkLengthX = 4;
     public int chunkLengthZ = 4;
-    public int maxHeight = 10; // where 1 square = 1 metre wide, this is a world with a max height of 100 metres
+    public int maxHeight = 10; // where 1 square = 1 metre wide. 
+                               // maxHeight = 100 means a world that is 100 metres high
 
     public float perlinXScale = 0.8f;
     public float perlinZScale = 0.9f;
@@ -52,9 +53,9 @@ public class Chunk : MonoBehaviour
     }
 
     /* 
-     * chunk size (in the x, y, and z directions)
-     * Set y to 0
-     * We only want to create a flat plain initially
+     * This function builds a chunk, which is used to contain quads of a part of the world. 
+     * Results in improved efficiency in dealing with the quads.
+     * A world can contain many chunks.
      * 
      */
     IEnumerator BuildChunk(int sizeX, int sizeZ)
@@ -107,10 +108,6 @@ public class Chunk : MonoBehaviour
         mf.mesh = new Mesh();
 
         mf.mesh.CombineMeshes(combine);
-
-        // Create a renderer for the parent (quad mesh)
- //       MeshRenderer renderer = this.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
- //       renderer.material = quadMaterial;
 
         // Delete all children (quad meshes)
         foreach (Transform childMesh in this.transform)
