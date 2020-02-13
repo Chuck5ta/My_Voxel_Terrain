@@ -15,12 +15,14 @@ public class Quad
 {
     public Material quadMaterial;
 
-    private float Xaxis = 0f; // defaulted to the centre of the world
-    private float Yaxis = 0f; // defaulted to the centre of the world
-    private float Zaxis = 0f; // defaulted to the centre of the world
+//    private float Xaxis = 0f; // defaulted to the centre of the world
+//    private float Yaxis = 0f; // defaulted to the centre of the world
+//    private float Zaxis = 0f; // defaulted to the centre of the world
 
     GameObject parent; // The chunk
-    Vector3 position; // location within the chunk
+    Vector2 position; // location within the chunk
+
+    Vector3 vertex0, vertex1, vertex2, vertex3;
 
     /* 
      * Quad constructor
@@ -29,26 +31,36 @@ public class Quad
      * material is the material (texture)
      * 
      */
-    public Quad(Vector3 position, GameObject parent, Material material)
+    /*
+   public Quad(Vector3 position, GameObject parent, Material material)
+   {
+       this.parent = parent;
+       this.position = position; // position within the chunk
+       quadMaterial = material;
+   } */
+    public Quad(Vector2 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Material material)
     {
         this.parent = parent;
-        this.position = position;
+        this.position = locationInChunk; // position within the chunk
+        this.vertex0 = vertex0;
+        this.vertex1 = vertex1;
+        this.vertex2 = vertex2;
+        this.vertex3 = vertex3;
         quadMaterial = material;
     }
 
-    public void CreateQuad(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Vector3 vertex4)
+    public void CreateQuad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
     {
         // position = location within the chunk
         // vertices = location of each vertex of the quad within the game world
 
         Mesh mesh = new Mesh();
-        mesh.name = "Quad_" + position.x + "_" + position.z;
 
         Vector3[] vertices = new Vector3[4];
-        vertices[0] = vertex1; //top-left
-        vertices[1] = vertex2; //top-right
-        vertices[2] = vertex3; //bottom-left
-        vertices[3] = vertex4; //bottom-right
+        vertices[0] = vertex0; //top-left
+        vertices[1] = vertex1; //top-right
+        vertices[2] = vertex2; //bottom-left
+        vertices[3] = vertex3; //bottom-right
 
         mesh.vertices = vertices;
 
@@ -69,11 +81,11 @@ public class Quad
         mesh.RecalculateBounds();
 
         GameObject quad = new GameObject("Quad");
-        quad.transform.position = position;
+        quad.name = "Quad_" + position.x + "_" + position.y;
+     //   quad.transform.position = position; // set the quad's location in the chunk
         quad.transform.parent = parent.transform;
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
-        // uncomment for viewing each quad as it is created
         MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
         renderer.material = quadMaterial;
     }
@@ -91,17 +103,17 @@ public class Quad
         //       vertices[0] = new Vector3(0, 0, 1); //top-left
         //       vertices[1] = new Vector3(1, 0, 1); //top-right
         //       vertices[2] = new Vector3(0, 0, 0); //bottom-left
-        //       vertices[3] = new Vector3(1, 0, 0); //bottom-right
+        //       vertices[3] = ne  Vector3(1, 0, 0); //bottom-right
 
         // Initial triangle vertices coordinates (at the centre of the world)
         // Flat and facing up
-        Vector3 vertex1 = new Vector3(Xaxis, Yaxis, Zaxis + 1f);      //top-left
-        Vector3 vertex2 = new Vector3(Xaxis + 1f, Yaxis, Zaxis + 1f); //top-right
-        Vector3 vertex3 = new Vector3(Xaxis, Yaxis, Zaxis);           //bottom-left
-        Vector3 vertex4 = new Vector3(Xaxis + 1f, Yaxis, Zaxis);      //bottom-right
+//        Vector3 vertex1 = new Vector3(Xaxis, Yaxis, Zaxis + 1f);      //top-left
+//        Vector3 vertex2 = new Vector3(Xaxis + 1f, Yaxis, Zaxis + 1f); //top-right
+//        Vector3 vertex3 = new Vector3(Xaxis, Yaxis, Zaxis);           //bottom-left
+//        Vector3 vertex4 = new Vector3(Xaxis + 1f, Yaxis, Zaxis);      //bottom-right
 
         // best to build the world up in quads?
-        CreateQuad(vertex1, vertex2, vertex3, vertex4);
+        CreateQuad(vertex0, vertex1, vertex2, vertex3);
     }
 
     // Update is called once per frame

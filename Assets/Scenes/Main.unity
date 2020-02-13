@@ -166,8 +166,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quadMaterial: {fileID: 2100000, guid: 3609a5a572aa0b245aa4fa7d738fe665, type: 2}
-  chunkLengthX: 20
-  chunkLengthZ: 20
+  chunkLengthX: 4
+  chunkLengthZ: 4
   maxHeight: 10
   perlinXScale: 0.03
   perlinZScale: 0.04
