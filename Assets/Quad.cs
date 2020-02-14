@@ -72,7 +72,7 @@ public class Quad
 
         mesh.uv = uvs;
 
-        Vector3[] normals = new Vector3[4] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward };
+        Vector3[] normals = new Vector3[4] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
         mesh.normals = normals;
 
         mesh.RecalculateBounds();
