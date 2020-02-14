@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-/*
+﻿/*
  * 31 JAN 2020
  * Build the terrain out of quads (a quad will be made up of 2 triangles in the game world)
  *  
@@ -9,7 +7,11 @@
  * 
  * https://answers.unity.com/questions/154324/how-do-uvs-work.html
  * 
+ * 
  */
+
+using UnityEngine;
+
 
 public class Quad
 {
@@ -21,6 +23,7 @@ public class Quad
 
     GameObject parent; // The chunk
     Vector2 position; // location within the chunk
+                      // this is used to give the quad a unique name
 
     Vector3 vertex0, vertex1, vertex2, vertex3;
 
@@ -29,15 +32,9 @@ public class Quad
      * position is the location within the chunk
      * parent is the chunk
      * material is the material (texture)
+     * vertex0, vertex1, vertex2, vertex3 is the quad's location in the world 
      * 
      */
-    /*
-   public Quad(Vector3 position, GameObject parent, Material material)
-   {
-       this.parent = parent;
-       this.position = position; // position within the chunk
-       quadMaterial = material;
-   } */
     public Quad(Vector2 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Material material)
     {
         this.parent = parent;
@@ -82,7 +79,7 @@ public class Quad
 
         GameObject quad = new GameObject("Quad");
         quad.name = "Quad_" + position.x + "_" + position.y;
-     //   quad.transform.position = position; // set the quad's location in the chunk
+    //    quad.transform.position = position; // set the quad's location in the chunk
         quad.transform.parent = parent.transform;
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
@@ -94,30 +91,7 @@ public class Quad
     // this is called from within the chunk code
     public void Draw()
     {
-        // Upright and facing forward
-        //       vertices[0] = new Vector3(0, 1, 0); //top-left
-        //       vertices[1] = new Vector3(1, 1, 0); //top-right
-        //       vertices[2] = new Vector3(0, 0, 0); //bottom-left
-        //       vertices[3] = new Vector3(1, 0, 0); //bottom-right
-        // Flat and facing up
-        //       vertices[0] = new Vector3(0, 0, 1); //top-left
-        //       vertices[1] = new Vector3(1, 0, 1); //top-right
-        //       vertices[2] = new Vector3(0, 0, 0); //bottom-left
-        //       vertices[3] = ne  Vector3(1, 0, 0); //bottom-right
-
-        // Initial triangle vertices coordinates (at the centre of the world)
-        // Flat and facing up
-//        Vector3 vertex1 = new Vector3(Xaxis, Yaxis, Zaxis + 1f);      //top-left
-//        Vector3 vertex2 = new Vector3(Xaxis + 1f, Yaxis, Zaxis + 1f); //top-right
-//        Vector3 vertex3 = new Vector3(Xaxis, Yaxis, Zaxis);           //bottom-left
-//        Vector3 vertex4 = new Vector3(Xaxis + 1f, Yaxis, Zaxis);      //bottom-right
-
         // best to build the world up in quads?
         CreateQuad(vertex0, vertex1, vertex2, vertex3);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 }

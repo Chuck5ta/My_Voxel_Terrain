@@ -1,4 +1,13 @@
-﻿using System.Collections;
+﻿/*
+ * 14 FEB 2020
+ * A chunk contains quads that make up a part of the world's terrain.
+ * 
+ * 14 Feb 2020 - Terrain generation is now working, but it is in dire need of improving, as it is far too slow.
+ * 
+ * 
+ */
+
+using System.Collections;
 using UnityEngine;
 
 public class Chunk : MonoBehaviour
@@ -86,7 +95,7 @@ public class Chunk : MonoBehaviour
         // Vertex 2 = bottom-left
         // Vertex 3 = bottom-right
         //   0 --- 1
-        //   |     |
+        //   |     | vertices
         //   2 --- 3
 
         // Vertex 0
@@ -118,7 +127,7 @@ public class Chunk : MonoBehaviour
             vertex = new Vector3(x - 0.5f, yPos, z + 0.5f);
         }
         //   0 --- 1
-        //   |     |
+        //   |     | vertices
         //   2 --- 3
         // Vertex 1
         // --------
@@ -149,7 +158,7 @@ public class Chunk : MonoBehaviour
             vertex = new Vector3(x + 0.5f, yPos, z + 0.5f);
         }
         //   0 --- 1
-        //   |     |
+        //   |     | vertices
         //   2 --- 3
         // Vertex 2
         // --------
@@ -180,7 +189,7 @@ public class Chunk : MonoBehaviour
             vertex = new Vector3(x-0.5f, yPos, z-0.5f);
         }
         //   0 --- 1
-        //   |     |
+        //   |     | vertices
         //   2 --- 3
         // Vertex 3
         // --------
@@ -221,10 +230,9 @@ public class Chunk : MonoBehaviour
      * Results in improved efficiency in dealing with the quads.
      * A world can contain many chunks.
      * 
-     * 
      * IDEA!!!!
      * generate the vertices then the quads - no more need to check neighboring quads to get their vertices
-     * 
+     * - something like this needs to be done, as current system is far too slow to generate the terrain
      * 
      */
     IEnumerator BuildChunk(int sizeX, int sizeZ)
@@ -241,7 +249,7 @@ public class Chunk : MonoBehaviour
                 print("QUAD: " + x + " " + z);
                 print("===========");
                 // work out which vertices need to be generated
-                // ones that are connected to quads that already exist can use the vertex of those quads at
+                // Vertices that are connected to quads that already exist can use the vertex of those quads at
                 // the point the quads meet.
 
                 // Vertex 0 = top-left 
@@ -249,7 +257,7 @@ public class Chunk : MonoBehaviour
                 // Vertex 2 = bottom-left
                 // Vertex 3 = bottom-right
                 //   0 --- 1
-                //   |     |
+                //   |     | vertices
                 //   2 --- 3
 
                 // Vertex 0
@@ -292,71 +300,10 @@ public class Chunk : MonoBehaviour
                 Vector3 vertex3 = GetVertex(3, x, z);
                 print("Vertex 3: " + vertex0);
 
-                // OR check the 4 edges for neighbouring quads
-
-                // Positive X neighbour
-                // going to the right
-                // ====================
-                // if neighbour to the right
-                // get vertices of that neighbour  
-                // this[top-right] = neighbor[top-left]
-                // this[bottom-right] = neighbor[bottom-left]
-                // else
-                // get fBM
-
-
-                // Negative X neighbour
-                // going to the left
-
-                // Positive Z neighbour
-                // going forward
-
-                // Negative Z neighbour
-                // going backward
-
-
-                // use Perlin here to decide on the Y axis position of the quad
-                // could we use this to be the position of the vertex, not the quad?
-                /*         float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
-                                          (z + perlinZScale) * perlinZScale,
-                                          perlinOctaves,
-                                          perlinPersistance) * perlinHeightScale); */
-
-
-
-                // connect along the x axis
-                // pass the 2 coords to be used by the next quad
-                // -----------------------------------------------------
-                // Chunk needs to decide on what the quad's vertices are!
-                //         Vector3 pos = new Vector3(x, yPos, z);
-
                 Vector3 locationInChunk = new Vector3(x, z);
-
-                // need to also pass the coordinates of the 4 vertices
-                // it needs to know what quads are next to it, then link up to them
-                //        chunkData[x, z] = new Quad(pos, this.gameObject, quadMaterial);
-                //        chunkData[x, z].Draw();
-
 
                 chunkData[x, z] = new Quad(locationInChunk, vertex0, vertex1, vertex2, vertex3, this.gameObject, quadMaterial);
                 chunkData[x, z].Draw();
-
-
-                // Now to grab the quad's 4 vertices
-                // get the quad we just made
-                //            GameObject quad = GameObject.Find("Quad_" + x + "_" + z);
-
-                //            Debug.Log("Quad_" + x + "_" + z);
-                //            Debug.Log(quad.name);
-                /*            Vector3[] meshVerts = quad.GetComponent<MeshFilter>().mesh.vertices;
-                            Vector3 vertPos = quad.transform.position + transform.TransformPoint(meshVerts[0]);
-                            Debug.Log(vertPos);
-                            vertPos = quad.transform.position + transform.TransformPoint(meshVerts[1]);
-                            Debug.Log(vertPos);
-                            vertPos = quad.transform.position + transform.TransformPoint(meshVerts[2]);
-                            Debug.Log(vertPos);
-                            vertPos = quad.transform.position + transform.TransformPoint(meshVerts[3]);
-                            Debug.Log(vertPos); */
             }
         }
 
