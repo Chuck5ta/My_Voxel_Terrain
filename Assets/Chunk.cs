@@ -5,6 +5,13 @@
  * 14 Feb 2020 - Terrain generation is now working, but it is in dire need of improving, as it is far too slow.
  * 
  * 
+ * 
+ * 
+ * Useful links
+ * ============
+ * Empyrion terrain generation information
+ * https://docs.google.com/document/d/1MCvuCMtFvnCV8UHAglEi-IhLJgcD60TzNBjVbAZCptw/edit#heading=h.ygrn9c9eg1fd
+ * 
  */
 
 using System.Collections;
@@ -13,6 +20,11 @@ using UnityEngine;
 public class Chunk : MonoBehaviour
 {
     public Material quadMaterial;
+    public Material grassMaterial;
+    public Material rockMaterial;
+    public Material sandMaterial;
+    public Material dirtMaterial;
+
     public Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
                               // I may have to build the world in blocks, if this quad attempt does not work out,
                               // then chunkData will become a 3D array
@@ -68,8 +80,8 @@ public class Chunk : MonoBehaviour
 
     private float GenerateYpos(int vertexLocation, int x, int z)
     {
-        float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale + vertexLocation,
-           (z + perlinZScale) * perlinZScale + vertexLocation,
+        float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
+           (z + perlinZScale) * perlinZScale,
            perlinOctaves,
            perlinPersistance) * perlinHeightScale);
         return yPos;
@@ -225,6 +237,20 @@ public class Chunk : MonoBehaviour
         return vertex;
     }
 
+    Material SetMaterial(Vector3 vertex0)
+    {
+        print("Setting material");
+        if (vertex0.y > maxHeight*0.40)
+        {
+            return rockMaterial;
+        }        
+        else if (vertex0.y > maxHeight * 0.25)
+        {
+            return dirtMaterial;
+        }
+        return grassMaterial;
+    }
+
     /* 
      * This function builds a chunk, which is used to contain quads of a part of the world. 
      * Results in improved efficiency in dealing with the quads.
@@ -302,12 +328,14 @@ public class Chunk : MonoBehaviour
 
                 Vector3 locationInChunk = new Vector3(x, z);
 
+                // set the quad to grass or rock
+                quadMaterial = SetMaterial(vertex0);
                 chunkData[x, z] = new Quad(locationInChunk, vertex0, vertex1, vertex2, vertex3, this.gameObject, quadMaterial);
                 chunkData[x, z].Draw();
             }
         }
 
-   //     CombineQuads();
+        // CombineQuads();
         yield return null; // yield must be included in an IEnumerator function
     }
 
@@ -336,7 +364,7 @@ public class Chunk : MonoBehaviour
         // Delete all children (quad meshes)
         foreach (Transform childMesh in this.transform)
         {
-            Destroy(childMesh.gameObject);
+             Destroy(childMesh.gameObject);
         }
     }
 
