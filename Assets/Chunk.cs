@@ -44,11 +44,6 @@ public class Chunk : MonoBehaviour
     public int perlinPersistance = 8;
     public float perlinHeightScale = 0.9f;
 
-    const int VERTEX0 = 0;
-    const int VERTEX1 = 1;
-    const int VERTEX2 = 2;
-    const int VERTEX3 = 3;
-
     /*
      * fBM returns a value below 1, therefore we need this function to turn it into a value
      * in the game world of between 0 and maxHeight (e.g. 0 and 150 (1 unit/square = 1 metre wide/high/deep - 1m^2))
@@ -60,7 +55,7 @@ public class Chunk : MonoBehaviour
 
     /*
      * Fractal Brownian Motion
-     * this function returns the height (Y position in Unity) of each quad
+     * this function is used to generate the height (Y position in Unity) of each vertex
      */
     float fBM(float x, float z, int octave, float persistance)
     {
@@ -80,14 +75,9 @@ public class Chunk : MonoBehaviour
         return total / maxValue;
     }
 
-    private float GenerateYpos(int vertexLocation, int x, int z)
-    {
-        float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
-           (z + perlinZScale) * perlinZScale,
-           perlinOctaves,
-           perlinPersistance) * perlinHeightScale);
-        return yPos;
-    }
+    /*
+     * Leaving this function in for now, but it may be removed later
+     */
     private Vector3 GetVertexFromQuad(GameObject quad, int vertexPos)
     {
         Vector3[] meshVerts = quad.GetComponent<MeshFilter>().mesh.vertices;
@@ -98,147 +88,9 @@ public class Chunk : MonoBehaviour
         return vertex;
     }
 
-    Vector3 GetVertex(int vertexLocation, int x, int z)
-    {
-        Vector3 vertex = new Vector3(0,0,0);
-        GameObject quad;
-        float yPos = 0f;
-
-        // Vertex 0 = top-left 
-        // Vertex 1 = top-right
-        // Vertex 2 = bottom-left
-        // Vertex 3 = bottom-right
-        //   0 --- 1
-        //   |     | vertices
-        //   2 --- 3
-
-        // Vertex 0
-        // --------
-        // IF PositiveZ neighbour || NegativeX neighbour
-        //     GET vertex (either PositiveZ's bottom left vertex OR NegativeX's top-right vertex)
-        // ELSE
-        //     fBM vertex 0
-        if (vertexLocation == 0)
-        {
-            // is there a quad on the PositiveZ
-            if (quad = GameObject.Find("Quad_" + x + "_" + (z + 1)))
-            {
-                Debug.Log("Quad does exist at  " + x + "_" + (z + 1));
-                return GetVertexFromQuad(quad, VERTEX2);
-            }
-            // is there a quad on the NegativeX
-            else if (quad = GameObject.Find("Quad_" + (x - 1) + "_" + z))
-            {
-                Debug.Log("Quad does exist at  " + (x - 1) + "_" + z);
-                return GetVertexFromQuad(quad, VERTEX1);
-            }
-            else
-            {
-                print("fBM the vertex!");
-                // fBM the vertex
-                yPos = GenerateYpos(vertexLocation, x, z);
-            }
-            vertex = new Vector3(x - 0.5f, yPos, z + 0.5f);
-        }
-        //   0 --- 1
-        //   |     | vertices
-        //   2 --- 3
-        // Vertex 1
-        // --------
-        // IF PositiveZ neighbour || PositiveX neighbour
-        //     GET vertex (either PositiveZ's bottom right vertex OR PositiveX's top-left vertex)
-        // ELSE
-        //     fBM vertex 1
-        else if (vertexLocation == 1)
-        {
-            // is there a quad on the PositiveZ
-            if (quad = GameObject.Find("Quad_" + x + "_" + (z+1)))
-            {
-                Debug.Log("Quad does exist at  " + x + "_" + (z + 1));
-                return GetVertexFromQuad(quad, VERTEX3);
-            }
-            // is there a quad on the PositiveX
-            else if (quad = GameObject.Find("Quad_" + (x+1) + "_" + z))
-            {
-                Debug.Log("Quad does exist at  " + (x + 1) + "_" + z);
-                return GetVertexFromQuad(quad, VERTEX0);
-            }
-            else
-            {
-                print("fBM the vertex!");
-                // fBM the vertex
-                yPos = GenerateYpos(vertexLocation, x, z);
-            }
-            vertex = new Vector3(x + 0.5f, yPos, z + 0.5f);
-        }
-        //   0 --- 1
-        //   |     | vertices
-        //   2 --- 3
-        // Vertex 2
-        // --------
-        // IF NegativeZ neighbour || NegativeX neighbour
-        //     GET vertex (either NegativeZ's bottom right vertex OR NegativeX's top-left vertex)
-        // ELSE
-        //     fBM vertex 2
-        else if (vertexLocation == 2)
-        {
-            // is there a quad on the NegativeZ
-            if (quad = GameObject.Find("Quad_" + x + "_" + (z-1)))
-            {
-                Debug.Log("Quad does exist at  " + x + "_" + (z - 1));
-                return GetVertexFromQuad(quad, VERTEX0);
-            }
-            // is there a quad on the NegativeX
-            else if (quad = GameObject.Find("Quad_" + (x-1) + "_" + z))
-            {
-                Debug.Log("Quad does exist at  " + (x - 1) + "_" + z);
-                return GetVertexFromQuad(quad, VERTEX3);
-            }
-            else
-            {
-                print("fBM the vertex!");
-                // fBM the vertex
-                yPos = GenerateYpos(vertexLocation, x, z);
-            }
-            vertex = new Vector3(x-0.5f, yPos, z-0.5f);
-        }
-        //   0 --- 1
-        //   |     | vertices
-        //   2 --- 3
-        // Vertex 3
-        // --------
-        // IF NegativeZ neighbour || PositiveX neighbour
-        //     GET vertex (either NegativeZ's top-right vertex OR PositiveX's bottom-left vertex)
-        // ELSE
-        //     fBM vertex 3
-        else // vertexLocation == 3
-        {
-            // is there a quad on the NegativeZ
-            if (quad = GameObject.Find("Quad_" + x + "_" + (z-1)))
-            {
-                Debug.Log("Quad does exist at  " + x + "_" + (z - 1));
-                return GetVertexFromQuad(quad, VERTEX1);
-            }
-            // is there a quad on the PositiveX
-            else if (quad = GameObject.Find("Quad_" + (x+1) + "_" + z))
-            {
-                Debug.Log("Quad does exist at  " + (x + 1) + "_" + z);
-                return GetVertexFromQuad(quad, VERTEX2);
-            }
-            else
-            {
-                print("fBM the vertex!");
-                // fBM the vertex
-                yPos = GenerateYpos(vertexLocation, x, z);
-            }
-            vertex = new Vector3(x+0.5f, yPos, z-0.5f);
-        }
-
-        Debug.Log("New vertex: " + vertex);
-
-        return vertex;
-    }
-
+    /*
+     * Pick a material to add to the quad
+     */
     Material SetMaterial(Vector3 vertex0)
     {
         print("Setting material");
@@ -283,7 +135,7 @@ public class Chunk : MonoBehaviour
 
                 // Store cordinates of this vertex
                 chunkVertices[x, z] = new Vector3(x,yPos,z);
-                Debug.Log("Coords generated at " + x + " " + z + " : " + chunkVertices[x, z]);
+    //            Debug.Log("Coords generated at " + x + " " + z + " : " + chunkVertices[x, z]);
             }
         }
 
