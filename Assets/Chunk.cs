@@ -3,7 +3,7 @@
  * 
  * 14 Feb 2020 - Terrain generation is now working, but it is in dire need of improving, as it is far too slow.
  * 16 Feb 2010 - Vastly improved the terrain gen algorithm. Now many, many times faster. Threading still to be implemented. 
- * 
+ *             - Threading implemented, reducing the terrain gen time by more than 50%
  * 
  * 
  * Useful links
@@ -32,8 +32,6 @@ public class Chunk : MonoBehaviour
     public Material rockMaterial;
     public Material sandMaterial;
     public Material dirtMaterial;
-
-    private GameObject chunk;
 
     private Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
                                // I may have to build the world in blocks, if this quad attempt does not work out,
@@ -133,7 +131,7 @@ public class Chunk : MonoBehaviour
                                            chunkVertices[x, z],
                                            chunkVertices[x - 1, z - 1],
                                            chunkVertices[x, z - 1],
-                                           chunk,
+                                           this.gameObject,
                                            quadMaterial);
             chunkData[x - 1, z - 1].Draw();
         }
@@ -227,7 +225,6 @@ public class Chunk : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        chunk = this.gameObject; // not required - tried this due to Unity's issue with C# threads (no access to Unity API)
         StartCoroutine(BuildChunk(chunkLengthX, chunkLengthZ));
     }
 
