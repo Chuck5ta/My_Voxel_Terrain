@@ -1,9 +1,8 @@
 ﻿/*
- * 14 FEB 2020
  * A chunk contains quads that make up a part of the world's terrain.
  * 
  * 14 Feb 2020 - Terrain generation is now working, but it is in dire need of improving, as it is far too slow.
- * 
+ * 16 Feb 2010 - Vastly improved the terrain gen algorithm. Now many, many times faster. Threading still to be implemented. 
  * 
  * 
  * 
@@ -11,6 +10,9 @@
  * ============
  * Empyrion terrain generation information
  * https://docs.google.com/document/d/1MCvuCMtFvnCV8UHAglEi-IhLJgcD60TzNBjVbAZCptw/edit#heading=h.ygrn9c9eg1fd
+ * 
+ * Blending textures
+ *       https://answers.unity.com/questions/1351772/how-to-blend-two-textures.html
  * 
  */
 
@@ -256,82 +258,54 @@ public class Chunk : MonoBehaviour
      * Results in improved efficiency in dealing with the quads.
      * A world can contain many chunks.
      * 
-     * IDEA!!!!
+     * IDEA!!!! I have now implemented this - still need to include multi-processing/threads
      * generate the vertices then the quads - no more need to check neighboring quads to get their vertices
      * - something like this needs to be done, as current system is far too slow to generate the terrain
      * 
      */
     IEnumerator BuildChunk(int sizeX, int sizeZ)
     {
+        // holds quad info within the chunk
         chunkData = new Quad[sizeX, sizeZ];
+        // holds vertices coordinates within the chunk
+        Vector3[,] chunkVertices = new Vector3[sizeX, sizeZ];
 
-        // create quads
+        // generate all vertex coordinates
         for (int z = 0; z < sizeZ; z++)
         {
             for (int x = 0; x < sizeX; x++)
             {
-                print(" ");
-                print(" ");
-                print("QUAD: " + x + " " + z);
-                print("===========");
-                // work out which vertices need to be generated
-                // Vertices that are connected to quads that already exist can use the vertex of those quads at
-                // the point the quads meet.
+                // generate Y coordinate
+                float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
+                   (z + perlinZScale) * perlinZScale,
+                   perlinOctaves,
+                   perlinPersistance) * perlinHeightScale);
 
-                // Vertex 0 = top-left 
-                // Vertex 1 = top-right
-                // Vertex 2 = bottom-left
-                // Vertex 3 = bottom-right
-                //   0 --- 1
-                //   |     | vertices
-                //   2 --- 3
+                // Store cordinates of this vertex
+                chunkVertices[x, z] = new Vector3(x,yPos,z);
+                Debug.Log("Coords generated at " + x + " " + z + " : " + chunkVertices[x, z]);
+            }
+        }
 
-                // Vertex 0
-                // --------
-                // IF PositiveZ neighbour || NegativeX neighbour
-                //     GET vertex (either PositiveZ's bottom left vertex OR NegativeX's top-right vertex)
-                // ELSE
-                //     fBM vertex 0
-                print("Vertex 0");
-                Vector3 vertex0 = GetVertex(0, x, z);
-                print("Vertex 0: " + vertex0);
-
-                // Vertex 1
-                // --------
-                // IF PositiveZ neighbour || PositiveX neighbour
-                //     GET vertex (either PositiveZ's bottom right vertex OR PositiveX's top-left vertex)
-                // ELSE
-                //     fBM vertex 1
-                print("Vertex 1");
-                Vector3 vertex1 = GetVertex(1, x, z);
-                print("Vertex 1: " + vertex1);
-
-                // Vertex 2
-                // --------
-                // IF NegativeZ neighbour || NegativeX neighbour
-                //     GET vertex (either NegativeZ's bottom right vertex OR NegativeX's top-left vertex)
-                // ELSE
-                //     fBM vertex 2
-                print("Vertex 2");
-                Vector3 vertex2 = GetVertex(2, x, z);
-                print("Vertex 2: " + vertex2);
-
-                // Vertex 3
-                // --------
-                // IF NegativeZ neighbour || PositiveX neighbour
-                //     GET vertex (either NegativeZ's top-right vertex OR PositiveX's bottom-left vertex)
-                // ELSE
-                //     fBM vertex 3
-                print("Vertex 3");
-                Vector3 vertex3 = GetVertex(3, x, z);
-                print("Vertex 3: " + vertex0);
-
+        // Place chunk in world based on newly generated vertices
+        // create quads
+        for (int z = 1; z < sizeZ; z++)
+        {
+            for (int x = 1; x < sizeX; x++)
+            {
                 Vector3 locationInChunk = new Vector3(x, z);
-
-                // set the quad to grass or rock
-                quadMaterial = SetMaterial(vertex0);
-                chunkData[x, z] = new Quad(locationInChunk, vertex0, vertex1, vertex2, vertex3, this.gameObject, quadMaterial);
-                chunkData[x, z].Draw();
+                // vertex0 - chunkVertices[x-1, z]
+                // vertex1 - chunkVertices[x, z]
+                // vertex2 - chunkVertices[x-1, z-1]
+                // vertex3 - chunkVertices[x, z-1]
+                chunkData[x-1, z-1] = new Quad(locationInChunk, 
+                                               chunkVertices[x-1, z], 
+                                               chunkVertices[x, z],
+                                               chunkVertices[x-1, z-1], 
+                                               chunkVertices[x, z-1], 
+                                               this.gameObject, 
+                                               quadMaterial);
+                chunkData[x-1, z-1].Draw();
             }
         }
 

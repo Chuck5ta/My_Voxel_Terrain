@@ -261,8 +261,8 @@ MonoBehaviour:
   rockMaterial: {fileID: 2100000, guid: 2d4421a0823886547800f11ae6d13352, type: 2}
   sandMaterial: {fileID: 2100000, guid: 1e13ccca538ad424398ff08ea1b381ca, type: 2}
   dirtMaterial: {fileID: 2100000, guid: ae52789a0a308e1459b5eae77a5be7cc, type: 2}
-  chunkLengthX: 20
-  chunkLengthZ: 20
+  chunkLengthX: 100
+  chunkLengthZ: 100
   maxHeight: 6
   perlinXScale: 0.03
   perlinZScale: 0.04
