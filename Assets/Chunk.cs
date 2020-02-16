@@ -13,11 +13,17 @@
  * 
  * Blending textures
  *       https://answers.unity.com/questions/1351772/how-to-blend-two-textures.html
+ *       
+ * Threads
+ * https://www.tutorialspoint.com/csharp/csharp_multithreading.htm
+ * C# Job System
+ * https://docs.unity3d.com/Manual/JobSystem.html?_ga=2.217102486.185736627.1581613830-307768343.1578037165
  * 
  */
 
 using System.Collections;
 using UnityEngine;
+using System.Threading;
 
 public class Chunk : MonoBehaviour
 {
@@ -27,9 +33,12 @@ public class Chunk : MonoBehaviour
     public Material sandMaterial;
     public Material dirtMaterial;
 
-    public Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
-                              // I may have to build the world in blocks, if this quad attempt does not work out,
-                              // then chunkData will become a 3D array
+    private GameObject chunk;
+
+    private Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
+                               // I may have to build the world in blocks, if this quad attempt does not work out,
+                               // then chunkData will become a 3D array
+    private Vector3[,] chunkVertices; // 2D array to hold all the coordinates of the vertices that make up the terrain in the chunk
 
     public int chunkLengthX = 4;
     public int chunkLengthZ = 4;
@@ -105,6 +114,51 @@ public class Chunk : MonoBehaviour
         return grassMaterial;
     }
 
+    /*
+     * Display the quads - a row at a time, to create the terrain in a chunk
+     * Unable to use the C# thread for this, therefore used Unity's Coroutine
+     * May revisit this, as I would like to use C# thread throughout
+     */
+    IEnumerator GenerateRowOfQuads(int z, int sizeX)
+    {
+        for (int x = 1; x < sizeX; x++)
+        {
+            Vector3 locationInChunk = new Vector3(x, z);
+            // vertex0 - chunkVertices[x-1, z];
+            // vertex1 - chunkVertices[x, z]
+            // vertex2 - chunkVertices[x-1, z-1]
+            // vertex3 - chunkVertices[x, z-1]
+            chunkData[x - 1, z - 1] = new Quad(locationInChunk,
+                                           chunkVertices[x - 1, z],
+                                           chunkVertices[x, z],
+                                           chunkVertices[x - 1, z - 1],
+                                           chunkVertices[x, z - 1],
+                                           chunk,
+                                           quadMaterial);
+            chunkData[x - 1, z - 1].Draw();
+        }
+        yield return null;
+    }
+
+    /*
+     * Generate the vertices that make up a row of a terrain in a chunk
+     * C# thread is used to speed up the generation of these
+     */
+    void GenerateRowOfVertices(int z, int sizeX)
+    {
+        for (int x = 0; x < sizeX; x++)
+        {
+            // generate Y coordinate
+            float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
+               (z + perlinZScale) * perlinZScale,
+               perlinOctaves,
+               perlinPersistance) * perlinHeightScale);
+
+            // Store cordinates of this vertex
+            chunkVertices[x, z] = new Vector3(x, yPos, z);
+        }
+    }
+
     /* 
      * This function builds a chunk, which is used to contain quads of a part of the world. 
      * Results in improved efficiency in dealing with the quads.
@@ -120,45 +174,21 @@ public class Chunk : MonoBehaviour
         // holds quad info within the chunk
         chunkData = new Quad[sizeX, sizeZ];
         // holds vertices coordinates within the chunk
-        Vector3[,] chunkVertices = new Vector3[sizeX, sizeZ];
+        chunkVertices = new Vector3[sizeX, sizeZ];
 
+        Thread[] rowOfVerts = new Thread[sizeZ];
         // generate all vertex coordinates
         for (int z = 0; z < sizeZ; z++)
         {
-            for (int x = 0; x < sizeX; x++)
-            {
-                // generate Y coordinate
-                float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
-                   (z + perlinZScale) * perlinZScale,
-                   perlinOctaves,
-                   perlinPersistance) * perlinHeightScale);
-
-                // Store cordinates of this vertex
-                chunkVertices[x, z] = new Vector3(x,yPos,z);
-    //            Debug.Log("Coords generated at " + x + " " + z + " : " + chunkVertices[x, z]);
-            }
+            int index = z;
+            // place the generation of a row of coordinates in its own thread
+            rowOfVerts[z] = new Thread(() => GenerateRowOfVertices(index, sizeX));
+            rowOfVerts[z].Start();
         }
-
-        // Place chunk in world based on newly generated vertices
-        // create quads
         for (int z = 1; z < sizeZ; z++)
         {
-            for (int x = 1; x < sizeX; x++)
-            {
-                Vector3 locationInChunk = new Vector3(x, z);
-                // vertex0 - chunkVertices[x-1, z]
-                // vertex1 - chunkVertices[x, z]
-                // vertex2 - chunkVertices[x-1, z-1]
-                // vertex3 - chunkVertices[x, z-1]
-                chunkData[x-1, z-1] = new Quad(locationInChunk, 
-                                               chunkVertices[x-1, z], 
-                                               chunkVertices[x, z],
-                                               chunkVertices[x-1, z-1], 
-                                               chunkVertices[x, z-1], 
-                                               this.gameObject, 
-                                               quadMaterial);
-                chunkData[x-1, z-1].Draw();
-            }
+            // place the generation of a row of quads in its own thread
+            StartCoroutine(GenerateRowOfQuads(z, sizeX));
         }
 
         // CombineQuads();
@@ -197,6 +227,7 @@ public class Chunk : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        chunk = this.gameObject; // not required - tried this due to Unity's issue with C# threads (no access to Unity API)
         StartCoroutine(BuildChunk(chunkLengthX, chunkLengthZ));
     }
 
