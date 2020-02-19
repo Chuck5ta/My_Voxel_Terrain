@@ -8,11 +8,15 @@
  * 
  * Useful links
  * ============
+ * Courses
+ * https://holistic3d.com/
+ * https://www.gamedev.tv/
+ * 
  * Empyrion terrain generation information
  * https://docs.google.com/document/d/1MCvuCMtFvnCV8UHAglEi-IhLJgcD60TzNBjVbAZCptw/edit#heading=h.ygrn9c9eg1fd
  * 
  * Blending textures
- *       https://answers.unity.com/questions/1351772/how-to-blend-two-textures.html
+ * https://answers.unity.com/questions/1351772/how-to-blend-two-textures.html
  *       
  * Threads
  * https://www.tutorialspoint.com/csharp/csharp_multithreading.htm
@@ -25,18 +29,15 @@ using System.Collections;
 using UnityEngine;
 using System.Threading;
 
-public class Chunk : MonoBehaviour
+public class Chunk
 {
-    public Material quadMaterial;
-    public Material grassMaterial;
-    public Material rockMaterial;
-    public Material sandMaterial;
-    public Material dirtMaterial;
+    private Material quadMaterial;
 
-    private Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
-                               // I may have to build the world in blocks, if this quad attempt does not work out,
-                               // then chunkData will become a 3D array
-    private Vector3[,] chunkVertices; // 2D array to hold all the coordinates of the vertices that make up the terrain in the chunk
+    public Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
+                              // I may have to build the world in blocks, if this quad attempt does not work out,
+                              // then chunkData will become a 3D array
+    public Vector3[,] chunkVertices; // 2D array to hold all the coordinates of the vertices that make up the terrain in the chunk
+    public GameObject chunk;
 
     public int chunkLengthX = 4;
     public int chunkLengthZ = 4;
@@ -50,6 +51,23 @@ public class Chunk : MonoBehaviour
     public int perlinOctaves = 3;
     public int perlinPersistance = 8;
     public float perlinHeightScale = 0.9f;
+
+    private int chunkZIndex, chunkXIndex;
+
+    /*
+     * Constructor
+     * chunkIndex is the chunk we are currently working on
+     * 
+     * chunk 0 will be based at 0,0,0
+     */
+    public Chunk(int chunkZIndex, int chunkXIndex, Vector3 position)
+    {
+        this.chunkZIndex = chunkZIndex;
+        this.chunkXIndex = chunkXIndex;
+        chunk = new GameObject(World.BuildChunkName(position));
+        chunk.transform.position = position;
+        BuildChunk();
+    }
 
     /*
      * fBM returns a value below 1, therefore we need this function to turn it into a value
@@ -83,33 +101,19 @@ public class Chunk : MonoBehaviour
     }
 
     /*
-     * Leaving this function in for now, but it may be removed later
-     */
-    private Vector3 GetVertexFromQuad(GameObject quad, int vertexPos)
-    {
-        Vector3[] meshVerts = quad.GetComponent<MeshFilter>().mesh.vertices;
-        Vector3 vertex = quad.transform.position + transform.TransformPoint(meshVerts[vertexPos]);
-        Debug.Log(" ");
-        Debug.Log(vertex);
-        Debug.Log(" ");
-        return vertex;
-    }
-
-    /*
      * Pick a material to add to the quad
      */
     Material SetMaterial(Vector3 vertex0)
     {
-        print("Setting material");
         if (vertex0.y > maxHeight*0.40)
         {
-            return rockMaterial;
+            return World.rock;
         }        
         else if (vertex0.y > maxHeight * 0.25)
         {
-            return dirtMaterial;
+            return World.dirt;
         }
-        return grassMaterial;
+        return World.grass;
     }
 
     /*
@@ -117,10 +121,11 @@ public class Chunk : MonoBehaviour
      * Unable to use the C# thread for this, therefore used Unity's Coroutine
      * May revisit this, as I would like to use C# thread throughout
      */
-    IEnumerator GenerateRowOfQuads(int z, int sizeX)
+    void GenerateRowOfQuads(int z, int sizeX)
     {
         for (int x = 1; x < sizeX; x++)
         {
+            quadMaterial = SetMaterial(chunkVertices[x - 1, z]); // not ideal!!!
             Vector3 locationInChunk = new Vector3(x, z);
             // vertex0 - chunkVertices[x-1, z];
             // vertex1 - chunkVertices[x, z]
@@ -131,20 +136,20 @@ public class Chunk : MonoBehaviour
                                            chunkVertices[x, z],
                                            chunkVertices[x - 1, z - 1],
                                            chunkVertices[x, z - 1],
-                                           this.gameObject,
+                                           chunk.gameObject, 
+                                           this,
                                            quadMaterial);
             chunkData[x - 1, z - 1].Draw();
         }
-        yield return null;
     }
 
     /*
      * Generate the vertices that make up a row of a terrain in a chunk
      * C# thread is used to speed up the generation of these
      */
-    void GenerateRowOfVertices(int z, int sizeX)
+    void GenerateRowOfVertices(int z)
     {
-        for (int x = 0; x < sizeX; x++)
+        for (int x = 0; x < World.chunkSize * 2; x++)
         {
             // generate Y coordinate
             float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
@@ -153,7 +158,19 @@ public class Chunk : MonoBehaviour
                perlinPersistance) * perlinHeightScale);
 
             // Store cordinates of this vertex
-            chunkVertices[x, z] = new Vector3(x, yPos, z);
+            chunkVertices[x, z] = new Vector3(x + (chunkXIndex * (World.chunkSize - 1)), yPos, z + (chunkZIndex * (World.chunkSize - 1)));
+        }
+    }
+
+    /*
+     * Draw the quads in the chunk
+     */
+    public void DrawChunk()
+    {
+        for (int z = 1; z < World.chunkSize; z++)
+        {
+            // place the generation of a row of quads in its own thread
+            GenerateRowOfQuads(z, World.chunkSize);
         }
     }
 
@@ -167,30 +184,26 @@ public class Chunk : MonoBehaviour
      * - something like this needs to be done, as current system is far too slow to generate the terrain
      * 
      */
-    IEnumerator BuildChunk(int sizeX, int sizeZ)
+    void BuildChunk()
     {
         // holds quad info within the chunk
-        chunkData = new Quad[sizeX, sizeZ];
+        chunkData = new Quad[World.chunkSize, World.chunkSize];
         // holds vertices coordinates within the chunk
-        chunkVertices = new Vector3[sizeX, sizeZ];
+        chunkVertices = new Vector3[World.chunkSize*2, World.chunkSize*2];
 
-        Thread[] rowOfVerts = new Thread[sizeZ];
+  //      Thread[] rowOfVerts = new Thread[World.chunkSize*2];
         // generate all vertex coordinates
-        for (int z = 0; z < sizeZ; z++)
+        for (int z = 0; z < World.chunkSize*2; z++)
         {
-            int index = z;
+      //      int index = z;
             // place the generation of a row of coordinates in its own thread
-            rowOfVerts[z] = new Thread(() => GenerateRowOfVertices(index, sizeX));
-            rowOfVerts[z].Start();
-        }
-        for (int z = 1; z < sizeZ; z++)
-        {
-            // place the generation of a row of quads in its own thread
-            StartCoroutine(GenerateRowOfQuads(z, sizeX));
+      //      rowOfVerts[z] = new Thread(() => GenerateRowOfVertices(index, World.chunkSize));
+      //      rowOfVerts[z].Start();
+            GenerateRowOfVertices(z);
         }
 
         // CombineQuads();
-        yield return null; // yield must be included in an IEnumerator function
+   //     yield return null; // yield must be included in an IEnumerator function
     }
 
     // Combine all the quads in the chunk
@@ -198,7 +211,7 @@ public class Chunk : MonoBehaviour
     {
         // combine all children meshes
 
-        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        MeshFilter[] meshFilters = chunk.GetComponentsInChildren<MeshFilter>();
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
         int i = 0;
         // Total quads = meshFilters.Length
@@ -210,26 +223,15 @@ public class Chunk : MonoBehaviour
         }
 
         // Create a new mesh on the parent object
-        MeshFilter mf = (MeshFilter)this.gameObject.AddComponent(typeof(MeshFilter));
+        MeshFilter mf = (MeshFilter)chunk.gameObject.AddComponent(typeof(MeshFilter));
         mf.mesh = new Mesh();
 
         mf.mesh.CombineMeshes(combine);
 
         // Delete all children (quad meshes)
-        foreach (Transform childMesh in this.transform)
+        foreach (Transform childMesh in chunk.transform)
         {
-             Destroy(childMesh.gameObject);
+             GameObject.Destroy(childMesh.gameObject);
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        StartCoroutine(BuildChunk(chunkLengthX, chunkLengthZ));
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 }

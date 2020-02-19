@@ -15,12 +15,13 @@ using UnityEngine;
 
 public class Quad
 {
-    public Material quadMaterial;
+    private Material quadMaterial;
 
-//    private float Xaxis = 0f; // defaulted to the centre of the world
-//    private float Yaxis = 0f; // defaulted to the centre of the world
-//    private float Zaxis = 0f; // defaulted to the centre of the world
+    //    private float Xaxis = 0f; // defaulted to the centre of the world
+    //    private float Yaxis = 0f; // defaulted to the centre of the world
+    //    private float Zaxis = 0f; // defaulted to the centre of the world
 
+    Chunk owner; // so that we can access the chunkData array
     GameObject parent; // The chunk
     Vector2 position; // location within the chunk
                       // this is used to give the quad a unique name
@@ -35,8 +36,9 @@ public class Quad
      * vertex0, vertex1, vertex2, vertex3 is the quad's location in the world 
      * 
      */
-    public Quad(Vector2 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Material material)
+    public Quad(Vector2 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Chunk owner, Material material)
     {
+        this.owner = owner;
         this.parent = parent;
         this.position = locationInChunk; // position within the chunk
         this.vertex0 = vertex0;
@@ -80,7 +82,7 @@ public class Quad
         GameObject quad = new GameObject("Quad");
         quad.name = "Quad_" + position.x + "_" + position.y;
     //    quad.transform.position = position; // set the quad's location in the chunk
-        quad.transform.parent = parent.transform;
+        quad.transform.parent = this.parent.transform;
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
         MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;

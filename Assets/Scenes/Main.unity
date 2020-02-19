@@ -210,7 +210,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &536830021
 GameObject:
@@ -221,10 +221,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 536830022}
-  - component: {fileID: 536830023}
   - component: {fileID: 536830024}
+  - component: {fileID: 536830023}
   m_Layer: 0
-  m_Name: TerrainChunk
+  m_Name: World
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -242,7 +242,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &536830023
 MonoBehaviour:
@@ -253,24 +253,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 536830021}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bb5ec874ae191d4b891fd8d0cf65da0, type: 3}
+  m_Script: {fileID: 11500000, guid: ddd0b6f27b567344baaf9bb8b7fdb1e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   quadMaterial: {fileID: 2100000, guid: 0d4b2c934c131674a89959457b3af6fa, type: 2}
   grassMaterial: {fileID: 2100000, guid: 2eec074a5879d1c46bb496f13be6bb5e, type: 2}
   rockMaterial: {fileID: 2100000, guid: 2d4421a0823886547800f11ae6d13352, type: 2}
   sandMaterial: {fileID: 2100000, guid: 1e13ccca538ad424398ff08ea1b381ca, type: 2}
-  dirtMaterial: {fileID: 2100000, guid: ae52789a0a308e1459b5eae77a5be7cc, type: 2}
-  chunkLengthX: 100
-  chunkLengthZ: 100
-  maxHeight: 6
-  perlinXScale: 0.03
-  perlinZScale: 0.04
-  perlinOffsetX: 455676
-  perlinOffsetY: 4234
-  perlinOctaves: 6
-  perlinPersistance: 8
-  perlinHeightScale: 0.9
+  dirtMaterial: {fileID: 2100000, guid: 0d4b2c934c131674a89959457b3af6fa, type: 2}
 --- !u!23 &536830024
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -387,7 +377,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: -0.110678904, y: 0.8813278, z: -0.25532058, w: -0.38186768}
-  m_LocalPosition: {x: 124.731155, y: 49.416306, z: 127.81444}
+  m_LocalPosition: {x: 28.019531, y: 22.915852, z: 57.676407}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
