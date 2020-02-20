@@ -66,9 +66,6 @@ public class Chunk
     {
         this.chunkZIndex = chunkZIndex;
         this.chunkXIndex = chunkXIndex;
-
-        Debug.Log("Building chunk name: " + World.BuildChunkName(position));
-
         chunk = new GameObject(World.BuildChunkName(position));
         chunk.transform.position = position;
         BuildChunk();
@@ -161,17 +158,58 @@ public class Chunk
     }
 
     /*
+     * This retrieves the vertices from the neighboring chunk and uses them in the current chunk
+     * This will result in the 2 chunks linking up visually
+     * z is the current row number (Z axis position)
+     * negativeZchunk is the neighbouring chunk we wish to get the vertices from
+     */
+    private void GetVerticesFromNegXneighbour(int z, Chunk negativeXchunk)
+    {
+        chunkVertices[0, z].x = chunkXIndex * World.chunkSize; // - (World.chunkSize * 2 + 1);
+        chunkVertices[0, z].y = negativeXchunk.chunkVertices[World.chunkSize, z].y;
+        chunkVertices[0, z].z = z + (chunkZIndex * World.chunkSize);
+    }
+
+    /*
+     * This retrieves the vertices from the neighboring chunk and uses them in the current chunk
+     * This will result in the 2 chunks linking up visually
+     * z is the current row number (Z axis position)
+     * negativeZchunk is the neighbouring chunk we wish to get the vertices from
+     */
+    private void GetVerticesFromPosXneighbour(int z, Chunk positiveXchunk)
+    {
+        chunkVertices[(World.chunkSize * 2) - 1, z].x = ((World.chunkSize * 2) - 1) + (chunkXIndex * World.chunkSize); // - (World.chunkSize * 2 + 1);
+        chunkVertices[(World.chunkSize * 2) - 1, z].y = positiveXchunk.chunkVertices[0, z].y;
+        chunkVertices[(World.chunkSize * 2) - 1, z].z = z + (chunkZIndex * World.chunkSize);
+    }
+
+    /*
      * Generate the vertices that make up a row of a terrain in a chunk
      * C# thread is used to speed up the generation of these
      * ====================
      * Need to test if the location is at an end and there is a chunk next to it
-     * 
      * 
      */
     void GenerateRowOfVertices(int z)
     {
         for (int x = 0; x < World.chunkSize * 2; x++)
         {
+            // IF x = 0, and have neighbour, then use their coords
+            // rows at position 0 and World.chunkSize-1, do not generate new coordinates if they have a neighbour chunk
+            //     retrieve them from the chunk neighbour 
+            // RETRIEVE ALL VERTS FROM NEIGHBOURING CHUNK FOR ROW 0
+            if (x == 0 && isNegativeX_Chunk)
+            {
+                // retrieve coords from neighbour
+                GetVerticesFromNegXneighbour(z, negativeXchunk);
+                continue;
+            }
+            else if (x == ((World.chunkSize * 2) - 1) && isPositiveX_Chunk)
+            {
+                // retrieve coords from neighbour
+                GetVerticesFromPosXneighbour(z, positiveXchunk);
+                continue;
+            }
 
             // DO WE NEED TO GENERATE THIS ROW?
             //    If at an end and we have a chunk neighbour then get there row store it here
@@ -184,8 +222,6 @@ public class Chunk
 
             // Store cordinates of this vertex
             chunkVertices[x, z] = new Vector3(x + (chunkXIndex * (World.chunkSize)), yPos, z + (chunkZIndex * (World.chunkSize)));
-
-            Debug.Log("VERTS FOR ROW : " + z + " : " + chunkVertices[x, z]);
         }
     }
 
@@ -208,10 +244,8 @@ public class Chunk
                                             chunk.transform.position.z - World.chunkSize);
         string chunkName = World.BuildChunkName(negativeZPos);
 
-  //      Debug.Log("Check for neighbour: " + chunkName);
         if (World.chunks.TryGetValue(chunkName, out negativeZchunk))
         {
- //           Debug.Log("Neg Z Neighbour found");
             isNegativeZ_Chunk = true;
         }
         // PositiveZ - forward
@@ -219,10 +253,8 @@ public class Chunk
                                             chunk.transform.position.y,
                                             chunk.transform.position.z + World.chunkSize);
         chunkName = World.BuildChunkName(positiveZPos);
- //       Debug.Log("Check for neighbour: " + chunkName);
         if (World.chunks.TryGetValue(chunkName, out positiveZchunk))
         {
-  //          Debug.Log("Pos Z Neighbour found");
             isPositiveZ_Chunk = true;
         }
         // NegativeX - left
@@ -230,10 +262,8 @@ public class Chunk
                                             chunk.transform.position.y,
                                             chunk.transform.position.z);
         chunkName = World.BuildChunkName(negativeXPos);
- //       Debug.Log("Check for neighbour: " + chunkName);
         if (World.chunks.TryGetValue(chunkName, out negativeXchunk))
         {
-  //          Debug.Log("Neg X Neighbour found");
             isNegativeX_Chunk = true;
         }
         // PositiveX - right
@@ -241,10 +271,8 @@ public class Chunk
                                             chunk.transform.position.y,
                                             chunk.transform.position.z);
         chunkName = World.BuildChunkName(positiveXPos);
-  //      Debug.Log("Check for neighbour: " + chunkName);
         if (World.chunks.TryGetValue(chunkName, out positiveXchunk))
         {
-   //         Debug.Log("Pos X Neighbour found");
             isPositiveX_Chunk = true;
         }
     }
@@ -257,19 +285,11 @@ public class Chunk
      */
     private void GetVerticesFromNegZneighbour(int z, Chunk negativeZchunk)
     {
-        Debug.Log("*************************************************");
-        Debug.Log("************************Z************************* " + z);
-        // if negativeX
-        //     Z = (World.chunkSize*2)-1
-        // if positiveX
-        //     Z = Z
         for (int x = 0; x < World.chunkSize * 2; x++)
         {
-            chunkVertices[x, z].x = x + (chunkXIndex * (World.chunkSize)); // - (World.chunkSize * 2 + 1);
-  //          chunkVertices[x, z].y = negativeZchunk.chunkVertices[x, (World.chunkSize * 2) - 5].y;
+            chunkVertices[x, z].x = x + (chunkXIndex * World.chunkSize); // - (World.chunkSize * 2 + 1);
             chunkVertices[x, z].y = negativeZchunk.chunkVertices[x, World.chunkSize].y;
-            chunkVertices[x, z].z = z + (chunkZIndex * (World.chunkSize));
-            Debug.Log("NEG Z VERTS: @ " + x + " " + z + " : " + chunkVertices[x, z]);
+            chunkVertices[x, z].z = z + (chunkZIndex * World.chunkSize);
         }
     }
 
@@ -278,16 +298,17 @@ public class Chunk
      * This will result in the 2 chunks linking up visually
      * z is the current row number (Z axis position)
      * positiveZchunk is the neighbouring chunk we wish to get the vertices from
+     * 
+     * NOTE: THIS MIGHT NOT WORK!!!!!
+     * 
      */
     private void GetVerticesFromPosZneighbour(int z, Chunk positiveZchunk)
     {
-        // if negativeX
-        //     Z = (World.chunkSize*2)-1
-        // if positiveX
-        //     Z = Z
         for (int x = 0; x < World.chunkSize * 2; x++)
         {
-            chunkVertices[x, z] = positiveZchunk.chunkVertices[x, 0]; // we need the verts from row 0 of the neighbour
+            chunkVertices[x, z].x = x + (chunkXIndex * World.chunkSize); // - (World.chunkSize * 2 + 1);
+            chunkVertices[x, z].y = positiveZchunk.chunkVertices[x, 0].y;
+            chunkVertices[x, z].z = z + (chunkZIndex * World.chunkSize);
         }
     }
 
@@ -320,14 +341,12 @@ public class Chunk
             // RETRIEVE ALL VERTS FROM NEIGHBOURING CHUNK FOR ROW 0
             if (z == 0 && isNegativeZ_Chunk)
             {
-    //            Debug.Log("Z = 0 and isNegativeZ_Chunk");
                 // retrieve coords from neighbour
                 GetVerticesFromNegZneighbour(z, negativeZchunk);
                 continue;
             }
             else if (z == ((World.chunkSize * 2) - 1) && isPositiveZ_Chunk)
             {
- //               Debug.Log("Z = ((World.chunkSize * 2) - 1) and isPositiveZ_Chunk");
                 // retrieve coords from neighbour
                 GetVerticesFromPosZneighbour(z, positiveZchunk);
                 continue;
