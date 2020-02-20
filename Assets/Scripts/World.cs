@@ -46,14 +46,16 @@ public class World : MonoBehaviour
 
 
     public static int worldSize = 2; // # of chunks in the world
-    public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 quads
+    public static int chunkSize = 5;    // dimensions of a chunk 4x4x4 quads
     public static Dictionary<string, Chunk> chunks;
 
     public static string BuildChunkName(Vector3 position)
     {
         return (int)position.x + "_" +
-               (int)position.y + "_" +
                (int)position.z;
+ //       return (int)position.x + "_" +
+ //              (int)position.y + "_" +
+ //              (int)position.z;
     }
 
     IEnumerator BuildWorld()
@@ -65,6 +67,8 @@ public class World : MonoBehaviour
                 Vector3 chunkPosition = new Vector3(this.transform.position.x + (chunkXIndex * chunkSize),
                                                     chunkXIndex * chunkSize,
                                                     this.transform.position.z + (chunkZIndex * chunkSize));
+
+                // pass through neighbouring chunks???
                 Chunk c = new Chunk(chunkZIndex, chunkXIndex, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
                 c.chunk.transform.parent = this.transform;
                 chunks.Add(c.chunk.name, c);
