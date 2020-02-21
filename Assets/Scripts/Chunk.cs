@@ -52,15 +52,26 @@ public class Chunk
     public int perlinPersistance = 8;
     public float perlinHeightScale = 0.9f;
 
+
+    // represents current chunk being worked on
     private int chunkZIndex, chunkXIndex;
 
+    // negativeXchunk is the chunk to the left of the current chunk, along the negative X axis
+    // positiveXchunk is the chunk to the right of the current chunk, along the positive X axis
+    // negativeZchunk is the chunk behind/back of the current chunk, along the negative Z axis
+    // positiveZchunk is the chunk to the in front/forward of the current chunk, along the positive Z axis
+    public Chunk negativeXchunk, positiveXchunk, negativeZchunk, positiveZchunk;
+    public bool isNegativeX_Chunk = false;
+    public bool isPositiveX_Chunk = false;
+    public bool isNegativeZ_Chunk = false;
+    public bool isPositiveZ_Chunk = false;
 
 
     /*
      * Constructor
-     * chunkIndex is the chunk we are currently working on
+     * chunkZIndex, chunkXIndex is the chunk we are currently working on
      * 
-     * chunk 0 will be based at 0,0,0
+     * e.g. chunk 0 will be based at 0,0,0 in the world
      */
     public Chunk(int chunkZIndex, int chunkXIndex, Vector3 position)
     {
@@ -147,11 +158,20 @@ public class Chunk
 
     /*
      * Draw the quads in the chunk
+     * 
+     * Unity is not thread safe yet - 
+     * look at https://docs.unity3d.com/Manual/JobSystem.html?_ga=2.149032254.968692378.1582283703-307768343.1578037165
      */
     public void DrawChunk()
     {
+    //    Thread[] rowOfQuads = new Thread[World.chunkSize];
         for (int z = 1; z <= World.chunkSize; z++)
         {
+    //        Debug.Log("Generate row: " + z);
+    //        int index = z;
+            // place the generation of a row of coordinates in its own thread
+    //        rowOfQuads[z-1] = new Thread(() => GenerateRowOfQuads(index, World.chunkSize));
+    //        rowOfQuads[z-1].Start();
             // place the generation of a row of quads in its own thread
             GenerateRowOfQuads(z, World.chunkSize);
         }
@@ -204,6 +224,7 @@ public class Chunk
                 GetVerticesFromNegXneighbour(z, negativeXchunk);
                 continue;
             }
+            // RETRIEVE ALL VERTS FROM NEIGHBOURING CHUNK FOR ROW (World.chunkSize * 2) - 1
             else if (x == ((World.chunkSize * 2) - 1) && isPositiveX_Chunk)
             {
                 // retrieve coords from neighbour
@@ -212,7 +233,7 @@ public class Chunk
             }
 
             // DO WE NEED TO GENERATE THIS ROW?
-            //    If at an end and we have a chunk neighbour then get there row store it here
+            //    If at an end and we have a chunk neighbour then get their row and store it here
             // ELSE 
             // generate Y coordinate
             float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
@@ -225,12 +246,6 @@ public class Chunk
         }
     }
 
-
-    public Chunk negativeXchunk, positiveXchunk, negativeZchunk, positiveZchunk;
-    public bool isNegativeX_Chunk = false;
-    public bool isPositiveX_Chunk = false;
-    public bool isNegativeZ_Chunk = false;
-    public bool isPositiveZ_Chunk = false;
     /*
      * This check to see if there are neighbouring chunks along the edges.
      * It retrieves all neighbours to be used later
@@ -317,10 +332,6 @@ public class Chunk
      * Results in improved efficiency in dealing with the quads.
      * A world can contain many chunks.
      * 
-     * IDEA!!!! I have now implemented this - still need to include multi-processing/threads
-     * generate the vertices then the quads - no more need to check neighboring quads to get their vertices
-     * - something like this needs to be done, as current system is far too slow to generate the terrain
-     * 
      */
     void BuildChunk()
     {
@@ -351,12 +362,12 @@ public class Chunk
                 GetVerticesFromPosZneighbour(z, positiveZchunk);
                 continue;
             }
-            else
+
             //      int index = z;
             // place the generation of a row of coordinates in its own thread
             //      rowOfVerts[z] = new Thread(() => GenerateRowOfVertices(index, World.chunkSize));
             //      rowOfVerts[z].Start();
-                GenerateRowOfVertices(z);
+            GenerateRowOfVertices(z);
         }
 
         // CombineQuads();

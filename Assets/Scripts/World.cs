@@ -44,7 +44,6 @@ public class World : MonoBehaviour
     public static Material sand;
     public static Material dirt;
 
-
     public static int worldSize = 10; // # of chunks in the world
     public static int chunkSize = 5;    // dimensions of a chunk 4x4x4 quads
     public static Dictionary<string, Chunk> chunks;
@@ -53,7 +52,7 @@ public class World : MonoBehaviour
     {
         return (int)position.x + "_" +
                (int)position.z;
- //       return (int)position.x + "_" +
+ //       return (int)position.x + "_" +   // leave this, as we may need to implement a cubish world, instead of the quad one we have
  //              (int)position.y + "_" +
  //              (int)position.z;
     }
@@ -68,12 +67,10 @@ public class World : MonoBehaviour
                                                     chunkXIndex * chunkSize,
                                                     this.transform.position.z + (chunkZIndex * chunkSize));
 
-                // pass through neighbouring chunks???
                 Chunk c = new Chunk(chunkZIndex, chunkXIndex, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
                 c.chunk.transform.parent = this.transform;
                 chunks.Add(c.chunk.name, c);
             }
-            // make sure the next chunk uses the last row of vertices of the previous chunk for the its 1st row of vertices
         }
         int index = 0;
         foreach (KeyValuePair<string, Chunk> c in chunks)

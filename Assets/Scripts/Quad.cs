@@ -81,7 +81,7 @@ public class Quad
 
         GameObject quad = new GameObject("Quad");
         quad.name = "Quad_" + position.x + "_" + position.y;
-    //    quad.transform.position = position; // set the quad's location in the chunk
+    //    quad.transform.position = position; // set the quad's location in the chunk | Do not uncomment!!! it will override the coordinates we want the quad to have!
         quad.transform.parent = this.parent.transform;
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
