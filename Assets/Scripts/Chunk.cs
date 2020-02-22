@@ -44,13 +44,15 @@ public class Chunk
     public int maxHeight = 10; // where 1 square = 1 metre wide. 
                                // maxHeight = 100 means a world that is 100 metres high
 
-    public float perlinXScale = 0.8f;
-    public float perlinZScale = 0.9f;
-    public int perlinOffsetX = 0;
-    public int perlinOffsetY = 0;
-    public int perlinOctaves = 3;
-    public int perlinPersistance = 8;
-    public float perlinHeightScale = 0.9f;
+    // These are for the perlin noise method of Y axis value generation
+    public float perlinXScale = 0.1f;
+    public float perlinZScale = 0.2f;
+    public int perlinOffsetX = 0; // where to start the curve along the X axis
+    public int perlinOffsetZ = 0; // where to start the curve along the Z axis
+    public int perlinOctaves = 4; // the number of curves we wish to use to generate the Y axis position
+    public float perlinPersistance = 0.5f; // the amount of change in each successive curve (mulitplied by perlinPersistance)
+                                           // each successibe curve is smaller that the previous one
+    public float perlinHeightScale = 0.9f; // affects the height of the vertex (Y axis location)
 
 
     // represents current chunk being worked on
@@ -92,37 +94,15 @@ public class Chunk
     }
 
     /*
-     * Fractal Brownian Motion
-     * this function is used to generate the height (Y position in Unity) of each vertex
-     */
-    float fBM(float x, float z, int octave, float persistance)
-    {
-        float total = 0;
-        float frequency = 0.2f;
-        float amplitude = 0.4f;
-        float maxValue = 0;
-        for (int i = 0; i < octave; i++)
-        {
-            total += Mathf.PerlinNoise(x * frequency,
-                                       z * frequency) * amplitude;
-            maxValue += amplitude;
-            amplitude *= persistance;
-            frequency *= 2;
-        }
-
-        return total / maxValue;
-    }
-
-    /*
      * Pick a material to add to the quad
      */
     Material SetMaterial(Vector3 vertex0)
     {
-        if (vertex0.y > maxHeight*0.40)
+        if (vertex0.y > maxHeight*0.70)
         {
             return World.rock;
         }        
-        else if (vertex0.y > maxHeight * 0.25)
+        else if (vertex0.y > maxHeight * 0.50)
         {
             return World.dirt;
         }
@@ -236,10 +216,10 @@ public class Chunk
             //    If at an end and we have a chunk neighbour then get their row and store it here
             // ELSE 
             // generate Y coordinate
-            float yPos = Map(0, maxHeight, 0, 1, fBM((x + perlinXScale) * perlinXScale,
-               (z + perlinZScale) * perlinZScale,
-               perlinOctaves,
-               perlinPersistance) * perlinHeightScale);
+            float yPos = Map(0, maxHeight, 0, 1, Noise.fBM((x + perlinOffsetX) * perlinXScale,
+                                                           (z + perlinOffsetZ) * perlinZScale,
+                                                           perlinOctaves,
+                                                           perlinPersistance) * perlinHeightScale);
 
             // Store cordinates of this vertex
             chunkVertices[x, z] = new Vector3(x + (chunkXIndex * (World.chunkSize)), yPos, z + (chunkZIndex * (World.chunkSize)));

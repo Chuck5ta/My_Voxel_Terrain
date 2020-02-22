@@ -1,0 +1,28 @@
+
+
+public static int worldSize = 1; // # of chunks in the world
+public static int chunkSize = 50;    // dimensions of a chunk 4x4x4 quads
+
+
+Nicely mountainous with valleys between
+
+    public float perlinXScale = 0.8f;
+    public float perlinZScale = 0.9f;
+    public int perlinOffsetX = 0;
+    public int perlinOffsetY = 0;
+    public int perlinOctaves = 4;
+    public float perlinPersistance = 0.5f;
+    public float perlinHeightScale = 0.9f;
+	
+
+Undulating hills
+    public float perlinXScale = 0.1f;
+    public float perlinZScale = 0.2f;
+    public int perlinOffsetX = 0;
+    public int perlinOffsetY = 0;
+    public int perlinOctaves = 4;
+    public float perlinPersistance = 0.5f;
+    public float perlinHeightScale = 0.9f;
+
+
+

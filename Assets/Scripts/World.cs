@@ -44,8 +44,8 @@ public class World : MonoBehaviour
     public static Material sand;
     public static Material dirt;
 
-    public static int worldSize = 10; // # of chunks in the world
-    public static int chunkSize = 5;    // dimensions of a chunk 4x4x4 quads
+    public static int worldSize = 1; // # of chunks in the world
+    public static int chunkSize = 50;    // dimensions of a chunk 4x4x4 quads
     public static Dictionary<string, Chunk> chunks;
 
     public static string BuildChunkName(Vector3 position)
