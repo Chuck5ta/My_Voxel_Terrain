@@ -1,7 +1,8 @@
 ﻿/*
-Gradually blend 2 textures from one to the other
+Test shader
+only used for testing
  */
-Shader "Custom/Gradual Blend"
+Shader "Custom/Test Shader"
 {
     Properties
     {
@@ -13,7 +14,7 @@ Shader "Custom/Gradual Blend"
     SubShader
     {
         Tags { "RenderType" = "Opaque" }
-        LOD 200
+        LOD 300
 
         ZWrite On
 
@@ -47,8 +48,8 @@ Shader "Custom/Gradual Blend"
                 fixed4 texture01 = tex2D(_Texture01, i.texcoord);
                 fixed4 texture02 = tex2D(_Texture02, i.texcoord);
                 fixed4 c = lerp(texture01, texture02, i.texcoord.y) * _Color;
-        //          fixed4 c = lerp(t1, t2, i.texcoord.y / 0.25) * step(i.texcoord.y, 0.25) * _Color;
-        //        c.a = 1;
+                //          fixed4 c = lerp(t1, t2, i.texcoord.y / 0.25) * step(i.texcoord.y, 0.25) * _Color;
+                //     c.a = 1;
                 return c;
             }
             ENDCG

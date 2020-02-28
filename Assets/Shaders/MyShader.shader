@@ -1,6 +1,6 @@
 ﻿/*
 Test shader
-only use for testing
+only used for testing
  */
 Shader "Custom/Texture Blend" 
 {
