@@ -18,17 +18,9 @@ public class Texturing
         {
             return World.dirt;
         }
-        else if (vertex0.y > maxTerrainHeight * 0.44)
-        {
-            return World.topBlendGrassDirt;
-        }
-        else if (vertex0.y > maxTerrainHeight * 0.42)
+        else if (vertex0.y > maxTerrainHeight * 0.49)
         {
             return World.blendGrassDirt;
-        }
-        else if (vertex0.y > maxTerrainHeight * 0.40)
-        {
-            return World.bottomBlendGrassDirt;
         }
         return World.grass;
     }

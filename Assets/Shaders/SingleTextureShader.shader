@@ -1,8 +1,7 @@
 ﻿/*
-Test shader
-only used for testing
+This shader is used for the quads that have a single texture.
  */
-Shader "Custom/Test Shader"
+Shader "Custom/Single Texture Shader"
 {
     Properties
     {
@@ -22,11 +21,10 @@ Shader "Custom/Test Shader"
             CGPROGRAM
             #pragma vertex vert  
             #pragma fragment frag
-            #include "UnityCG.cginc"
+            #include "UnityCG.cginc" // required for appdata_full and UnityObjectToClipPos
 
             fixed4 _Color;
             sampler2D _Texture01;
-            sampler2D _Texture02;
 
             struct v2f
             {
