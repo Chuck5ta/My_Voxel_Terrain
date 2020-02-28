@@ -17,9 +17,27 @@ using UnityEngine;
  * Empyrion terrain generation information
  * https://docs.google.com/document/d/1MCvuCMtFvnCV8UHAglEi-IhLJgcD60TzNBjVbAZCptw/edit#heading=h.ygrn9c9eg1fd
  * 
+ * Free seamless textures
+ * http://www.cadhatch.com/seamless-textures/4588167680
+ * 
  * Blending textures
  * https://answers.unity.com/questions/1351772/how-to-blend-two-textures.html
- *       
+ * 
+ * Shaders
+ * https://www.google.com/search?q=unity+write+a+shader&rlz=1C1CHBD_en-GBGB888GB888&oq=unity+write+a+&aqs=chrome.2.0j69i57j0l6.5959j0j8&sourceid=chrome&ie=UTF-8#kpvalbx=_hMxTXrCWLMqd1fAPvt6p8AM32
+ * http://guidohenkel.com/2013/04/a-simple-cross-fade-shader-for-unity/
+ * https://www.youtube.com/watch?v=bR8DHcj6Htg&feature=youtu.be  
+ * https://docs.unity3d.com/Manual/ShaderTut1.html Shader programming
+ * https://answers.unity.com/questions/1108472/3-color-linear-gradient-shader.html - this might be good for gradual blend?
+ * https://docs.unity3d.com/520/Documentation/Manual/SL-VertexFragmentShaderExamples.html - detailed shader stuff
+ * https://docs.unity3d.com/Manual/SL-SurfaceShaderExamples.html
+ * https://www.reddit.com/r/Unity3D/comments/511irt/how_to_combine_vertex_shader_with_unity_standard/d78nfzz/
+ * 
+ * Combine vertex fragment and surface
+ * https://answers.unity.com/questions/1221197/can-you-specify-both-surface-and-vertexfragment-sh.html
+ * https://forum.unity.com/threads/achieving-a-multi-pass-effect-with-a-surface-shader.96393/?_ga=2.216324822.1192732292.1582647687-307768343.1578037165#post-628149
+ * 
+ * 
  * Threads
  * https://www.tutorialspoint.com/csharp/csharp_multithreading.htm
  * C# Job System
@@ -36,6 +54,10 @@ public class World : MonoBehaviour
     public Material rockMaterial;
     public Material sandMaterial;
     public Material dirtMaterial;
+    public Material blendGrassDirtMaterial;
+    public Material blendDirtRockMaterial;
+    public Material bottomBlendGrassDirtMaterial;
+    public Material topBlendGrassDirtMaterial;
 
     // these are accessible from other classes (the above are not, but are settable in the Inspector)
     // these are assigned to in the Startup function
@@ -43,9 +65,13 @@ public class World : MonoBehaviour
     public static Material rock;
     public static Material sand;
     public static Material dirt;
+    public static Material blendGrassDirt;
+    public static Material blendDirtRock;
+    public static Material bottomBlendGrassDirt;
+    public static Material topBlendGrassDirt;
 
     public static int worldSize = 1; // # of chunks in the world
-    public static int chunkSize = 50;    // dimensions of a chunk 4x4x4 quads
+    public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 quads
     public static Dictionary<string, Chunk> chunks;
 
     public static string BuildChunkName(Vector3 position)
@@ -90,6 +116,10 @@ public class World : MonoBehaviour
         rock = rockMaterial;
         sand = sandMaterial;
         dirt = dirtMaterial;
+        blendGrassDirt = blendGrassDirtMaterial;
+        blendDirtRock = blendDirtRockMaterial;
+        bottomBlendGrassDirt = bottomBlendGrassDirtMaterial;
+        topBlendGrassDirt = topBlendGrassDirtMaterial;
 
         chunks = new Dictionary<string, Chunk>();
         this.transform.position = Vector3.zero;

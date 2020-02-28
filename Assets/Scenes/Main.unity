@@ -256,11 +256,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddd0b6f27b567344baaf9bb8b7fdb1e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quadMaterial: {fileID: 2100000, guid: 0d4b2c934c131674a89959457b3af6fa, type: 2}
+  quadMaterial: {fileID: 2100000, guid: 2eec074a5879d1c46bb496f13be6bb5e, type: 2}
   grassMaterial: {fileID: 2100000, guid: 2eec074a5879d1c46bb496f13be6bb5e, type: 2}
   rockMaterial: {fileID: 2100000, guid: 2d4421a0823886547800f11ae6d13352, type: 2}
-  sandMaterial: {fileID: 2100000, guid: 1e13ccca538ad424398ff08ea1b381ca, type: 2}
-  dirtMaterial: {fileID: 2100000, guid: 0d4b2c934c131674a89959457b3af6fa, type: 2}
+  sandMaterial: {fileID: 2100000, guid: 58699e5fd92d8e447817e8577709405a, type: 2}
+  dirtMaterial: {fileID: 2100000, guid: ae52789a0a308e1459b5eae77a5be7cc, type: 2}
+  blendGrassDirtMaterial: {fileID: 2100000, guid: 42a57aed7691778449e744d06561974a,
+    type: 2}
+  blendDirtRockMaterial: {fileID: 2100000, guid: e1b3cd798de588241aab1bd909dd7343,
+    type: 2}
+  bottomBlendGrassDirtMaterial: {fileID: 2100000, guid: 2312281397bcc08408dd954aafddced1,
+    type: 2}
+  topBlendGrassDirtMaterial: {fileID: 2100000, guid: b37f1e4286c86f5488ff1cd33ef575d5,
+    type: 2}
 --- !u!23 &536830024
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -376,8 +384,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.40779802, y: -0.07356006, z: 0.032982256, w: 0.90950644}
-  m_LocalPosition: {x: 27.10281, y: 28.171448, z: -7.415619}
+  m_LocalRotation: {x: 0.18544848, y: 0.14544874, z: -0.03018447, w: 0.97136116}
+  m_LocalPosition: {x: -0.09622581, y: 8.979919, z: -7.636813}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

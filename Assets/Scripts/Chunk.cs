@@ -17,6 +17,9 @@
  * 
  * Blending textures
  * https://answers.unity.com/questions/1351772/how-to-blend-two-textures.html
+ * Shaders
+ * https://www.google.com/search?q=unity+write+a+shader&rlz=1C1CHBD_en-GBGB888GB888&oq=unity+write+a+&aqs=chrome.2.0j69i57j0l6.5959j0j8&sourceid=chrome&ie=UTF-8#kpvalbx=_hMxTXrCWLMqd1fAPvt6p8AM32
+ * http://guidohenkel.com/2013/04/a-simple-cross-fade-shader-for-unity/
  *       
  * Threads
  * https://www.tutorialspoint.com/csharp/csharp_multithreading.htm
@@ -31,6 +34,8 @@ using System.Threading;
 
 public class Chunk
 {
+
+
     private Material quadMaterial;
 
     public Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
@@ -41,12 +46,12 @@ public class Chunk
 
     public int chunkLengthX = 4;
     public int chunkLengthZ = 4;
-    public int maxHeight = 10; // where 1 square = 1 metre wide. 
+    public int maxTerrainHeight = 10; // where 1 square = 1 metre wide. 
                                // maxHeight = 100 means a world that is 100 metres high
 
     // These are for the perlin noise method of Y axis value generation
-    public float perlinXScale = 0.1f;
-    public float perlinZScale = 0.2f;
+    public float perlinXScale = 0.4f;
+    public float perlinZScale = 0.7f;
     public int perlinOffsetX = 0; // where to start the curve along the X axis
     public int perlinOffsetZ = 0; // where to start the curve along the Z axis
     public int perlinOctaves = 4; // the number of curves we wish to use to generate the Y axis position
@@ -84,6 +89,26 @@ public class Chunk
         BuildChunk();
     }
 
+
+    // texture related
+    public Texture2D texture = null;
+    public float minHeight = 0.1f;
+    public float maxHeight = 0.2f;
+    
+    public void TerrainTexture()
+    {
+   //     TerrainLayer newTerrainPrototype;
+   //     newTerrainPrototype = new TerrainLayer();
+   //     newTerrainPrototype = new TerrainLayer();
+   //     newTerrainPrototype.diffuseTexture = sh.diffuseTexture;
+   //     newTerrainPrototype.diffuseTexture.Apply(true);
+   //     terrainData.splatPrototypes = newTerrainPrototype;
+    }
+
+
+
+
+
     /*
      * fBM returns a value below 1, therefore we need this function to turn it into a value
      * in the game world of between 0 and maxHeight (e.g. 0 and 150 (1 unit/square = 1 metre wide/high/deep - 1m^2))
@@ -91,22 +116,6 @@ public class Chunk
     float Map(float newmin, int newmax, float origmin, float origmax, float value)
     {        
         return Mathf.Lerp(newmin, newmax, Mathf.InverseLerp(origmin, origmax, value));
-    }
-
-    /*
-     * Pick a material to add to the quad
-     */
-    Material SetMaterial(Vector3 vertex0)
-    {
-        if (vertex0.y > maxHeight*0.70)
-        {
-            return World.rock;
-        }        
-        else if (vertex0.y > maxHeight * 0.50)
-        {
-            return World.dirt;
-        }
-        return World.grass;
     }
 
     /*
@@ -118,7 +127,7 @@ public class Chunk
     {
         for (int x = 1; x <= sizeX; x++)
         {
-            quadMaterial = SetMaterial(chunkVertices[x - 1, z]); // not ideal!!!
+            quadMaterial = Texturing.SetMaterial(chunkVertices[x - 1, z], maxTerrainHeight); // not ideal!!!
             Vector3 locationInChunk = new Vector3(x, z);
             // vertex0 - chunkVertices[x-1, z];
             // vertex1 - chunkVertices[x, z]
@@ -216,7 +225,7 @@ public class Chunk
             //    If at an end and we have a chunk neighbour then get their row and store it here
             // ELSE 
             // generate Y coordinate
-            float yPos = Map(0, maxHeight, 0, 1, Noise.fBM((x + perlinOffsetX) * perlinXScale,
+            float yPos = Map(0, maxTerrainHeight, 0, 1, Noise.fBM((x + perlinOffsetX) * perlinXScale,
                                                            (z + perlinOffsetZ) * perlinZScale,
                                                            perlinOctaves,
                                                            perlinPersistance) * perlinHeightScale);
