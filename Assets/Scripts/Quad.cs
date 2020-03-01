@@ -17,16 +17,16 @@ public class Quad
 {
     private Material quadMaterial;
 
-    //    private float Xaxis = 0f; // defaulted to the centre of the world
-    //    private float Yaxis = 0f; // defaulted to the centre of the world
-    //    private float Zaxis = 0f; // defaulted to the centre of the world
-
+    GameObject quad;
     Chunk owner; // so that we can access the chunkData array
     GameObject parent; // The chunk
     Vector2 position; // location within the chunk
                       // this is used to give the quad a unique name
 
     Vector3 vertex0, vertex1, vertex2, vertex3;
+
+    // grass 0, dirt 1, sand 2, rock 4 - bitflags and bitwise operations ?????
+    public int terrainType = World.grassQuad; // default as grass terrain
 
     /* 
      * Quad constructor
@@ -36,16 +36,17 @@ public class Quad
      * vertex0, vertex1, vertex2, vertex3 is the quad's location in the world 
      * 
      */
-    public Quad(Vector2 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Chunk owner, Material material)
+    public Quad(Vector2 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Chunk owner, Material material, int terrainType)
     {
         this.owner = owner;
         this.parent = parent;
-        this.position = locationInChunk; // position within the chunk
+        position = locationInChunk; // position within the chunk
         this.vertex0 = vertex0;
         this.vertex1 = vertex1;
         this.vertex2 = vertex2;
         this.vertex3 = vertex3;
         quadMaterial = material;
+        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
     }
 
     public void CreateQuad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
@@ -79,7 +80,7 @@ public class Quad
 
         mesh.RecalculateBounds();
 
-        GameObject quad = new GameObject("Quad");
+        quad = new GameObject("Quad");
         quad.name = "Quad_" + position.x + "_" + position.y;
     //    quad.transform.position = position; // set the quad's location in the chunk | Do not uncomment!!! it will override the coordinates we want the quad to have!
         quad.transform.parent = this.parent.transform;
@@ -87,6 +88,11 @@ public class Quad
         meshFilter.mesh = mesh;
         MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
         renderer.material = quadMaterial;
+    }
+
+    public void SetMaterial(Material newMaterial)
+    {
+        quad.GetComponent<MeshRenderer>().material = newMaterial;
     }
 
     // Kick off creating the quad mesh

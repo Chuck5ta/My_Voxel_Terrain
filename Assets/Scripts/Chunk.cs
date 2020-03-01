@@ -29,13 +29,11 @@
  */
 
 using System.Collections;
-using UnityEngine;
 using System.Threading;
+using UnityEngine;
 
 public class Chunk
 {
-
-
     private Material quadMaterial;
 
     public Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
@@ -47,7 +45,7 @@ public class Chunk
     public int chunkLengthX = 4;
     public int chunkLengthZ = 4;
     public int maxTerrainHeight = 10; // where 1 square = 1 metre wide. 
-                               // maxHeight = 100 means a world that is 100 metres high
+                                      // maxHeight = 100 means a world that is 100 metres high
 
     // These are for the perlin noise method of Y axis value generation
     public float perlinXScale = 0.4f;
@@ -76,7 +74,7 @@ public class Chunk
 
     /*
      * Constructor
-     * chunkZIndex, chunkXIndex is the chunk we are currently working on
+     * chunkZIndex, chunkXIndex is the location of the chunk we are currently working on
      * 
      * e.g. chunk 0 will be based at 0,0,0 in the world
      */
@@ -90,33 +88,57 @@ public class Chunk
     }
 
 
-    // texture related
-    public Texture2D texture = null;
-    public float minHeight = 0.1f;
-    public float maxHeight = 0.2f;
-    
-    public void TerrainTexture()
+    // END OF TERRAIN BLENDING IN THE GAME WORLD
+    // ******************************************
+
+    // make the terrain look more natural by applying blending of the textures where needed
+    public void BlendTheQuads()
     {
-   //     TerrainLayer newTerrainPrototype;
-   //     newTerrainPrototype = new TerrainLayer();
-   //     newTerrainPrototype = new TerrainLayer();
-   //     newTerrainPrototype.diffuseTexture = sh.diffuseTexture;
-   //     newTerrainPrototype.diffuseTexture.Apply(true);
-   //     terrainData.splatPrototypes = newTerrainPrototype;
+        // go through the quads
+        for (int z = 0; z < World.chunkSize-1; z++)
+        {
+            for (int x = 0; x < World.chunkSize-1; x++)
+            {
+                // IF Grass quad
+                if (chunkData[x, z].terrainType == World.grassQuad)
+                {
+                    // Vertical gradient blending
+                    //     IF positiveZ quad is dirt
+                    if (chunkData[x, z + 1].terrainType == World.dirtQuad)
+                    {
+                        chunkData[x, z].terrainType = World.blendGrassToDirtQuad;
+                        chunkData[x, z].SetMaterial(World.blendGrassDirt);
+                    }
+                    //     IF negativeZ quad is dirt
+                    else if (z > 0 && chunkData[x, z - 1].terrainType == World.dirtQuad)
+                    {
+                        chunkData[x, z].terrainType = World.blendDirtToGrassQuad;
+                        chunkData[x, z].SetMaterial(World.blendDirtGrass);
+                    }
+                    // Horizontal gradient blending
+                    //     IF positiveX quad is dirt
+                    else if (chunkData[x+1, z].terrainType == World.dirtQuad)
+                    {
+                        chunkData[x, z].terrainType = World.horizontalBlendGrassToDirtQuad;
+                        chunkData[x, z].SetMaterial(World.horizontalBlendGrassDirt);
+                    }
+                    //     IF negativeX quad is dirt
+                    else if (x > 0 && chunkData[x - 1, z].terrainType == World.dirtQuad)
+                    {
+                        chunkData[x, z].terrainType = World.horizontalBlendDirtToGrassQuad;
+                        chunkData[x, z].SetMaterial(World.horizontalBlendDirtGrass);
+                    }
+                }
+            }
+        }
     }
+    
+    // ********************************************
+    // START OF TERRAIN BLENDING IN THE GAME WORLD
 
 
-
-
-
-    /*
-     * fBM returns a value below 1, therefore we need this function to turn it into a value
-     * in the game world of between 0 and maxHeight (e.g. 0 and 150 (1 unit/square = 1 metre wide/high/deep - 1m^2))
-     */
-    float Map(float newmin, int newmax, float origmin, float origmax, float value)
-    {        
-        return Mathf.Lerp(newmin, newmax, Mathf.InverseLerp(origmin, origmax, value));
-    }
+    // END OF QUAD CREATION IN THE GAME WORLD
+    // ***************************************
 
     /*
      * Display the quads - a row at a time, to create the terrain in a chunk
@@ -125,9 +147,10 @@ public class Chunk
      */
     void GenerateRowOfQuads(int z, int sizeX)
     {
+        int terrainType;
         for (int x = 1; x <= sizeX; x++)
         {
-            quadMaterial = Texturing.SetMaterial(chunkVertices[x - 1, z], maxTerrainHeight); // not ideal!!!
+            quadMaterial = Texturing.SetMaterial(chunkVertices[x - 1, z], maxTerrainHeight, out terrainType); // not ideal!!!
             Vector3 locationInChunk = new Vector3(x, z);
             // vertex0 - chunkVertices[x-1, z];
             // vertex1 - chunkVertices[x, z]
@@ -140,7 +163,8 @@ public class Chunk
                                            chunkVertices[x, z - 1],
                                            chunk.gameObject, 
                                            this,
-                                           quadMaterial);
+                                           quadMaterial,
+                                           terrainType);
             chunkData[x - 1, z - 1].Draw();
         }
     }
@@ -153,18 +177,18 @@ public class Chunk
      */
     public void DrawChunk()
     {
-    //    Thread[] rowOfQuads = new Thread[World.chunkSize];
         for (int z = 1; z <= World.chunkSize; z++)
         {
-    //        Debug.Log("Generate row: " + z);
-    //        int index = z;
-            // place the generation of a row of coordinates in its own thread
-    //        rowOfQuads[z-1] = new Thread(() => GenerateRowOfQuads(index, World.chunkSize));
-    //        rowOfQuads[z-1].Start();
             // place the generation of a row of quads in its own thread
             GenerateRowOfQuads(z, World.chunkSize);
         }
     }
+
+    // *****************************************
+    // START OF QUAD CREATION IN THE GAME WORLD
+
+
+
 
     /*
      * This retrieves the vertices from the neighboring chunk and uses them in the current chunk
@@ -225,7 +249,7 @@ public class Chunk
             //    If at an end and we have a chunk neighbour then get their row and store it here
             // ELSE 
             // generate Y coordinate
-            float yPos = Map(0, maxTerrainHeight, 0, 1, Noise.fBM((x + perlinOffsetX) * perlinXScale,
+            float yPos = Noise.Map(0, maxTerrainHeight, 0, 1, Noise.fBM((x + perlinOffsetX) * perlinXScale,
                                                            (z + perlinOffsetZ) * perlinZScale,
                                                            perlinOctaves,
                                                            perlinPersistance) * perlinHeightScale);

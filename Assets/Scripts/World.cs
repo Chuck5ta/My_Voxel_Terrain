@@ -32,6 +32,10 @@ using UnityEngine;
  * https://docs.unity3d.com/520/Documentation/Manual/SL-VertexFragmentShaderExamples.html - detailed shader stuff
  * https://docs.unity3d.com/Manual/SL-SurfaceShaderExamples.html
  * https://www.reddit.com/r/Unity3D/comments/511irt/how_to_combine_vertex_shader_with_unity_standard/d78nfzz/
+ * Master Class
+ * https://www.youtube.com/watch?v=9WW5-0N1DsI
+ * Lots of techniques explained!!!
+ * https://andreashackel.de/tech-art/stripes-shader-1/
  * 
  * Combine vertex fragment and surface
  * https://answers.unity.com/questions/1221197/can-you-specify-both-surface-and-vertexfragment-sh.html
@@ -55,10 +59,21 @@ public class World : MonoBehaviour
     public Material sandMaterial;
     public Material dirtMaterial;
     public Material blendGrassDirtMaterial;
+    public Material blendDirtGrassMaterial;
     public Material blendDirtRockMaterial;
-    public Material bottomBlendGrassDirtMaterial;
-    public Material topBlendGrassDirtMaterial;
+    public Material horizontalBlendGrassDirtMaterial;
+    public Material horizontalBlendDirtGrassMaterial;
 
+    // grass 0, dirt 1, sand 2, rock 4 - bitflags and bitwise operations ??????
+    public static int grassQuad = 0;
+    public static int dirtQuad = 1;
+    public static int sandQuad = 2;
+    public static int rockQuad = 3;
+    public static int blendDirtToGrassQuad = 4;
+    public static int blendGrassToDirtQuad = 5;
+    public static int horizontalBlendGrassToDirtQuad = 6;
+    public static int horizontalBlendDirtToGrassQuad = 7;
+    
     // these are accessible from other classes (the above are not, but are settable in the Inspector)
     // these are assigned to in the Startup function
     public static Material grass;
@@ -66,9 +81,10 @@ public class World : MonoBehaviour
     public static Material sand;
     public static Material dirt;
     public static Material blendGrassDirt;
+    public static Material blendDirtGrass;
+    public static Material horizontalBlendGrassDirt;
+    public static Material horizontalBlendDirtGrass;
     public static Material blendDirtRock;
-    public static Material bottomBlendGrassDirt;
-    public static Material topBlendGrassDirt;
 
     public static int worldSize = 1; // # of chunks in the world
     public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 quads
@@ -98,13 +114,20 @@ public class World : MonoBehaviour
                 chunks.Add(c.chunk.name, c);
             }
         }
-        int index = 0;
         foreach (KeyValuePair<string, Chunk> c in chunks)
         {
-            index++;
             c.Value.DrawChunk(); // draw the entire chunk
             yield return null;
         }
+
+        // Pass over the terrain, working out where to apply gradual blending
+        // Blend the world
+        // go through the chunks, seeing which quads need to have a texture applied
+        foreach (KeyValuePair<string, Chunk> chunk in chunks)
+        {
+            chunk.Value.BlendTheQuads();
+        }
+
     }
 
 
@@ -117,9 +140,10 @@ public class World : MonoBehaviour
         sand = sandMaterial;
         dirt = dirtMaterial;
         blendGrassDirt = blendGrassDirtMaterial;
+        blendDirtGrass = blendDirtGrassMaterial;
         blendDirtRock = blendDirtRockMaterial;
-        bottomBlendGrassDirt = bottomBlendGrassDirtMaterial;
-        topBlendGrassDirt = topBlendGrassDirtMaterial;
+        horizontalBlendGrassDirt = horizontalBlendGrassDirtMaterial;
+        horizontalBlendDirtGrass = horizontalBlendDirtGrassMaterial;
 
         chunks = new Dictionary<string, Chunk>();
         this.transform.position = Vector3.zero;

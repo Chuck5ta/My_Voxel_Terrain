@@ -5,6 +5,14 @@ using UnityEngine;
 public class Noise
 {
 
+    /*
+     * fBM returns a value below 1, therefore we need the Map function to turn it into a value
+     * in the game world of between 0 and maxHeight (e.g. 0 and 150 (1 unit/square = 1 metre wide/high/deep - 1m^2))
+     */
+    public static float Map(float newmin, int newmax, float origmin, float origmax, float value)
+    {
+        return Mathf.Lerp(newmin, newmax, Mathf.InverseLerp(origmin, origmax, value));
+    }
 
     /*
      * Fractal Brownian Motion

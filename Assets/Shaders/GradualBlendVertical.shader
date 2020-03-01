@@ -1,7 +1,7 @@
 ﻿/*
-Gradually blend 2 textures from one to the other
+Gradually blend 2 textures from one to the other vertically
  */
-Shader "Custom/Gradual Blend"
+Shader "Custom/GradualBlendVertical"
 {
     Properties
     {
@@ -46,9 +46,9 @@ Shader "Custom/Gradual Blend"
             {
                 fixed4 texture01 = tex2D(_Texture01, i.texcoord);
                 fixed4 texture02 = tex2D(_Texture02, i.texcoord);
+                // texcoord.y used for vertical blend
                 fixed4 c = lerp(texture01, texture02, i.texcoord.y) * _Color;
-        //          fixed4 c = lerp(t1, t2, i.texcoord.y / 0.25) * step(i.texcoord.y, 0.25) * _Color;
-        //        c.a = 1;
+                c.a = 1; // alpha set to 1 - totally opaque
                 return c;
             }
             ENDCG

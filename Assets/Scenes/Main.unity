@@ -263,6 +263,8 @@ MonoBehaviour:
   dirtMaterial: {fileID: 2100000, guid: ae52789a0a308e1459b5eae77a5be7cc, type: 2}
   blendGrassDirtMaterial: {fileID: 2100000, guid: 42a57aed7691778449e744d06561974a,
     type: 2}
+  blendDirtGrassMaterial: {fileID: 2100000, guid: 1266f9751c462014db410167c9afaf8a,
+    type: 2}
   blendDirtRockMaterial: {fileID: 2100000, guid: e1b3cd798de588241aab1bd909dd7343,
     type: 2}
   bottomBlendGrassDirtMaterial: {fileID: 2100000, guid: 2312281397bcc08408dd954aafddced1,
