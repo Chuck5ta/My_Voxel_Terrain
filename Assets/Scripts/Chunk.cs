@@ -95,16 +95,86 @@ public class Chunk
     public void BlendTheQuads()
     {
         // go through the quads
-        for (int z = 0; z < World.chunkSize-1; z++)
+        for (int z = 0; z < World.chunkSize; z++)
         {
-            for (int x = 0; x < World.chunkSize-1; x++)
+            for (int x = 0; x < World.chunkSize; x++)
             {
                 // IF Grass quad
                 if (chunkData[x, z].terrainType == World.grassQuad)
                 {
+                    //  Diagonal gradient blend Test    IF PositiveZ and PositiveX quads are dirt
+                    //          if (chunkData[x + 1, z].terrainType == World.dirtQuad &&
+                    //              chunkData[x, z + 1].terrainType == World.dirtQuad)
+                    //          {
+                    //              Debug.Log("Found dirt in the corner");
+                    //              chunkData[x, z].terrainType = World.TESTBlendQuad;
+                    //              chunkData[x, z].SetMaterial(World.TESTBlend);
+                    //          }
+                    // check for dirt Top and Bottom
+                    //  Vetical Test    IF Top (PosZ) and bottom (NegZ) quads are dirt
+                    if (z < World.chunkSize - 1 && z > 0 && 
+                                               chunkData[x, z + 1].terrainType == World.dirtQuad &&
+                                               chunkData[x, z - 1].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.dirtQuad;
+                        chunkData[x, z].SetMaterial(World.dirt);
+                    }
+                    // check for dirt Top and Bottom
+                    //  Horizontal Test    IF Left (NegX) and right (PosX) quads are dirt
+                    else if (x < World.chunkSize - 1 && x > 0 &&
+                                               chunkData[x - 1, z].terrainType == World.dirtQuad &&
+                                               chunkData[x + 1, z].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.dirtQuad;
+                        chunkData[x, z].SetMaterial(World.dirt);
+                    }
+
+
+                    //  Diagonal gradient blend Test    IF Left (NegX) and bottom (NegZ) quads are dirt
+                    else if (z > 0 && x > 0 && chunkData[x - 1, z].terrainType == World.dirtQuad &&
+                                               chunkData[x, z - 1].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendDirtGrassBottomLeftQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendBottomLeftDirtGrass);
+                    }
+                    //  Diagonal gradient blend Test    IF Top (PosZ) and right (PosX) quads are dirt
+                    else if (x < World.chunkSize-1 && z < World.chunkSize-1 && chunkData[x, z + 1].terrainType == World.dirtQuad &&
+                                               chunkData[x + 1, z].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendGrassToLargeDirtTopRightQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendTopRightGrassToLargeDirt);
+                    }
+                    //  Diagonal gradient blend Test    IF Top (PosZ) and left (NegX) quads are dirt
+                    else if (x < World.chunkSize - 1 && z < World.chunkSize - 1 && x > 0 && chunkData[x, z + 1].terrainType == World.dirtQuad &&
+                                               chunkData[x + 1, z].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendGrassToLargeDirtTopLeftQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendTopLeftGrassToLargeDirt);
+                    }
+                    //  Diagonal gradient blend Test    IF Bottom (NegZ) and left (NegX) quads are dirt
+                    else if (x > 0 && z > 0 && chunkData[x, z - 1].terrainType == World.dirtQuad &&
+                                               chunkData[x - 1, z].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendGrassToLargeDirtBottomLeftQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendBottomLeftGrassToLargeDirt);
+                    }
+                    //  Diagonal gradient blend Test    IF Bottom (NegZ) and left (PosX) quads are dirt
+                    else if (x < World.chunkSize - 1 && x > 0 && z > 0 && chunkData[x, z - 1].terrainType == World.dirtQuad &&
+                                               chunkData[x + 1, z].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendGrassToLargeDirtBottomRightQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendBottomRightGrassToLargeDirt);
+                    }
                     // Vertical gradient blending
                     //     IF positiveZ quad is dirt
-                    if (chunkData[x, z + 1].terrainType == World.dirtQuad)
+                    else if (z < World.chunkSize - 1 && chunkData[x, z + 1].terrainType == World.dirtQuad)
                     {
                         chunkData[x, z].terrainType = World.blendGrassToDirtQuad;
                         chunkData[x, z].SetMaterial(World.blendGrassDirt);
@@ -117,7 +187,7 @@ public class Chunk
                     }
                     // Horizontal gradient blending
                     //     IF positiveX quad is dirt
-                    else if (chunkData[x+1, z].terrainType == World.dirtQuad)
+                    else if (x < World.chunkSize - 1 && chunkData[x+1, z].terrainType == World.dirtQuad)
                     {
                         chunkData[x, z].terrainType = World.horizontalBlendGrassToDirtQuad;
                         chunkData[x, z].SetMaterial(World.horizontalBlendGrassDirt);
@@ -127,6 +197,34 @@ public class Chunk
                     {
                         chunkData[x, z].terrainType = World.horizontalBlendDirtToGrassQuad;
                         chunkData[x, z].SetMaterial(World.horizontalBlendDirtGrass);
+                    }
+                    //  Diagonal gradient blend Test    IF Top Right quad is dirt
+                    else if (x < World.chunkSize - 1 && z < World.chunkSize - 1 && chunkData[x + 1, z + 1].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendGrassToDirtTopRightQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendTopRightGrassDirt);
+                    }
+                    //  Diagonal gradient blend Test    IF Top Left quad is dirt
+                    else if (z < World.chunkSize - 1 && x > 0 && chunkData[x - 1, z + 1].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendGrassToDirtTopLeftQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendTopLeftGrassDirt);
+                    }
+                    //  Diagonal gradient blend Test    IF Bottom Right quad is dirt
+                    else if (x < World.chunkSize - 1 && z > 0 && chunkData[x + 1, z - 1].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendGrassToDirtBottomRightQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendBottomRightGrassDirt);
+                    }
+                    //  Diagonal gradient blend Test    IF Bottom Left quad is dirt
+                    else if (z > 0 && x > 0 && chunkData[x - 1, z - 1].terrainType == World.dirtQuad)
+                    {
+                        Debug.Log("Found dirt in the corner");
+                        chunkData[x, z].terrainType = World.diagonalBlendSmallDirtToLargelGrassBottomLeftQuad;
+                        chunkData[x, z].SetMaterial(World.diagonalBlendBottomLeftSmallDirtToLargeGrass);
                     }
                 }
             }

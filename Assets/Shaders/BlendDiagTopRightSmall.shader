@@ -1,14 +1,10 @@
-﻿/*
-Test shader
-only used for testing
- */
-Shader "Custom/TestShader"
+﻿Shader "Custom/BlendDiagTopRight"
 {
     Properties
     {
         _Color("Color", Color) = (1,1,1,1)
         _Texture01("Texture 1", 2D) = "white" {}
-        _Texture02("Texture 2", 2D) = "black" {}
+        _Texture02("Texture 2", 2D) = "white" {}
     }
 
     SubShader
@@ -47,26 +43,11 @@ Shader "Custom/TestShader"
             {
                 fixed4 texture01 = tex2D(_Texture01, i.texcoord);
                 fixed4 texture02 = tex2D(_Texture02, i.texcoord);
-          //      fixed4 c = lerp(texture01, texture02, i.texcoord.x) * _Color;
-
                 // pythagorous's theorum to create a diagonal gradient
-      //          fixed4 c = lerp(texture01, texture02, (i.texcoord.x + i.texcoord.y)) * _Color;
-
-                // TOP RIGHT
+                // This is working perfectly for grass to dirt, where dirt is in the top right corner - DO NOT ALTER CODE!!!!
+ //               fixed4 c = lerp(texture01, texture02, (i.texcoord.x * i.texcoord.y) * (1 - step(i.texcoord.y, 0.1))) * _Color;
+                // This does the same!!!
                 fixed4 c = lerp(texture01, texture02, (i.texcoord.x * i.texcoord.y)) * _Color;
-
-                // BOTTOM RIGHT
-                fixed4 c = lerp(texture01, texture02, ((i.texcoord.x * i.texcoord.x) - (i.texcoord.x * i.texcoord.y))) * _Color;
-
-                // TOP LEFT
-                fixed4 c = lerp(texture01, texture02, ((i.texcoord.y * i.texcoord.y))) * _Color;
-
-                // BOTTOM LEFT 
-                fixed4 c = lerp(texture01, texture02, (i.texcoord.x + i.texcoord.y) - (i.texcoord.x * i.texcoord.y)) * _Color;
-
-        //        fixed4 c = lerp(texture01, texture02, (i.texcoord.x + i.texcoord.y)) * _Color;
-                fixed4 c = lerp(texture01, texture02, (i.texcoord.x) * (1 - step(i.texcoord.y, 0.5))) * _Color;
-          //      fixed value = floor(frac(c) + 0.5);
                 c.a = 1; // alpha set to 1 - totally opaque
                 return c;
             }

@@ -206,7 +206,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 79710446}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 8.54, y: 8.67, z: 4.93}
+  m_LocalPosition: {x: 8.54, y: 14.08, z: 4.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -267,10 +267,33 @@ MonoBehaviour:
     type: 2}
   blendDirtRockMaterial: {fileID: 2100000, guid: e1b3cd798de588241aab1bd909dd7343,
     type: 2}
-  bottomBlendGrassDirtMaterial: {fileID: 2100000, guid: 2312281397bcc08408dd954aafddced1,
+  horizontalBlendGrassDirtMaterial: {fileID: 2100000, guid: fe9ccc51da49f91419a4e56d70722b2a,
     type: 2}
-  topBlendGrassDirtMaterial: {fileID: 2100000, guid: b37f1e4286c86f5488ff1cd33ef575d5,
+  horizontalBlendDirtGrassMaterial: {fileID: 2100000, guid: 85b7f8edee4885e4caa0b1f3921a9222,
     type: 2}
+  diagonalBlendGrassDirtMaterial: {fileID: 2100000, guid: c947eb72fed99bc478aaae32a1534910,
+    type: 2}
+  diagonalBlendDirtGrassMaterial: {fileID: 2100000, guid: b37f1e4286c86f5488ff1cd33ef575d5,
+    type: 2}
+  diagonalBlendGrassDirtTopLeftMaterial: {fileID: 2100000, guid: 2312281397bcc08408dd954aafddced1,
+    type: 2}
+  diagonalBlendGrassDirtBottomRightMaterial: {fileID: 2100000, guid: d0a6740bd3d813046811ca39f3ef461e,
+    type: 2}
+  diagonalBlendGrassDirtTopRightMaterial: {fileID: 2100000, guid: 30fe11753aef0d8478bd234aece7f8cd,
+    type: 2}
+  diagonalBlendSmallDirtToLargelGrassBottomLeftMaterial: {fileID: 2100000, guid: b1bb71f6f91bb1647ac7a66feca04b63,
+    type: 2}
+  diagonalBlendDirtGrassBottomLeftMaterial: {fileID: 2100000, guid: aebefcd53af8e0d4ea302748410fff24,
+    type: 2}
+  diagonalBlendGrassToLargeDirtTopRightMaterial: {fileID: 2100000, guid: 3deac2b30f51b464d965ead7c1120793,
+    type: 2}
+  diagonalBlendGrassToLargeDirtTopLeftMaterial: {fileID: 2100000, guid: 1fffd434a077c2a4d838820f5594219b,
+    type: 2}
+  diagonalBlendGrassToLargeDirtBottomLeftMaterial: {fileID: 2100000, guid: aebefcd53af8e0d4ea302748410fff24,
+    type: 2}
+  diagonalBlendGrassToLargeDirtBottomRightMaterial: {fileID: 2100000, guid: ab8c696eb2cc44b4c8a9d8ec1b5caaad,
+    type: 2}
+  TESTBlendMaterial: {fileID: 2100000, guid: b37f1e4286c86f5488ff1cd33ef575d5, type: 2}
 --- !u!23 &536830024
 MeshRenderer:
   m_ObjectHideFlags: 0
