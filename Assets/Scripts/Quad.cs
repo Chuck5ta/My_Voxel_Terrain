@@ -26,7 +26,7 @@ public class Quad
     Vector3 vertex0, vertex1, vertex2, vertex3;
 
     // grass 0, dirt 1, sand 2, rock 4 - bitflags and bitwise operations ?????
-    public int terrainType = World.grassQuad; // default as grass terrain
+    public int terrainType = 0; //Texturing.grassQuad; // default as grass terrain
 
     /* 
      * Quad constructor

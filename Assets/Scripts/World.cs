@@ -54,76 +54,6 @@ using UnityEngine;
 
 public class World : MonoBehaviour
 {
-    [Header("Materials")]
-    [Tooltip("Any material can go here")] public Material quadMaterial;
-    public Material grassMaterial;
-    public Material rockMaterial;
-    public Material sandMaterial;
-    public Material dirtMaterial;
-    public Material blendGrassDirtMaterial;
-    public Material blendDirtGrassMaterial;
-    public Material blendDirtRockMaterial;
-    public Material horizontalBlendGrassDirtMaterial;
-    public Material horizontalBlendDirtGrassMaterial;
-    public Material diagonalBlendGrassDirtMaterial;
-    public Material diagonalBlendDirtGrassMaterial;
-    public Material diagonalBlendGrassDirtTopLeftMaterial;
-    public Material diagonalBlendGrassDirtBottomRightMaterial;
-    public Material diagonalBlendGrassDirtTopRightMaterial;
-    public Material diagonalBlendSmallDirtToLargelGrassBottomLeftMaterial;
-    public Material diagonalBlendDirtGrassBottomLeftMaterial;
-    public Material diagonalBlendGrassToLargeDirtTopRightMaterial;
-    public Material diagonalBlendGrassToLargeDirtTopLeftMaterial;
-    public Material diagonalBlendGrassToLargeDirtBottomLeftMaterial;
-    public Material diagonalBlendGrassToLargeDirtBottomRightMaterial;
-    public Material TESTBlendMaterial;
-
-    // grass 0, dirt 1, sand 2, rock 4 - bitflags and bitwise operations ??????
-    public static int grassQuad = 0;
-    public static int dirtQuad = 1;
-    public static int sandQuad = 2;
-    public static int rockQuad = 3;
-    public static int blendDirtToGrassQuad = 4;
-    public static int blendGrassToDirtQuad = 5;
-    public static int horizontalBlendGrassToDirtQuad = 6;
-    public static int horizontalBlendDirtToGrassQuad = 7;
-    public static int diagonalBlendGrassToDirtQuad = 8;
-    public static int diagonalBlendDirtToGrassQuad = 9;
-    public static int diagonalBlendGrassToDirtTopLeftQuad = 10;
-    public static int diagonalBlendGrassToDirtBottomRightQuad = 11;
-    public static int diagonalBlendGrassToDirtTopRightQuad = 12;
-    public static int diagonalBlendSmallDirtToLargelGrassBottomLeftQuad = 13;
-    public static int diagonalBlendDirtGrassBottomLeftQuad = 14;
-    public static int diagonalBlendGrassToLargeDirtTopRightQuad = 15;
-    public static int diagonalBlendGrassToLargeDirtTopLeftQuad = 16;
-    public static int diagonalBlendGrassToLargeDirtBottomLeftQuad = 17;
-    public static int diagonalBlendGrassToLargeDirtBottomRightQuad = 18;
-    public static int TESTBlendQuad = 50;
-
-    // these are accessible from other classes (the above are not, but are settable in the Inspector)
-    // these are assigned to in the Startup function
-    public static Material grass;
-    public static Material rock;
-    public static Material sand;
-    public static Material dirt;
-    public static Material blendGrassDirt;
-    public static Material blendDirtGrass;
-    public static Material horizontalBlendGrassDirt;
-    public static Material horizontalBlendDirtGrass;
-    public static Material diagonalBlendGrassDirt;
-    public static Material diagonalBlendDirtGrass;
-    public static Material diagonalBlendTopLeftGrassDirt;
-    public static Material diagonalBlendBottomRightGrassDirt;
-    public static Material diagonalBlendTopRightGrassDirt;
-    public static Material diagonalBlendBottomLeftSmallDirtToLargeGrass;
-    public static Material diagonalBlendBottomLeftDirtGrass;
-    public static Material diagonalBlendTopRightGrassToLargeDirt;
-    public static Material diagonalBlendTopLeftGrassToLargeDirt;
-    public static Material diagonalBlendBottomLeftGrassToLargeDirt;
-    public static Material diagonalBlendBottomRightGrassToLargeDirt;
-    public static Material blendDirtRock;
-    public static Material TESTBlend;
-
     public static int worldSize = 1; // # of chunks in the world
     public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 quads
     public static Dictionary<string, Chunk> chunks;
@@ -158,42 +88,19 @@ public class World : MonoBehaviour
             yield return null;
         }
 
-        // Pass over the terrain, working out where to apply gradual blending
-        // Blend the world
-        // go through the chunks, seeing which quads need to have a texture applied
+        /* Make the terrain look more natural
+         * e.g. Pass over the terrain, working out where to apply gradual blending
+         */
         foreach (KeyValuePair<string, Chunk> chunk in chunks)
         {
-            chunk.Value.BlendTheQuads();
+            chunk.Value.MakeTerrainLookReal();
         }
-
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // replace this with a sprite atlas
-        grass = grassMaterial;
-        rock = rockMaterial;
-        sand = sandMaterial;
-        dirt = dirtMaterial;
-        blendGrassDirt = blendGrassDirtMaterial;
-        blendDirtGrass = blendDirtGrassMaterial;
-        blendDirtRock = blendDirtRockMaterial;
-        horizontalBlendGrassDirt = horizontalBlendGrassDirtMaterial;
-        horizontalBlendDirtGrass = horizontalBlendDirtGrassMaterial;
-        diagonalBlendGrassDirt = diagonalBlendGrassDirtMaterial;
-        diagonalBlendDirtGrass = diagonalBlendDirtGrassMaterial;
-        diagonalBlendTopLeftGrassDirt = diagonalBlendGrassDirtTopLeftMaterial;
-        diagonalBlendBottomRightGrassDirt = diagonalBlendGrassDirtBottomRightMaterial;
-        diagonalBlendTopRightGrassDirt = diagonalBlendGrassDirtTopRightMaterial;
-        diagonalBlendBottomLeftSmallDirtToLargeGrass = diagonalBlendSmallDirtToLargelGrassBottomLeftMaterial;
-        diagonalBlendBottomLeftDirtGrass = diagonalBlendDirtGrassBottomLeftMaterial;
-        diagonalBlendTopRightGrassToLargeDirt = diagonalBlendGrassToLargeDirtTopRightMaterial;
-        diagonalBlendTopLeftGrassToLargeDirt = diagonalBlendGrassToLargeDirtTopLeftMaterial;
-        diagonalBlendBottomLeftGrassToLargeDirt = diagonalBlendGrassToLargeDirtBottomLeftMaterial;
-        diagonalBlendBottomRightGrassToLargeDirt = diagonalBlendGrassToLargeDirtBottomRightMaterial;
-        TESTBlend = TESTBlendMaterial;
-
         chunks = new Dictionary<string, Chunk>();
         this.transform.position = Vector3.zero;
         this.transform.rotation = Quaternion.identity;
