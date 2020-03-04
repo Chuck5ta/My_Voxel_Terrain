@@ -27,7 +27,6 @@ public class TextureBlending
             chunkData[x, z + 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x, z - 1].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.dirtQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad));
         }
@@ -37,7 +36,6 @@ public class TextureBlending
             chunkData[x - 1, z].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.dirtQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad));
         }
@@ -46,7 +44,6 @@ public class TextureBlending
             chunkData[x - 1, z].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x, z - 1].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToLargeDirtBottomLeftQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtBottomLeftQuad));
         }
@@ -55,7 +52,6 @@ public class TextureBlending
             chunkData[x, z + 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToLargeDirtTopRightQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtTopRightQuad));
         }
@@ -64,7 +60,6 @@ public class TextureBlending
             chunkData[x, z + 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToLargeDirtTopLeftQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtTopLeftQuad));
         }
@@ -73,7 +68,6 @@ public class TextureBlending
             chunkData[x, z - 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x - 1, z].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToLargeDirtBottomLeftQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtBottomLeftQuad));
         }
@@ -82,7 +76,6 @@ public class TextureBlending
             chunkData[x, z - 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToLargeDirtBottomRightQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtBottomRightQuad));
         }
@@ -118,7 +111,6 @@ public class TextureBlending
         else if (x < World.chunkSize - 1 && z < World.chunkSize - 1 &&
             chunkData[x + 1, z + 1].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToSmallDirtTopRightQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToSmallDirtTopRightQuad));
         }
@@ -134,7 +126,6 @@ public class TextureBlending
         else if (x < World.chunkSize - 1 && z > 0 &&
             chunkData[x + 1, z - 1].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToSmallDirtBottomRightQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToSmallDirtBottomRightQuad));
         }
@@ -142,7 +133,6 @@ public class TextureBlending
         else if (z > 0 && x > 0 &&
             chunkData[x - 1, z - 1].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToSmallDirtBottomLeftQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToSmallDirtBottomLeftQuad));
         }

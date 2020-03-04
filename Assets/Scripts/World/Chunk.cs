@@ -227,7 +227,7 @@ public class Chunk
             //    If at an end and we have a chunk neighbour then get their row and store it here
             // ELSE 
             // generate Y coordinate
-            float yPos = Noise.Map(0, maxTerrainHeight, 0, 1, Noise.fBM((x + perlinOffsetX) * perlinXScale,
+            float yPos = NoiseGenerator.Map(0, maxTerrainHeight, 0, 1, NoiseGenerator.fBM((x + perlinOffsetX) * perlinXScale,
                                                            (z + perlinOffsetZ) * perlinZScale,
                                                            perlinOctaves,
                                                            perlinPersistance) * perlinHeightScale);
