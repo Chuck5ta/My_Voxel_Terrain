@@ -67,11 +67,12 @@ public class CustomMaterials : MonoBehaviour
 
     public static Material RetrieveMaterial(int materialIndex)
     {
+        Debug.Log("RetrieveMaterial");
     //    return grass;
         return material[materialIndex];
     }
-    // Start is called before the first frame update
-    void Start()
+
+    private void InitiliseMaterials()
     {
         material = new Material[16];
         // Basic materials
@@ -96,6 +97,18 @@ public class CustomMaterials : MonoBehaviour
         material[diagBlendGrassToLargeDirtTopRightQuad] = diagBlendGrassToLargeDirtTopRight;
         material[diagBlendGrassToLargeDirtTopLeftQuad] = diagBlendGrassToLargeDirtTopLeft;
         material[diagBlendGrassToLargeDirtBottomRightQuad] = diagBlendGrassToLargeDirtBottomRight;
-        material[diagBlendGrassToLargeDirtBottomLeftQuad] = diagBlendGrassToLargeDirtBottomLeft;
+        material[diagBlendGrassToLargeDirtBottomLeftQuad] = diagBlendGrassToLargeDirtBottomLeft;   
+    }
+
+
+    private void Awake()
+    {
+        InitiliseMaterials();
+    }
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
     }
 }
