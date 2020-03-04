@@ -23,7 +23,7 @@ public class TextureBlending
     {
         // check for dirt Top and Bottom
         //  Vetical Test    IF Top (PosZ) and bottom (NegZ) quads are dirt
-        if (z < World.chunkSize - 1 && z > 0 &&
+        if (z < Universe.chunkSize - 1 && z > 0 &&
             chunkData[x, z + 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x, z - 1].terrainType == CustomMaterials.dirtQuad)
         {
@@ -32,7 +32,7 @@ public class TextureBlending
         }
         // check for dirt Top and Bottom
         //  horiz Test    IF Left (NegX) and right (PosX) quads are dirt
-        else if (x < World.chunkSize - 1 && x > 0 &&
+        else if (x < Universe.chunkSize - 1 && x > 0 &&
             chunkData[x - 1, z].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
@@ -48,7 +48,7 @@ public class TextureBlending
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtBottomLeftQuad));
         }
         //  diag gradient blend Test    IF Top (PosZ) and right (PosX) quads are dirt
-        else if (x < World.chunkSize - 1 && z < World.chunkSize - 1 &&
+        else if (x < Universe.chunkSize - 1 && z < Universe.chunkSize - 1 &&
             chunkData[x, z + 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
@@ -56,7 +56,7 @@ public class TextureBlending
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtTopRightQuad));
         }
         //  diag gradient blend Test    IF Top (PosZ) and left (NegX) quads are dirt
-        else if (x < World.chunkSize - 1 && z < World.chunkSize - 1 && x > 0 &&
+        else if (x < Universe.chunkSize - 1 && z < Universe.chunkSize - 1 && x > 0 &&
             chunkData[x, z + 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
@@ -72,7 +72,7 @@ public class TextureBlending
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToLargeDirtBottomLeftQuad));
         }
         //  diag gradient blend Test    IF Bottom (NegZ) and left (PosX) quads are dirt
-        else if (x < World.chunkSize - 1 && x > 0 && z > 0 &&
+        else if (x < Universe.chunkSize - 1 && x > 0 && z > 0 &&
             chunkData[x, z - 1].terrainType == CustomMaterials.dirtQuad &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
@@ -81,7 +81,7 @@ public class TextureBlending
         }
         // Vertical gradient blending
         //     IF positiveZ quad is dirt
-        else if (z < World.chunkSize - 1 &&
+        else if (z < Universe.chunkSize - 1 &&
             chunkData[x, z + 1].terrainType == CustomMaterials.dirtQuad)
         {
             chunkData[x, z].terrainType = CustomMaterials.vertBlendGrassToDirtQuad;
@@ -95,7 +95,7 @@ public class TextureBlending
         }
         // horiz gradient blending
         //     IF positiveX quad is dirt
-        else if (x < World.chunkSize - 1 &&
+        else if (x < Universe.chunkSize - 1 &&
             chunkData[x + 1, z].terrainType == CustomMaterials.dirtQuad)
         {
             chunkData[x, z].terrainType = CustomMaterials.horizBlendGrassToDirtQuad;
@@ -108,14 +108,14 @@ public class TextureBlending
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.horizBlendDirtToGrassQuad));
         }
         //  diag gradient blend Test    IF Top Right quad is dirt
-        else if (x < World.chunkSize - 1 && z < World.chunkSize - 1 &&
+        else if (x < Universe.chunkSize - 1 && z < Universe.chunkSize - 1 &&
             chunkData[x + 1, z + 1].terrainType == CustomMaterials.dirtQuad)
         {
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToSmallDirtTopRightQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToSmallDirtTopRightQuad));
         }
         //  diag gradient blend Test    IF Top Left quad is dirt
-        else if (z < World.chunkSize - 1 && x > 0 &&
+        else if (z < Universe.chunkSize - 1 && x > 0 &&
             chunkData[x - 1, z + 1].terrainType == CustomMaterials.dirtQuad)
         {
             Debug.Log("Found dirt in the corner");
@@ -123,7 +123,7 @@ public class TextureBlending
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToSmallDirtTopLeftQuad));
         }
         //  diag gradient blend Test    IF Bottom Right quad is dirt
-        else if (x < World.chunkSize - 1 && z > 0 &&
+        else if (x < Universe.chunkSize - 1 && z > 0 &&
             chunkData[x + 1, z - 1].terrainType == CustomMaterials.dirtQuad)
         {
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToSmallDirtBottomRightQuad;

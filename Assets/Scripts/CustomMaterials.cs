@@ -67,8 +67,6 @@ public class CustomMaterials : MonoBehaviour
 
     public static Material RetrieveMaterial(int materialIndex)
     {
-        Debug.Log("RetrieveMaterial");
-    //    return grass;
         return material[materialIndex];
     }
 

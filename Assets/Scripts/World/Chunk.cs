@@ -1,5 +1,5 @@
 ﻿/*
- * A chunk contains quads that make up a part of the world's terrain.
+ * A chunk contains quads that make up a part of the Universe's terrain.
  * 
  * 14 Feb 2020 - Terrain generation is now working, but it is in dire need of improving, as it is far too slow.
  * 16 Feb 2010 - Vastly improved the terrain gen algorithm. Now many, many times faster. Threading still to be implemented. 
@@ -40,7 +40,7 @@ public class Chunk
     private Material quadMaterial;
 
     public Quad[,] chunkData; // 2D array to hold information on all of the quads in the chunk
-                              // I may have to build the world in blocks, if this quad attempt does not work out,
+                              // I may have to build the Universe in blocks, if this quad attempt does not work out,
                               // then chunkData will become a 3D array
     public Vector3[,] chunkVertices; // 2D array to hold all the coordinates of the vertices that make up the terrain in the chunk
     public GameObject chunk;
@@ -48,7 +48,7 @@ public class Chunk
     public int chunkLengthX = 4;
     public int chunkLengthZ = 4;
     public int maxTerrainHeight = 10; // where 1 square = 1 metre wide. 
-                                      // maxHeight = 100 means a world that is 100 metres high
+                                      // maxHeight = 100 means a Universe that is 100 metres high
 
     // These are for the perlin noise method of Y axis value generation
     public float perlinXScale = 0.4f;
@@ -79,19 +79,19 @@ public class Chunk
      * Constructor
      * chunkZIndex, chunkXIndex is the location of the chunk we are currently working on
      * 
-     * e.g. chunk 0 will be based at 0,0,0 in the world
+     * e.g. chunk 0 will be based at 0,0,0 in the Universe
      */
     public Chunk(int chunkZIndex, int chunkXIndex, Vector3 position)
     {
         this.chunkZIndex = chunkZIndex;
         this.chunkXIndex = chunkXIndex;
-        chunk = new GameObject(World.BuildChunkName(position));
+        chunk = new GameObject(Universe.BuildChunkName(position));
         chunk.transform.position = position;
         BuildChunk();
     }
 
 
-    // END OF TERRAIN BLENDING IN THE GAME WORLD
+    // END OF TERRAIN BLENDING IN THE GAME Universe
     // ******************************************
 
     /*
@@ -101,9 +101,9 @@ public class Chunk
     public void MakeTerrainLookReal()
     {
         // go through the quads
-        for (int z = 0; z < World.chunkSize; z++)
+        for (int z = 0; z < Universe.chunkSize; z++)
         {
-            for (int x = 0; x < World.chunkSize; x++)
+            for (int x = 0; x < Universe.chunkSize; x++)
             {
                 // Blend the tectures where needed
                 TextureBlending.GradientBlend(chunkData, x, z);
@@ -112,10 +112,10 @@ public class Chunk
     }
     
     // ********************************************
-    // START OF TERRAIN BLENDING IN THE GAME WORLD
+    // START OF TERRAIN BLENDING IN THE GAME Universe
 
 
-    // END OF QUAD CREATION IN THE GAME WORLD
+    // END OF QUAD CREATION IN THE GAME Universe
     // ***************************************
 
     /*
@@ -155,15 +155,15 @@ public class Chunk
      */
     public void DrawChunk()
     {
-        for (int z = 1; z <= World.chunkSize; z++)
+        for (int z = 1; z <= Universe.chunkSize; z++)
         {
             // place the generation of a row of quads in its own thread
-            GenerateRowOfQuads(z, World.chunkSize);
+            GenerateRowOfQuads(z, Universe.chunkSize);
         }
     }
 
     // *****************************************
-    // START OF QUAD CREATION IN THE GAME WORLD
+    // START OF QUAD CREATION IN THE GAME Universe
 
 
 
@@ -176,9 +176,9 @@ public class Chunk
      */
     private void GetVerticesFromNegXneighbour(int z, Chunk negativeXchunk)
     {
-        chunkVertices[0, z].x = chunkXIndex * World.chunkSize; // - (World.chunkSize * 2 + 1);
-        chunkVertices[0, z].y = negativeXchunk.chunkVertices[World.chunkSize, z].y;
-        chunkVertices[0, z].z = z + (chunkZIndex * World.chunkSize);
+        chunkVertices[0, z].x = chunkXIndex * Universe.chunkSize; // - (Universe.chunkSize * 2 + 1);
+        chunkVertices[0, z].y = negativeXchunk.chunkVertices[Universe.chunkSize, z].y;
+        chunkVertices[0, z].z = z + (chunkZIndex * Universe.chunkSize);
     }
 
     /*
@@ -189,9 +189,9 @@ public class Chunk
      */
     private void GetVerticesFromPosXneighbour(int z, Chunk positiveXchunk)
     {
-        chunkVertices[(World.chunkSize * 2) - 1, z].x = ((World.chunkSize * 2) - 1) + (chunkXIndex * World.chunkSize); // - (World.chunkSize * 2 + 1);
-        chunkVertices[(World.chunkSize * 2) - 1, z].y = positiveXchunk.chunkVertices[0, z].y;
-        chunkVertices[(World.chunkSize * 2) - 1, z].z = z + (chunkZIndex * World.chunkSize);
+        chunkVertices[(Universe.chunkSize * 2) - 1, z].x = ((Universe.chunkSize * 2) - 1) + (chunkXIndex * Universe.chunkSize); // - (Universe.chunkSize * 2 + 1);
+        chunkVertices[(Universe.chunkSize * 2) - 1, z].y = positiveXchunk.chunkVertices[0, z].y;
+        chunkVertices[(Universe.chunkSize * 2) - 1, z].z = z + (chunkZIndex * Universe.chunkSize);
     }
 
     /*
@@ -203,10 +203,10 @@ public class Chunk
      */
     void GenerateRowOfVertices(int z)
     {
-        for (int x = 0; x < World.chunkSize * 2; x++)
+        for (int x = 0; x < Universe.chunkSize * 2; x++)
         {
             // IF x = 0, and have neighbour, then use their coords
-            // rows at position 0 and World.chunkSize-1, do not generate new coordinates if they have a neighbour chunk
+            // rows at position 0 and Universe.chunkSize-1, do not generate new coordinates if they have a neighbour chunk
             //     retrieve them from the chunk neighbour 
             // RETRIEVE ALL VERTS FROM NEIGHBOURING CHUNK FOR ROW 0
             if (x == 0 && isNegativeX_Chunk)
@@ -215,8 +215,8 @@ public class Chunk
                 GetVerticesFromNegXneighbour(z, negativeXchunk);
                 continue;
             }
-            // RETRIEVE ALL VERTS FROM NEIGHBOURING CHUNK FOR ROW (World.chunkSize * 2) - 1
-            else if (x == ((World.chunkSize * 2) - 1) && isPositiveX_Chunk)
+            // RETRIEVE ALL VERTS FROM NEIGHBOURING CHUNK FOR ROW (Universe.chunkSize * 2) - 1
+            else if (x == ((Universe.chunkSize * 2) - 1) && isPositiveX_Chunk)
             {
                 // retrieve coords from neighbour
                 GetVerticesFromPosXneighbour(z, positiveXchunk);
@@ -233,7 +233,7 @@ public class Chunk
                                                            perlinPersistance) * perlinHeightScale);
 
             // Store cordinates of this vertex
-            chunkVertices[x, z] = new Vector3(x + (chunkXIndex * (World.chunkSize)), yPos, z + (chunkZIndex * (World.chunkSize)));
+            chunkVertices[x, z] = new Vector3(x + (chunkXIndex * (Universe.chunkSize)), yPos, z + (chunkZIndex * (Universe.chunkSize)));
         }
     }
 
@@ -247,37 +247,37 @@ public class Chunk
         // NegativeZ - back
         Vector3 negativeZPos = new Vector3(chunk.transform.position.x,
                                             chunk.transform.position.y,
-                                            chunk.transform.position.z - World.chunkSize);
-        string chunkName = World.BuildChunkName(negativeZPos);
+                                            chunk.transform.position.z - Universe.chunkSize);
+        string chunkName = Universe.BuildChunkName(negativeZPos);
 
-        if (World.chunks.TryGetValue(chunkName, out negativeZchunk))
+        if (Universe.chunks.TryGetValue(chunkName, out negativeZchunk))
         {
             isNegativeZ_Chunk = true;
         }
         // PositiveZ - forward
         Vector3 positiveZPos = new Vector3(chunk.transform.position.x,
                                             chunk.transform.position.y,
-                                            chunk.transform.position.z + World.chunkSize);
-        chunkName = World.BuildChunkName(positiveZPos);
-        if (World.chunks.TryGetValue(chunkName, out positiveZchunk))
+                                            chunk.transform.position.z + Universe.chunkSize);
+        chunkName = Universe.BuildChunkName(positiveZPos);
+        if (Universe.chunks.TryGetValue(chunkName, out positiveZchunk))
         {
             isPositiveZ_Chunk = true;
         }
         // NegativeX - left
-        Vector3 negativeXPos = new Vector3(chunk.transform.position.x - World.chunkSize,
+        Vector3 negativeXPos = new Vector3(chunk.transform.position.x - Universe.chunkSize,
                                             chunk.transform.position.y,
                                             chunk.transform.position.z);
-        chunkName = World.BuildChunkName(negativeXPos);
-        if (World.chunks.TryGetValue(chunkName, out negativeXchunk))
+        chunkName = Universe.BuildChunkName(negativeXPos);
+        if (Universe.chunks.TryGetValue(chunkName, out negativeXchunk))
         {
             isNegativeX_Chunk = true;
         }
         // PositiveX - right
-        Vector3 positiveXPos = new Vector3(chunk.transform.position.x + World.chunkSize,
+        Vector3 positiveXPos = new Vector3(chunk.transform.position.x + Universe.chunkSize,
                                             chunk.transform.position.y,
                                             chunk.transform.position.z);
-        chunkName = World.BuildChunkName(positiveXPos);
-        if (World.chunks.TryGetValue(chunkName, out positiveXchunk))
+        chunkName = Universe.BuildChunkName(positiveXPos);
+        if (Universe.chunks.TryGetValue(chunkName, out positiveXchunk))
         {
             isPositiveX_Chunk = true;
         }
@@ -291,11 +291,11 @@ public class Chunk
      */
     private void GetVerticesFromNegZneighbour(int z, Chunk negativeZchunk)
     {
-        for (int x = 0; x < World.chunkSize * 2; x++)
+        for (int x = 0; x < Universe.chunkSize * 2; x++)
         {
-            chunkVertices[x, z].x = x + (chunkXIndex * World.chunkSize); // - (World.chunkSize * 2 + 1);
-            chunkVertices[x, z].y = negativeZchunk.chunkVertices[x, World.chunkSize].y;
-            chunkVertices[x, z].z = z + (chunkZIndex * World.chunkSize);
+            chunkVertices[x, z].x = x + (chunkXIndex * Universe.chunkSize); // - (Universe.chunkSize * 2 + 1);
+            chunkVertices[x, z].y = negativeZchunk.chunkVertices[x, Universe.chunkSize].y;
+            chunkVertices[x, z].z = z + (chunkZIndex * Universe.chunkSize);
         }
     }
 
@@ -310,35 +310,35 @@ public class Chunk
      */
     private void GetVerticesFromPosZneighbour(int z, Chunk positiveZchunk)
     {
-        for (int x = 0; x < World.chunkSize * 2; x++)
+        for (int x = 0; x < Universe.chunkSize * 2; x++)
         {
-            chunkVertices[x, z].x = x + (chunkXIndex * World.chunkSize); // - (World.chunkSize * 2 + 1);
+            chunkVertices[x, z].x = x + (chunkXIndex * Universe.chunkSize); // - (Universe.chunkSize * 2 + 1);
             chunkVertices[x, z].y = positiveZchunk.chunkVertices[x, 0].y;
-            chunkVertices[x, z].z = z + (chunkZIndex * World.chunkSize);
+            chunkVertices[x, z].z = z + (chunkZIndex * Universe.chunkSize);
         }
     }
 
     /* 
-     * This function builds a chunk, which is used to contain quads of a part of the world. 
+     * This function builds a chunk, which is used to contain quads of a part of the Universe. 
      * Results in improved efficiency in dealing with the quads.
-     * A world can contain many chunks.
+     * A Universe can contain many chunks.
      * 
      */
     void BuildChunk()
     {
         // holds quad info within the chunk
-        chunkData = new Quad[World.chunkSize, World.chunkSize];
+        chunkData = new Quad[Universe.chunkSize, Universe.chunkSize];
         // holds vertices coordinates within the chunk
-        chunkVertices = new Vector3[World.chunkSize * 2, World.chunkSize * 2];
+        chunkVertices = new Vector3[Universe.chunkSize * 2, Universe.chunkSize * 2];
 
         // find and retrieve neighbouring chunks
         CheckForNeighbourChunks();
 
-        //      Thread[] rowOfVerts = new Thread[World.chunkSize*2];
+        //      Thread[] rowOfVerts = new Thread[Universe.chunkSize*2];
         // generate all vertex coordinates
-        for (int z = 0; z < World.chunkSize * 2; z++)
+        for (int z = 0; z < Universe.chunkSize * 2; z++)
         {
-            // rows at position 0 and World.chunkSize-1, do not generate new coordinates if they have a neighbour chunk
+            // rows at position 0 and Universe.chunkSize-1, do not generate new coordinates if they have a neighbour chunk
             //     retrieve them from the chunk neighbour 
             // RETRIEVE ALL VERTS FROM NEIGHBOURING CHUNK FOR ROW 0
             if (z == 0 && isNegativeZ_Chunk)
@@ -347,7 +347,7 @@ public class Chunk
                 GetVerticesFromNegZneighbour(z, negativeZchunk);
                 continue;
             }
-            else if (z == ((World.chunkSize * 2) - 1) && isPositiveZ_Chunk)
+            else if (z == ((Universe.chunkSize * 2) - 1) && isPositiveZ_Chunk)
             {
                 // retrieve coords from neighbour
                 GetVerticesFromPosZneighbour(z, positiveZchunk);
@@ -356,7 +356,7 @@ public class Chunk
 
             //      int index = z;
             // place the generation of a row of coordinates in its own thread
-            //      rowOfVerts[z] = new Thread(() => GenerateRowOfVertices(index, World.chunkSize));
+            //      rowOfVerts[z] = new Thread(() => GenerateRowOfVertices(index, Universe.chunkSize));
             //      rowOfVerts[z].Start();
             GenerateRowOfVertices(z);
         }

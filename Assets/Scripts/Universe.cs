@@ -52,8 +52,9 @@ using UnityEngine;
  * 
  */
 
-public class World : MonoBehaviour
+public class Universe : MonoBehaviour
 {
+  //  public static int universeSize = 1; // # of planets/worlds
     public static int worldSize = 1; // # of chunks in the world
     public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 quads
     public static Dictionary<string, Chunk> chunks;
@@ -104,7 +105,7 @@ public class World : MonoBehaviour
         chunks = new Dictionary<string, Chunk>();
         this.transform.position = Vector3.zero;
         this.transform.rotation = Quaternion.identity;
-        StartCoroutine(BuildWorld());
+        StartCoroutine(BuildWorld()); 
     }
 
     // Update is called once per frame
