@@ -54,7 +54,7 @@ using UnityEngine;
 
 public class Universe : MonoBehaviour
 {
-  //  public static int universeSize = 1; // # of planets/worlds
+    //  public static int universeSize = 1; // # of planets/worlds
     public static int worldSize = 1; // # of chunks in the world
     public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 quads
     public static Dictionary<string, Chunk> chunks;
@@ -63,13 +63,14 @@ public class Universe : MonoBehaviour
     {
         return (int)position.x + "_" +
                (int)position.z;
- //       return (int)position.x + "_" +   // leave this, as we may need to implement a cubish world, instead of the quad one we have
- //              (int)position.y + "_" +
- //              (int)position.z;
+        //       return (int)position.x + "_" +   // leave this, as we may need to implement a cubish world, instead of the quad one we have
+        //              (int)position.y + "_" +
+        //              (int)position.z;
     }
 
-    IEnumerator BuildWorld()
+    void GenerateFlatWorld()
     {
+
         for (int chunkZIndex = 0; chunkZIndex < worldSize; chunkZIndex++)
         {
             for (int chunkXIndex = 0; chunkXIndex < worldSize; chunkXIndex++)
@@ -86,7 +87,6 @@ public class Universe : MonoBehaviour
         foreach (KeyValuePair<string, Chunk> c in chunks)
         {
             c.Value.DrawChunk(); // draw the entire chunk
-            yield return null;
         }
 
         /* Make the terrain look more natural
@@ -96,7 +96,23 @@ public class Universe : MonoBehaviour
         {
             chunk.Value.MakeTerrainLookReal();
         }
-        
+
+    }
+
+    void GeneratePlanetWorld()
+    {
+        PlanetGen planet = new PlanetGen();
+        planet.GenerateVertices();
+    }
+
+    IEnumerator BuildWorld()
+    {
+        // GenerateFlatWorld();
+
+        GeneratePlanetWorld();
+
+        yield return null;
+
     }
 
     // Start is called before the first frame update
@@ -105,12 +121,12 @@ public class Universe : MonoBehaviour
         chunks = new Dictionary<string, Chunk>();
         this.transform.position = Vector3.zero;
         this.transform.rotation = Quaternion.identity;
-        StartCoroutine(BuildWorld()); 
+        StartCoroutine(BuildWorld());
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

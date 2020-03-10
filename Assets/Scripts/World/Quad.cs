@@ -49,6 +49,17 @@ public class Quad
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
     }
 
+
+    public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Material material, int terrainType)
+    {
+        this.vertex0 = vertex0;
+        this.vertex1 = vertex1;
+        this.vertex2 = vertex2;
+        this.vertex3 = vertex3;
+        quadMaterial = material;
+        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
+    }
+
     public void CreateQuad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
     {
         // position = location within the chunk
@@ -82,8 +93,8 @@ public class Quad
 
         quad = new GameObject("Quad");
         quad.name = "Quad_" + position.x + "_" + position.y;
-    //    quad.transform.position = position; // set the quad's location in the chunk | Do not uncomment!!! it will override the coordinates we want the quad to have!
-        quad.transform.parent = this.parent.transform;
+    //    quad.transform.position = position; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
+    //    quad.transform.parent = this.parent.transform;
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
         MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;

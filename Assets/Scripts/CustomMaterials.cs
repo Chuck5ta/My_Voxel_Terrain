@@ -18,10 +18,9 @@ public class CustomMaterials : MonoBehaviour
     // GRASS TO DIRT
     // =============
     [Header("Grass to Dirt Blending Materials")]
-    [SerializeField] Material vertBlendDirtToGrass;
     // vertical blends
+    [SerializeField] Material vertBlendDirtToGrass;
     [SerializeField] Material vertBlendGrassToDirt;
-    [SerializeField] Material vertBlendDirtToRock;
     // horizontal blends
     [SerializeField] Material horizBlendGrassToDirt;
     [SerializeField] Material horizBlendDirtToGrass;

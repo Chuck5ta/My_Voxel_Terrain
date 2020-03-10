@@ -118,7 +118,6 @@ public class TextureBlending
         else if (z < Universe.chunkSize - 1 && x > 0 &&
             chunkData[x - 1, z + 1].terrainType == CustomMaterials.dirtQuad)
         {
-            Debug.Log("Found dirt in the corner");
             chunkData[x, z].terrainType = CustomMaterials.diagBlendGrassToSmallDirtTopLeftQuad;
             chunkData[x, z].SetMaterial(CustomMaterials.RetrieveMaterial(CustomMaterials.diagBlendGrassToSmallDirtTopLeftQuad));
         }
