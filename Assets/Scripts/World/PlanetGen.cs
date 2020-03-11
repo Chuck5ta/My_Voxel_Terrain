@@ -28,6 +28,8 @@ public class PlanetGen
     const int Y = 100;
     const int Z = 100;
 
+    // The faces of the cube
+    // - starting point for the generation of a sphere/planet
     public enum Face { Top, Bottom, Front, Back, LeftSide, RightSide }
     
     // generate globe 
@@ -151,90 +153,139 @@ public class PlanetGen
     }
 
     // generate globe  - location in the game world (first planet at 0,0,0)
-    public PlanetGen(Vector3 univerLocation, float radius)
+    public PlanetGen(Vector3 planetLocation, float radius)
     {
         // Initialise planet as cube (8 vertices)
     }
 
 
     /*
+     * This places the vertex at a specified distance beyond its current location, along a calculated vector
+     */
+    private static Vector3 PushVertexOut(Vector3 cubeCentre, Vector3 vectorEquationResult, int distance, Vector3 pushOutVertex)
+    {
+        // X
+        if (vectorEquationResult.x > cubeCentre.x)
+            pushOutVertex.x = vectorEquationResult.x + distance;
+        else if (vectorEquationResult.x < cubeCentre.x)
+            pushOutVertex.x = vectorEquationResult.x - distance;
+        // Y
+        if (vectorEquationResult.y > cubeCentre.y)
+            pushOutVertex.y = vectorEquationResult.y + distance;
+        else if (vectorEquationResult.y < cubeCentre.y)
+            pushOutVertex.y = vectorEquationResult.y - distance;
+        // Z
+        if (vectorEquationResult.z > cubeCentre.z)
+            pushOutVertex.z = vectorEquationResult.z + distance;
+        else if (vectorEquationResult.z < cubeCentre.z)
+            pushOutVertex.z = vectorEquationResult.z - distance;
+
+        return pushOutVertex;
+    }
+
+    /*
+     * This is the vector equation used to acquire the direction (in 3D space) the vertex is to be pushed out along
+     * 
+     * TODO: Put this in its own class?
+     */
+    private static Vector3 CalculateVector(Vector3 newVector, Vector3 cubeCentre)
+    {
+        // Calculate the direction vector
+        Vector3 directionVector;
+        directionVector.x = newVector.x - cubeCentre.x;
+        directionVector.y = newVector.y - cubeCentre.y;
+        directionVector.z = newVector.z - cubeCentre.z;
+
+        //        Debug.Log("Quad - Direction vector: " + directionVector + " " + bottomLeft + " " + topLeft);
+        // Position Vector = cubeCentre.x cubeCentre.z cubeCentre.z
+        Vector3 vectorEquationResult;
+        vectorEquationResult.x = cubeCentre.x + directionVector.x;
+        vectorEquationResult.y = cubeCentre.y + directionVector.y;
+        vectorEquationResult.z = cubeCentre.z + directionVector.z;
+
+        //        Debug.Log("Quad - Inter result: " + interResult + " " + bottomLeft + " " + topLeft);
+        return vectorEquationResult;
+    }
+
+    /*
+     * Used when figuring out the centre of the quad and the midpoint of the edges around the quad 
+     * This returns the midpoint of one edge
+     * - the vertical and horizontal edges are used to locate the quad's centre
+     */
+    private static Vector3 GetEdgeMidpoint(Vector3 vertex1, Vector3 vertex2, out Vector3 vertex)
+    {
+        // X coord
+        if (vertex2.x > vertex1.x)
+            // (int)((topLeft.x - v0.x) / 2)
+            vertex.x = (int)((vertex2.x - vertex1.x) / 2 + vertex1.x);
+        else if (vertex2.x < vertex1.x)
+            vertex.x = (int)((vertex1.x - vertex2.x) / 2 + vertex2.x);
+        else vertex.x = vertex1.x;
+        // Y coord
+        if (vertex2.y > vertex1.y)
+            vertex.y = (int)((vertex2.y - vertex1.y) / 2 + vertex1.y);
+        else if (vertex2.y < vertex1.y)
+            vertex.y = (int)((vertex1.y - vertex2.y) / 2 + vertex2.y);
+        else vertex.y = vertex1.y;
+        // Z coord
+        if (vertex2.z > vertex1.z)
+            vertex.z = (int)((vertex2.z - vertex1.z) / 2 + vertex1.z);
+        else if (vertex2.z < vertex1.z)
+            vertex.z = (int)((vertex1.z - vertex2.z) / 2 + vertex2.z);
+        else vertex.z = vertex1.z;
+        return vertex;
+    }
+
+
+    /*
+     * This figures out where the centre of a quad is, then creates a vertex there and
+     * then uses a vector equation to push out the vertex 
+     * (all vertices must be the sphere's radius distance from the cube's centre)
+     * 
      * bottomLeft, topLeft, bottomRight are the vertices of the current quad
      * side is the side of the cube currently being worked on (top, botton, front, back, etc.)
      * newVector holds the coords of the newly created vector (centre of the face/quad)
      */
-    public void GetTheCentreOfTheQuad(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Face side, out Vector3 newVector)
+    public void GetTheCentreOfTheQuad(Vector3 bottomLeft, Vector3 topLeft, Vector3 bottomRight, Face side, out Vector3 quadCentre)
     {
-        // VERICAL
-        Vector3 vertical;
-        // X coord
-        if (topLeft.x > bottomLeft.x)
-            // (int)((topLeft.x - v0.x) / 2)
-            vertical.x = (int)((topLeft.x - bottomLeft.x) / 2 + bottomLeft.x);
-        else if (topLeft.x < bottomLeft.x)
-            vertical.x = (int)((bottomLeft.x - topLeft.x) / 2 + topLeft.x);
-        else vertical.x = bottomLeft.x;
-        // Y coord
-        if (topLeft.y > bottomLeft.y)
-            vertical.y = (int)((topLeft.y - bottomLeft.y) / 2 + bottomLeft.y);
-        else if (topLeft.y < bottomLeft.y)
-            vertical.y = (int)((bottomLeft.y - topLeft.y) / 2 + topLeft.y);
-        else vertical.y = bottomLeft.y;
-        // Z coord
-        if (topLeft.z > bottomLeft.z)
-            vertical.z = (int)((topLeft.z - bottomLeft.z) / 2 + bottomLeft.z);
-        else if (topLeft.z < bottomLeft.z)
-            vertical.z = (int)((bottomLeft.z - topLeft.z) / 2 + topLeft.z);
-        else vertical.z = bottomLeft.z;
+        // get the mid point of 2 of the edges, so that we can then figure out the centre of the quad
+        // VERICAL edge
+        Vector3 verticalMidpoint;
+        GetEdgeMidpoint(bottomLeft, topLeft, out verticalMidpoint);
 
- //       Debug.Log("Quad - Vertical vertex: " + vertical + " *** " + bottomLeft + " *** " + topLeft);
+        //       Debug.Log("Quad - Vertical vertex: " + vertical + " *** " + bottomLeft + " *** " + topLeft);
 
-        // HORIZONTAL
-        Vector3 horiz;
-        // X coord
-        if (bottomRight.x > bottomLeft.x)
-            horiz.x = (int)((bottomRight.x - bottomLeft.x) / 2 + bottomLeft.x);
-        else if (bottomRight.x < bottomLeft.x)
-            horiz.x = (int)((bottomLeft.x - bottomRight.x) / 2 + bottomRight.x);
-        else horiz.x = bottomLeft.x;
-        // Y coord
-        if (bottomRight.y > bottomLeft.y)
-            horiz.y = (int)((bottomRight.y - bottomLeft.y) / 2 + bottomLeft.y);
-        else if (bottomRight.y < bottomLeft.y)
-            horiz.y = (int)((bottomLeft.y - bottomRight.y) / 2 + bottomRight.y);
-        else horiz.y = bottomLeft.y;
-        // Z coord
-        if (bottomRight.z > bottomLeft.z)
-            horiz.z = (int)((bottomRight.z - bottomLeft.z) / 2 + bottomLeft.z);
-        else if (bottomRight.z < bottomLeft.z)
-            horiz.z = (int)((bottomLeft.z - bottomRight.z) / 2 + bottomRight.z);
-        else horiz.z = bottomLeft.z;
+        // HORIZONTAL edge
+        Vector3 horizontalMidpoint;
+        GetEdgeMidpoint(bottomLeft, bottomRight, out horizontalMidpoint);
 
- //       Debug.Log("Quad - Horizontal vertex: " + horiz + " *** " + bottomLeft + " *** " + bottomRight);
+        //       Debug.Log("Quad - Horizontal vertex: " + horiz + " *** " + bottomLeft + " *** " + bottomRight);
 
         // Bottom face
         if (side == Face.Bottom || side == Face.Back)
         {
-            newVector.x = (vertical.x < horiz.x) ? newVector.x = vertical.x : newVector.x = horiz.x;
+            quadCentre.x = (verticalMidpoint.x < horizontalMidpoint.x) ? quadCentre.x = verticalMidpoint.x : quadCentre.x = horizontalMidpoint.x;
         }
-        else // Front and Top and Left and Right faces
-        {            
-            newVector.x = (vertical.x > horiz.x) ? newVector.x = vertical.x : newVector.x = horiz.x;
+        else // Front, Top, Left and Right faces
+        {
+            quadCentre.x = (verticalMidpoint.x > horizontalMidpoint.x) ? quadCentre.x = verticalMidpoint.x : quadCentre.x = horizontalMidpoint.x;
         }
-        // Front and Top and Bottom and Back and Left and Right faces 
-        newVector.y = (vertical.y > horiz.y) ? newVector.y = vertical.y : newVector.y = horiz.y;
+        // Front and Top and Bottom and Back and Left and Right faces (ALL FACES)
+        quadCentre.y = (verticalMidpoint.y > horizontalMidpoint.y) ? quadCentre.y = verticalMidpoint.y : quadCentre.y = horizontalMidpoint.y;
 
         // Left and Back faces
         if (side == Face.LeftSide || side == Face.Back)
         {
-            newVector.z = (vertical.z < horiz.z) ? newVector.z = vertical.z : newVector.z = horiz.z;
+            quadCentre.z = (verticalMidpoint.z < horizontalMidpoint.z) ? quadCentre.z = verticalMidpoint.z : quadCentre.z = horizontalMidpoint.z;
         }
-        else // Front and Top and Bottom and Right faces
-        {            
-            newVector.z = (vertical.z > horiz.z) ? newVector.z = vertical.z : newVector.z = horiz.z;
+        else // Front, Top, Bottom and Right faces
+        {
+            quadCentre.z = (verticalMidpoint.z > horizontalMidpoint.z) ? quadCentre.z = verticalMidpoint.z : quadCentre.z = horizontalMidpoint.z;
         }
 
-//        Debug.Log("Quad - Newly created vertex: " + newVector);
-        
+        //        Debug.Log("Quad - Newly created vertex: " + newVector);
+
+        // VECTOR or PARAMETRIC EQUATION
         // https://www.youtube.com/watch?v=PyPp4QvQY3Q
         // https://www.youtube.com/watch?v=JlRagTNGBF0
         // start point = 250, 250, 250
@@ -251,37 +302,12 @@ public class PlanetGen
         // x = 250
         // y = 250
         // z = 250 + -250t = 0
-        // need to add 5 somehow!
-
-        Vector3 cubeCentre = new Vector3(349f, 349f, 349f);
-        // Calculate the direction vector
-        Vector3 directionVector;
-        directionVector.x = newVector.x - cubeCentre.x;
-        directionVector.y = newVector.y - cubeCentre.y;
-        directionVector.z = newVector.z - cubeCentre.z;
-
-//        Debug.Log("Quad - Direction vector: " + directionVector + " " + bottomLeft + " " + topLeft);
-        Vector3 interResult;
-        interResult.x = cubeCentre.x + directionVector.x;
-        interResult.y = cubeCentre.y + directionVector.y;
-        interResult.z = cubeCentre.z + directionVector.z;
-
-//        Debug.Log("Quad - Inter result: " + interResult + " " + bottomLeft + " " + topLeft);
-        // X
-        if (interResult.x > cubeCentre.x)
-            newVector.x = interResult.x + 5;
-        else if (interResult.x < cubeCentre.x)
-            newVector.x = interResult.x - 5;
-        // Y
-        if (interResult.y > cubeCentre.y)
-            newVector.y = interResult.y + 5;
-        else if (interResult.y < cubeCentre.y)
-            newVector.y = interResult.y - 5;
-        // Z
-        if (interResult.z > cubeCentre.z)
-            newVector.z = interResult.z + 5;
-        else if (interResult.z < cubeCentre.z)
-            newVector.z = interResult.z - 5;
+        // need to add 5 - push out vertex
+        Vector3 cubeCentre = new Vector3(349f, 349f, 349f); // TODO: MAGIC NUMBERS!!!!!
+        Vector3 vectorEquationResult;
+        vectorEquationResult = CalculateVector(quadCentre, cubeCentre);
+        int distance = 5; // TODO: this needs to be based on the required redius of a sphere (planet)
+        quadCentre = PushVertexOut(cubeCentre, vectorEquationResult, distance, quadCentre);
     }
 
     /*
@@ -290,33 +316,15 @@ public class PlanetGen
      * v0, v1 are the vertices of the edge
      * newVector holds the coordinates of the newly created vector (centre of the edge)
      */
-    public void GetTheCentreOfTheEdge(Vector3 v0, Vector3 v1, out Vector3 newVector)
+    public void GetTheCentreOfTheEdge(Vector3 vertex1, Vector3 vertex2, out Vector3 edgeCentre)
     {
-        // Works for the edges of the FRONT FACE, TOP FACE, BOTTOM FACE, BACK FACE, LEFT FACE, RIGHT FACE
-        // X coord
-        if (v1.x > v0.x)
-            // (int)((topLeft.x - v0.x) / 2)
-            newVector.x = (int)((v1.x - v0.x) / 2 + v0.x);
-        else if (v1.x < v0.x)
-            newVector.x = (int)((v0.x - v1.x) / 2 + v1.x);
-        else newVector.x = v0.x;
-        // Y coord
-        if (v1.y > v0.y)
-            newVector.y = (int)((v1.y - v0.y) / 2 + v0.y);
-        else if (v1.y < v0.y)
-            newVector.y = (int)((v0.y - v1.y) / 2 + v1.y);
-        else newVector.y = v0.y;
-        // Z coord
-        if (v1.z > v0.z)
-            newVector.z = (int)((v1.z - v0.z) / 2 + v0.z);
-        else if (v1.z < v0.z)
-            newVector.z = (int)((v0.z - v1.z) / 2 + v1.z);        
-        else newVector.z = v0.z;
+        GetEdgeMidpoint(vertex1, vertex2, out edgeCentre);
 
-        Debug.Log("Quad - Subdived edge vertex: " + newVector + " *** " + v0 + " *** " + v1);
+        //      Debug.Log("Quad - Subdived edge vertex: " + newVector + " *** " + v0 + " *** " + v1);
 
         // PUSH THE VERTEX OUT
 
+        // VECTOR or PARAMETRIC EQUATION
         // https://www.youtube.com/watch?v=PyPp4QvQY3Q
         // https://www.youtube.com/watch?v=JlRagTNGBF0
         // start point = 250, 250, 250
@@ -334,39 +342,11 @@ public class PlanetGen
         // y = 250
         // z = 250 + -250t = 0
         // need to add 5 somehow!
-
-        // WORKS for the edges of the FRONT face, TOP face, BOTTOM face, BACK face, LEFT SIDE face, RIGHT SIDE face,
-        //            
-
-        Vector3 cubeCentre = new Vector3(349f, 349f, 349f);
-        // Calculate the direction vector
-        Vector3 directionVector;
-        directionVector.x = newVector.x - cubeCentre.x;
-        directionVector.y = newVector.y - cubeCentre.y;
-        directionVector.z = newVector.z - cubeCentre.z;
-
-        //        Debug.Log("Quad - Direction vector: " + directionVector + " " + bottomLeft + " " + topLeft);
-        Vector3 interResult;
-        interResult.x = cubeCentre.x + directionVector.x;
-        interResult.y = cubeCentre.y + directionVector.y;
-        interResult.z = cubeCentre.z + directionVector.z;
-
-        //        Debug.Log("Quad - Inter result: " + interResult + " " + bottomLeft + " " + topLeft);
-        // X
-        if (interResult.x > cubeCentre.x)
-            newVector.x = interResult.x + 5;
-        else if (interResult.x < cubeCentre.x)
-            newVector.x = interResult.x - 5;
-        // Y
-        if (interResult.y > cubeCentre.y)
-            newVector.y = interResult.y + 5;
-        else if (interResult.y < cubeCentre.y)
-            newVector.y = interResult.y - 5;
-        // Z
-        if (interResult.z > cubeCentre.z)
-            newVector.z = interResult.z + 5;
-        else if (interResult.z < cubeCentre.z)
-            newVector.z = interResult.z - 5;
+        Vector3 cubeCentre = new Vector3(349f, 349f, 349f); // TODO: MAGIC NUMBERS!!!!!
+        Vector3 vectorEquationResult;
+        vectorEquationResult = CalculateVector(edgeCentre, cubeCentre);
+        int distance = 5; // TODO: this needs to be based on the required redius of a sphere (planet)
+        edgeCentre = PushVertexOut(cubeCentre, vectorEquationResult, distance, edgeCentre);
     }
 
     /* 
@@ -379,40 +359,40 @@ public class PlanetGen
     {
         Debug.Log("*** SIDE : " + side);
 
-        Vector3 newVector = new Vector3(0f,0f,0f);
+        Vector3 quadCentre = new Vector3(0f,0f,0f);
         // find the centre of the quad
         // new vertex v0.x + length/2, v0.y + length/2, v0.z + length/2
 
-        GetTheCentreOfTheQuad(v0, v1, v2, side, out newVector);
+        GetTheCentreOfTheQuad(v0, v1, v2, side, out quadCentre);
 
         // output new vertex
    //     Debug.Log("Quad - Push out vertext: " + newVector + " " + v0 + " " + v1);
 
         // store the new vertex
-        planetVertices[(int)newVector.x, (int)newVector.y, (int)newVector.z] = new Vector3(newVector.x, newVector.y, newVector.z);
+        planetVertices[(int)quadCentre.x, (int)quadCentre.y, (int)quadCentre.z] = new Vector3(quadCentre.x, quadCentre.y, quadCentre.z);
         //     Debug.Log("Quad - Newly stored vertex: " + newVector + " " + v0 + " " + v1);
 
         // PUSH NEW VERTEX OUT (radius)
         // may need to move quad to new location in the array
 
         // SPLIT QUAD's EDGES
+        Vector3 edgeCentre;
         //   bottom edge
         Debug.Log("*** BOTTOM EDGE ***");
-        GetTheCentreOfTheEdge(v0, v2, out newVector);
-        Debug.Log("Pushed out vertex: " + newVector + " " + v0 + " " + v2);
+        GetTheCentreOfTheEdge(v0, v2, out edgeCentre);
+        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v0 + " " + v2);
         //   left side edge
-        Debug.Log("*** LEFT SIDE  EDGE ***");
-        GetTheCentreOfTheEdge(v0, v1, out newVector);
-        Debug.Log("Pushed out vertex: " + newVector + " " + v0 + " " + v1);
+        Debug.Log("*** LEFT SIDE EDGE ***");
+        GetTheCentreOfTheEdge(v0, v1, out edgeCentre);
+        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v0 + " " + v1);
         //   left side edge
         Debug.Log("*** RIGHT SIDE  EDGE ***");
-        GetTheCentreOfTheEdge(v2, v3, out newVector);
-        Debug.Log("Pushed out vertex: " + newVector + " " + v2 + " " + v3);
+        GetTheCentreOfTheEdge(v2, v3, out edgeCentre);
+        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v2 + " " + v3);
         //   top edge
         Debug.Log("*** TOP EDGE ***");
-        GetTheCentreOfTheEdge(v1, v3, out newVector);
-        Debug.Log("Pushed out vertex: " + newVector + " " + v1 + " " + v3);
-
+        GetTheCentreOfTheEdge(v1, v3, out edgeCentre);
+        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v1 + " " + v3);
     }
 
     public void DisplayInitialCube(Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3)
@@ -427,6 +407,19 @@ public class PlanetGen
     // Generate vertices
     public void GenerateVertices()
     {
+
+    }
+
+    /*
+     * this draws the planet, using the vertices generated on the creation of the planet object
+     */
+    public void DrawPlanet()
+    {
+        // make use of the planetVertices[...] to draw the quads
+        // 599 x 599 x 599 array of vertices
+        // planet starts at 100x100x100
+
+        // need to figure out how to build the quads
 
     }
 

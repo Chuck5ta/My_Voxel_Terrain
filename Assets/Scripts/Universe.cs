@@ -102,7 +102,9 @@ public class Universe : MonoBehaviour
     void GeneratePlanetWorld()
     {
         PlanetGen planet = new PlanetGen();
-        planet.GenerateVertices();
+        //    planet.GenerateVertices();
+        // Display the planet
+        planet.DrawPlanet();
     }
 
     IEnumerator BuildWorld()
