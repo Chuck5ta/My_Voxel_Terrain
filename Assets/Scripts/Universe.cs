@@ -86,7 +86,7 @@ public class Universe : MonoBehaviour
         }
         foreach (KeyValuePair<string, Chunk> c in chunks)
         {
-            c.Value.DrawChunk(); // draw the entire chunk
+//            c.Value.DrawChunk(); // draw the entire chunk
         }
 
         /* Make the terrain look more natural
@@ -101,22 +101,30 @@ public class Universe : MonoBehaviour
 
     void GeneratePlanetWorld()
     {
-        PlanetGen planet = new PlanetGen();
+        int planetXPosition = 0;
+        int planetYPosition = 0;
+        int planetZPosition = 0;
+        Vector3 planetPosition = new Vector3(this.transform.position.x + (planetXPosition * 10),
+                                            this.transform.position.y + (planetYPosition * 10),
+                                            this.transform.position.z + (planetZPosition * 10));
+        //     Vector3 planetPosition = new Vector3(planetXPosition, planetYPosition, planetZPosition);
+
+        PlanetGen planet = new PlanetGen(planetPosition);
         //    planet.GenerateVertices();
         // Display the planet
-        planet.DrawPlanet();
+  //      planet.BuildPlanet();
     }
 
     IEnumerator BuildWorld()
     {
         // GenerateFlatWorld();
-
         GeneratePlanetWorld();
 
         yield return null;
 
     }
 
+    // UnityEditor.EditorApplication.isPlaying = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -124,7 +132,7 @@ public class Universe : MonoBehaviour
         this.transform.position = Vector3.zero;
         this.transform.rotation = Quaternion.identity;
         StartCoroutine(BuildWorld());
-    }
+    } 
 
     // Update is called once per frame
     void Update()

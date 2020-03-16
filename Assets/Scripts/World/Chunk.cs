@@ -87,7 +87,7 @@ public class Chunk
         this.chunkXIndex = chunkXIndex;
         chunk = new GameObject(Universe.BuildChunkName(position));
         chunk.transform.position = position;
-        BuildChunk();
+   //     BuildChunk();
     }
 
 
@@ -128,7 +128,7 @@ public class Chunk
         int terrainType;
         for (int x = 1; x <= sizeX; x++)
         {
-            quadMaterial = Texturing.SetMaterial(chunkVertices[x - 1, z], maxTerrainHeight, out terrainType); // not ideal!!!
+ /*           quadMaterial = Texturing.SetMaterial(chunkVertices[x - 1, z], maxTerrainHeight, out terrainType); // not ideal!!!
             Vector3 locationInChunk = new Vector3(x, z);
             // vertex0 - chunkVertices[x-1, z];
             // vertex1 - chunkVertices[x, z]
@@ -144,7 +144,7 @@ public class Chunk
                                            quadMaterial,
                                            terrainType);
             chunkData[x - 1, z - 1].Draw();
-        }
+        } */
     }
 
     /*
@@ -153,14 +153,14 @@ public class Chunk
      * Unity is not thread safe yet - 
      * look at https://docs.unity3d.com/Manual/JobSystem.html?_ga=2.149032254.968692378.1582283703-307768343.1578037165
      */
-    public void DrawChunk()
+ /*   public void DrawChunk()
     {
         for (int z = 1; z <= Universe.chunkSize; z++)
         {
             // place the generation of a row of quads in its own thread
             GenerateRowOfQuads(z, Universe.chunkSize);
         }
-    }
+    } */
 
     // *****************************************
     // START OF QUAD CREATION IN THE GAME Universe
@@ -174,12 +174,12 @@ public class Chunk
      * z is the current row number (Z axis position)
      * negativeZchunk is the neighbouring chunk we wish to get the vertices from
      */
-    private void GetVerticesFromNegXneighbour(int z, Chunk negativeXchunk)
+/*    private void GetVerticesFromNegXneighbour(int z, Chunk negativeXchunk)
     {
         chunkVertices[0, z].x = chunkXIndex * Universe.chunkSize; // - (Universe.chunkSize * 2 + 1);
         chunkVertices[0, z].y = negativeXchunk.chunkVertices[Universe.chunkSize, z].y;
         chunkVertices[0, z].z = z + (chunkZIndex * Universe.chunkSize);
-    }
+    } */
 
     /*
      * This retrieves the vertices from the neighboring chunk and uses them in the current chunk
@@ -187,12 +187,12 @@ public class Chunk
      * z is the current row number (Z axis position)
      * negativeZchunk is the neighbouring chunk we wish to get the vertices from
      */
-    private void GetVerticesFromPosXneighbour(int z, Chunk positiveXchunk)
+ /*   private void GetVerticesFromPosXneighbour(int z, Chunk positiveXchunk)
     {
         chunkVertices[(Universe.chunkSize * 2) - 1, z].x = ((Universe.chunkSize * 2) - 1) + (chunkXIndex * Universe.chunkSize); // - (Universe.chunkSize * 2 + 1);
         chunkVertices[(Universe.chunkSize * 2) - 1, z].y = positiveXchunk.chunkVertices[0, z].y;
         chunkVertices[(Universe.chunkSize * 2) - 1, z].z = z + (chunkZIndex * Universe.chunkSize);
-    }
+    } */
 
     /*
      * Generate the vertices that make up a row of a terrain in a chunk
@@ -201,7 +201,7 @@ public class Chunk
      * Need to test if the location is at an end and there is a chunk next to it
      * 
      */
-    void GenerateRowOfVertices(int z)
+ /*   void GenerateRowOfVertices(int z)
     {
         for (int x = 0; x < Universe.chunkSize * 2; x++)
         {
@@ -234,7 +234,7 @@ public class Chunk
 
             // Store cordinates of this vertex
             chunkVertices[x, z] = new Vector3(x + (chunkXIndex * (Universe.chunkSize)), yPos, z + (chunkZIndex * (Universe.chunkSize)));
-        }
+        } */
     }
 
     /*
@@ -358,7 +358,7 @@ public class Chunk
             // place the generation of a row of coordinates in its own thread
             //      rowOfVerts[z] = new Thread(() => GenerateRowOfVertices(index, Universe.chunkSize));
             //      rowOfVerts[z].Start();
-            GenerateRowOfVertices(z);
+  //          GenerateRowOfVertices(z);
         }
 
         // CombineQuads();

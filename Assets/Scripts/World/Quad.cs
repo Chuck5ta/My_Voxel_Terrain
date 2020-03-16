@@ -17,13 +17,17 @@ public class Quad
 {
     private Material quadMaterial;
 
-    GameObject quad;
-    Chunk owner; // so that we can access the chunkData array
-    GameObject parent; // The chunk
-    Vector2 position; // location within the chunk
-                      // this is used to give the quad a unique name
+    public GameObject quad;
+    public Cube.Side position;
 
-    Vector3 vertex0, vertex1, vertex2, vertex3;
+    //   Chunk owner; // so that we can access the chunkData array
+    public Cube owner; // so that we can access the chunkData array
+    public PlanetGen planetOwner; // so that we can access the chunkData array
+    public GameObject parent; // The chunk
+                       //   Vector3 position; // location within the chunk
+                       // this is used to give the quad a unique name
+
+    public Vector3 vertex0, vertex1, vertex2, vertex3;
 
     // grass 0, dirt 1, sand 2, rock 4 - bitflags and bitwise operations ?????
     public int terrainType = 0; //Texturing.grassQuad; // default as grass terrain
@@ -36,9 +40,22 @@ public class Quad
      * vertex0, vertex1, vertex2, vertex3 is the quad's location in the world 
      * 
      */
-    public Quad(Vector2 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Chunk owner, Material material, int terrainType)
+    public Quad(Cube.Side locationInCube, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Cube owner, Material material, int terrainType)
     {
         this.owner = owner;
+        this.parent = parent;
+        position = locationInCube; // position within the chunk
+        this.vertex0 = vertex0;
+        this.vertex1 = vertex1;
+        this.vertex2 = vertex2;
+        this.vertex3 = vertex3;
+        quadMaterial = material;
+        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
+    }
+
+    /*    public Quad(Vector3 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, PlanetGen owner, Material material, int terrainType)
+    {
+        this.planetOwner = owner;
         this.parent = parent;
         position = locationInChunk; // position within the chunk
         this.vertex0 = vertex0;
@@ -48,7 +65,18 @@ public class Quad
         quadMaterial = material;
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
     }
+    public Quad(Vector3 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Material material, int terrainType)
+    {
+        position = locationInChunk; // position within the chunk
+        this.vertex0 = vertex0;
+        this.vertex1 = vertex1;
+        this.vertex2 = vertex2;
+        this.vertex3 = vertex3;
+        quadMaterial = material;
+        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
+    }
 
+    */
 
     public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Material material, int terrainType)
     {
@@ -60,7 +88,7 @@ public class Quad
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
     }
 
-    public void CreateQuad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
+    public void CreateQuad()
     {
         // position = location within the chunk
         // vertices = location of each vertex of the quad within the game world
@@ -92,9 +120,10 @@ public class Quad
         mesh.RecalculateBounds();
 
         quad = new GameObject("Quad");
-        quad.name = "Quad_" + position.x + "_" + position.y;
-    //    quad.transform.position = position; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
-    //    quad.transform.parent = this.parent.transform;
+        //      quad.name = "Quad_" + position.x + "_" + position.y + "_" + position.z;
+        quad.name = "Quad_" + position;
+        //    quad.transform.position = position; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
+        //    quad.transform.parent = this.parent.transform;
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
         MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
@@ -111,6 +140,6 @@ public class Quad
     public void Draw()
     {
         // best to build the world up in quads?
-        CreateQuad(vertex0, vertex1, vertex2, vertex3);
+        CreateQuad();
     }
 }

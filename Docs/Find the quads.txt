@@ -1,0 +1,108 @@
+
+
+
+
+
+3DArrayOfVerts
+
+
+
+FORMING A QUAD - what needs to be checked
+
+
+Are we looking to form more than 1 quad?
+
+
+
+NEED TO FIND THE QUADS IN A 3D ARRAY!!!
+=======================================
+then we can subdivide forever
+
+
+Initialise all 3D array locations to null
+
+only process 3D locations that are not null
+
+Process order 
+Bottom
+
+X, Y, Z
+
+X row at a time
+
+BOTTOM of planet DECISION - ALL OF PLANET?????
+can't skip a row this time, as we need to see if a quad will form in many qirections
+- on the current level
+- and/or joining the current level with the level above
+
+
+X0, Y0, Z0
+
+IS THERE A QUAD TO BE MADE ALONG THE X AXIS?
+
+
+IS THERE A QUAD TO BE MADE ALONG THE Y AXIS? do we check above and below? I reckon just above!
+
+
+IF CURRENT VERTEX IS NOT NULL (quad to be made somewhere)
+    IS THERE A QUAD TO BE MADE ALONG THE X AXIS?
+	// at same level - horizontal plane
+	IF (X + 1, Y, Z) !NULL && (X + 1, Y, Z + 1) !NULL && (X, Y, Z + 1) !NULL
+		GenerateQuadAt the above location
+	// crossing levels - vertical plane
+	IF (X + 1, Y, Z) !NULL && (X, Y + 1, Z) !NULL && (X + 1, Y + 1, Z) !NULL
+		GenerateQuadAt the above location
+
+NEED TO TEST ALL POSSIBLE DIRECTIONS!!!!!
+flat
+crossing 
+X+1 Y+1 Z
+X-1 Y-1 Z
+X+1 Y-1 Z
+X-1 Y+1 Z
+X Y Y+1 Z+1
+X Y Y+1 Z-1
+X Y Y-1 Z+1
+X Y Y-1 Z-1
+Directly above
+X Y+1 Z
+
+
+ELSE IS THERE A QUAD TO BE MADE ALONG THE Y AXIS?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
