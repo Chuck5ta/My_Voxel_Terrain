@@ -8,6 +8,16 @@ using UnityEngine;
 public class Cube
 {
     public GameObject cube;
+
+    public Vector3 cubeLocation;
+
+    public Vector3[] frontQuadVertices = new Vector3[4];
+    public Vector3[] backQuadVertices = new Vector3[4];
+    public Vector3[] topQuadVertices = new Vector3[4];
+    public Vector3[] bottomQuadVertices = new Vector3[4];
+    public Vector3[] leftQuadVertices = new Vector3[4];
+    public Vector3[] rightQuadVertices = new Vector3[4];
+
     // Front quad
     // Back quad
     // Top quad
@@ -17,29 +27,187 @@ public class Cube
     Quad frontQuad, backQuad, topQuad, bottomQuad, leftQuad, rightQuad;
 
     public enum Side { Front, Back, Top, Bottom, Leftside, Rightside }
+    
 
     public Material defaultMaterial = CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad); // default material is dirt
 
     public PlanetGen planet;
 
-//    public Quad[,,] quadData;
+    public int currentX, currentY, currentZ;
+
+    //    public Quad[,,] quadData;
 
 
     // Cube contructor
+    public Cube(Vector3[,,] planetVertices, int currentX, int currentY, int currentZ, Material material, int terrainType, Vector3 cubePosition, string chunkName)
+    {
+        cubeLocation = cubePosition;
+        cube = new GameObject(chunkName + "_" + "Cube_" + Universe.BuildPlanetChunkName(cubeLocation));
+        this.currentX = currentX;
+        this.currentY = currentY;
+        this.currentZ = currentZ;
+  //      cube.name = "Cube_" + currentX + "_" + currentY + "_" + currentZ; // actual loacation within the 3D game world as well as in the array
+        cube.transform.position = cubeLocation;
+    }
     public Cube(PlanetGen planet, Vector3[,,] planetVertices, int distanceBetweenVertices, int currentX, int currentY, int currentZ, Material material, int terrainType)
     {
         cube = new GameObject("Cube");
         this.planet = planet;
+        this.currentX = currentX;
+        this.currentY = currentY;
+        this.currentZ = currentZ;
         cube.name = "Cube_" + currentX + "_" + currentY + "_" + currentZ; // actual loacation within the 3D game world as well as in the array
 
-        LocateAndDrawQuads(planetVertices, distanceBetweenVertices, currentX, currentY, currentZ);
+        LocateBottomQuad(planetVertices, distanceBetweenVertices);
     }
+
+    // store front quad data
+    public void storeFrontQuadData(Vector3 quadVertex0, Vector3 quadVertex1, Vector3 quadVertex2, Vector3 quadVertex3)
+    {
+        frontQuadVertices[0] = new Vector3(quadVertex0.x, quadVertex0.y, quadVertex0.z);
+        frontQuadVertices[1] = new Vector3(quadVertex1.x, quadVertex1.y, quadVertex1.z);
+        frontQuadVertices[2] = new Vector3(quadVertex2.x, quadVertex2.y, quadVertex2.z);
+        frontQuadVertices[3] = new Vector3(quadVertex3.x, quadVertex3.y, quadVertex3.z);
+
+        // TEST
+        DisplayFrontQuad(frontQuadVertices); // TODO: need to name the quad!!!
+    }
+    // store top quad data
+    public void storeTopQuadData(Vector3 quadVertex0, Vector3 quadVertex1, Vector3 quadVertex2, Vector3 quadVertex3)
+    {
+        topQuadVertices[0] = new Vector3(quadVertex0.x, quadVertex0.y, quadVertex0.z);
+        topQuadVertices[1] = new Vector3(quadVertex1.x, quadVertex1.y, quadVertex1.z);
+        topQuadVertices[2] = new Vector3(quadVertex2.x, quadVertex2.y, quadVertex2.z);
+        topQuadVertices[3] = new Vector3(quadVertex3.x, quadVertex3.y, quadVertex3.z);
+
+        // TEST
+        DisplayTopQuad(topQuadVertices); // TODO: need to name the quad!!!
+    }
+    // store bottoms quad data
+    public void storeBottomQuadData(Vector3 quadVertex0, Vector3 quadVertex1, Vector3 quadVertex2, Vector3 quadVertex3)
+    {
+        bottomQuadVertices[0] = new Vector3(quadVertex0.x, quadVertex0.y, quadVertex0.z);
+        bottomQuadVertices[1] = new Vector3(quadVertex1.x, quadVertex1.y, quadVertex1.z);
+        bottomQuadVertices[2] = new Vector3(quadVertex2.x, quadVertex2.y, quadVertex2.z);
+        bottomQuadVertices[3] = new Vector3(quadVertex3.x, quadVertex3.y, quadVertex3.z);
+
+        // TEST
+        DisplayBottomQuad(bottomQuadVertices); // TODO: need to name the quad!!!
+    }
+    // store back quad data
+    public void storeBackQuadData(Vector3 quadVertex0, Vector3 quadVertex1, Vector3 quadVertex2, Vector3 quadVertex3)
+    {
+        backQuadVertices[0] = new Vector3(quadVertex0.x, quadVertex0.y, quadVertex0.z);
+        backQuadVertices[1] = new Vector3(quadVertex1.x, quadVertex1.y, quadVertex1.z);
+        backQuadVertices[2] = new Vector3(quadVertex2.x, quadVertex2.y, quadVertex2.z);
+        backQuadVertices[3] = new Vector3(quadVertex3.x, quadVertex3.y, quadVertex3.z);
+
+        // TEST
+        DisplayBackQuad(backQuadVertices); // TODO: need to name the quad!!!
+    }
+    // store left quad data
+    public void storeLeftQuadData(Vector3 quadVertex0, Vector3 quadVertex1, Vector3 quadVertex2, Vector3 quadVertex3)
+    {
+        leftQuadVertices[0] = new Vector3(quadVertex0.x, quadVertex0.y, quadVertex0.z);
+        leftQuadVertices[1] = new Vector3(quadVertex1.x, quadVertex1.y, quadVertex1.z);
+        leftQuadVertices[2] = new Vector3(quadVertex2.x, quadVertex2.y, quadVertex2.z);
+        leftQuadVertices[3] = new Vector3(quadVertex3.x, quadVertex3.y, quadVertex3.z);
+
+        // TEST
+        DisplayLeftQuad(leftQuadVertices); // TODO: need to name the quad!!!
+    }
+    // store right quad data
+    public void storeRightQuadData(Vector3 quadVertex0, Vector3 quadVertex1, Vector3 quadVertex2, Vector3 quadVertex3)
+    {
+        rightQuadVertices[0] = new Vector3(quadVertex0.x, quadVertex0.y, quadVertex0.z);
+        rightQuadVertices[1] = new Vector3(quadVertex1.x, quadVertex1.y, quadVertex1.z);
+        rightQuadVertices[2] = new Vector3(quadVertex2.x, quadVertex2.y, quadVertex2.z);
+        rightQuadVertices[3] = new Vector3(quadVertex3.x, quadVertex3.y, quadVertex3.z);
+
+        // TEST
+        DisplayRightQuad(rightQuadVertices); // TODO: need to name the quad!!!
+    }
+
+
+    public void DisplayFrontQuad(Vector3[] quadVertices)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, cube.transform.position);
+        newQuad.Draw(cube.name + "_Front_quad"); // TODO: need to name the quad!!!
+    }
+    public void DisplayTopQuad(Vector3[] quadVertices)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, quadPosition);
+        newQuad.Draw(cube.name + "_Top_quad"); // TODO: need to name the quad!!!
+    }
+    public void DisplayBottomQuad(Vector3[] quadVertices)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, quadPosition);
+        newQuad.Draw(cube.name + "_Bottom_quad"); // TODO: need to name the quad!!!
+    }
+    public void DisplayBackQuad(Vector3[] quadVertices)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, quadPosition);
+        newQuad.Draw(cube.name + "_Back_quad"); // TODO: need to name the quad!!!
+    }
+    public void DisplayLeftQuad(Vector3[] quadVertices)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, quadPosition);
+        newQuad.Draw(cube.name + "_Left_quad"); // TODO: need to name the quad!!!
+    }
+    public void DisplayRightQuad(Vector3[] quadVertices)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, quadPosition);
+        newQuad.Draw(cube.name + "_Right_quad"); // TODO: need to name the quad!!!
+    }
+
+
 
     // check for which ones are active/visible
     // set those up (visible, material, etc.)
 
     // set the others to not visible
 
+
+    public void LocateBottomQuad(Vector3[,,] planetVertices, int distanceBetweenVertices)
+    {
+        // quad starting at the coords passed into the cube constructor
+        if (planetVertices[currentX + distanceBetweenVertices, currentY, currentZ].x != -1 &&
+            planetVertices[currentX, currentY, currentZ + distanceBetweenVertices].x != -1 &&
+            planetVertices[currentX + distanceBetweenVertices, currentY, currentZ + distanceBetweenVertices].x != -1)
+        {
+            Debug.Log("Bottom quad located @ " + currentX + "," + currentY + "," + currentZ);
+        }
+    }
 
 
     /*
@@ -71,7 +239,7 @@ public class Cube
             planetVertices[currentX, currentY, currentZ + distanceBetweenVertices - 1].x != -1 &&
             planetVertices[currentX + distanceBetweenVertices - 1, currentY, currentZ + distanceBetweenVertices - 1].x != -1)
         {
-
+            Debug.Log("Bottom quad located @ " + currentX + "," + currentY + "," + currentZ);
             // BOTTOM SIDE QUAD
             if (currentY < planet.universeSize / 2) // in the bottom half of the planet
             {
@@ -88,10 +256,10 @@ public class Cube
                 Debug.Log("distanceBetweenVertices : " + distanceBetweenVertices);
 
                 Debug.Log("VERTICES 0 : " + planetVertices[currentX, currentY, currentZ]);
-                Debug.Log("VERTICES 1 : " + planetVertices[currentX + distanceBetweenVertices+2, currentY, currentZ]);
-                Debug.Log("VERTICES 2 : " + planetVertices[currentX, currentY, currentZ + distanceBetweenVertices + 2]);
-                Debug.Log("VERTICES 3 : " + planetVertices[currentX + distanceBetweenVertices + 2, currentY, currentZ + distanceBetweenVertices + 2]);
-                bottomQuad.Draw();
+                Debug.Log("VERTICES 1 : " + planetVertices[currentX + distanceBetweenVertices-1, currentY, currentZ]);
+                Debug.Log("VERTICES 2 : " + planetVertices[currentX, currentY, currentZ + distanceBetweenVertices - 1]);
+                Debug.Log("VERTICES 3 : " + planetVertices[currentX + distanceBetweenVertices-1, currentY, currentZ + distanceBetweenVertices - 1]);
+                bottomQuad.Draw("TODO");
 
     //            DisplayInitialCube(planetVertices[currentX, currentY, currentZ],
     //                           planetVertices[currentX + distanceBetweenVertices - 1, currentY, currentZ],

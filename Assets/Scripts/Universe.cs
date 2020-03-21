@@ -54,9 +54,11 @@ using UnityEngine;
 
 public class Universe : MonoBehaviour
 {
+    public static int universeSize = 25; // 25 x 25 x 25
+
     //  public static int universeSize = 1; // # of planets/worlds
     public static int worldSize = 1; // # of chunks in the world
-    public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 quads
+    public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 cubes
     public static Dictionary<string, Chunk> chunks;
 
     public static string BuildChunkName(Vector3 position)
@@ -68,9 +70,15 @@ public class Universe : MonoBehaviour
         //              (int)position.z;
     }
 
+    public static string BuildPlanetChunkName(Vector3 position)
+    {
+        return (int)position.x + "_" +   // leave this, as we may need to implement a cubish world, instead of the quad one we have
+                (int)position.y + "_" +
+                (int)position.z;
+    }
+
     void GenerateFlatWorld()
     {
-
         for (int chunkZIndex = 0; chunkZIndex < worldSize; chunkZIndex++)
         {
             for (int chunkXIndex = 0; chunkXIndex < worldSize; chunkXIndex++)
@@ -109,7 +117,7 @@ public class Universe : MonoBehaviour
                                             this.transform.position.z + (planetZPosition * 10));
         //     Vector3 planetPosition = new Vector3(planetXPosition, planetYPosition, planetZPosition);
 
-        PlanetGen planet = new PlanetGen(planetPosition);
+        Planet planet = new Planet(planetPosition);
         //    planet.GenerateVertices();
         // Display the planet
   //      planet.BuildPlanet();

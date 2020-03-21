@@ -21,6 +21,7 @@ using UnityEngine;
 public class PlanetGen
 {
     public int universeSize = 25; // 25 x 25 x 25
+    // must always be an odd number, or otherwise subdivision fails
     public int planetSize = 5; // 100 x 100 x 100 world
     // bottom left corner of cube
     const int X = 10;
@@ -131,8 +132,12 @@ public class PlanetGen
         // Now subdivide quads
 
 
+        Debug.Log("---===== SUBDIVISION STAGE =====---");
+        Debug.Log("         =================");
         Subdivide();
-     //   DrawQuads();
+        Debug.Log("---===== CUBE DRAWING STAGE =====---");
+        Debug.Log("         ******************");
+        DrawCubes();
 
         //    Debug.Log("Front **********************");
         // Front
@@ -315,15 +320,16 @@ public class PlanetGen
     /*
      * This controls the drawing of a row (along the X axis), based on the vertices held in planetVertices
      */
-    private void DrawRowOfQuads(int currentY, int currentZ)
+    private void DrawRowOfCubes(int currentY, int currentZ)
     {
         for (int currentX = X; currentX < planetSize + 10; currentX += distanceBetweenVertices)
         { // locate quads along the X avis
-          // IS THERE A VERTEX HERE?
+            Debug.Log("X is : " + currentX);
+            // IS THERE A VERTEX HERE?
             if (planetVertices[currentX, currentY, currentZ].x != -1)
             {
                 Debug.Log("Vertex found at: " + currentX + "," + currentY + "," + currentZ + "," + " " + planetVertices[currentX, currentY, currentZ]);
-                Debug.Log("Draw Cube @ " + currentX + "," + currentY + "," + currentZ);
+                Debug.Log("Create Cube @ " + currentX + "," + currentY + "," + currentZ);
                 CreateCube(currentX, currentY, currentZ); // currentY, currentZ, currentX will be the location in the 3D array planetData
 
                 //       LocateAndDrawQuads(distanceBetweenVertices, currentY, currentZ, currentX);
@@ -335,29 +341,25 @@ public class PlanetGen
     /*
      * This controls the drawing of one layer of a planet's quads, based on the vertices held in planetVertices
      */
-    private void DrawLayerOfQuads(int currentY)
+    private void DrawLayerOfCubes(int currentY)
     {
         for (int currentZ = Z; currentZ < planetSize + 10; currentZ += distanceBetweenVertices)
         {
-            DrawRowOfQuads(currentY, currentZ);
+            Debug.Log("Z is : " + currentZ);
+            DrawRowOfCubes(currentY, currentZ);
         }
     }
 
     /*
      * This controls the drawing of a planet's vertices, based on the vertices held in planetVertices
      */
-    public void DrawQuads()
+    public void DrawCubes()
     {
-        // locate quads
-        for (int i = 0; i < totalLayers; i++) // the maximum number of layers the planet is to have
+        // current X, current Y, current Z
+        for (int currentY = Y; currentY < planetSize + 10; currentY += distanceBetweenVertices) // process only existing vertices
         {
-            // subdivide the current faces
-            // increase currentLayerTotal to the new current total number of layers
-            // current X, current Y, current Z
-            for (int currentY = Y; currentY < planetSize + 10; currentY += distanceBetweenVertices) // process only existing vertices
-            {
-                DrawLayerOfQuads(currentY);
-            }
+            Debug.Log("Y is : " + currentY);
+            DrawLayerOfCubes(currentY);
         }
     }
 
@@ -399,7 +401,7 @@ public class PlanetGen
             // BOTTOM SIDE QUAD
             if (currentY < universeSize / 2) // in the bottom half of the planet
             {
-                Debug.Log("********* BOTTOM QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
+    //            Debug.Log("********* BOTTOM QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
                 subdivideQuad(planetVertices[currentX, currentY, currentZ],
                                planetVertices[currentX + distanceBetweenVertices - 1, currentY, currentZ],
                                planetVertices[currentX, currentY, currentZ + distanceBetweenVertices - 1],
@@ -414,14 +416,14 @@ public class PlanetGen
             }
             else // TOP SIDE QUAD
             {
-                Debug.Log("********* TOP QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
+    //            Debug.Log("********* TOP QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
                 subdivideQuad(planetVertices[currentX, currentY, currentZ],
                                 planetVertices[currentX + distanceBetweenVertices - 1, currentY, currentZ],
                                 planetVertices[currentX, currentY, currentZ + distanceBetweenVertices - 1],
                                 planetVertices[currentX + distanceBetweenVertices - 1, currentY, currentZ + distanceBetweenVertices - 1],
                                planetSize,
                                Face.Top);
-                Debug.Log("TOP SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
+    //            Debug.Log("TOP SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
             }
         }
 
@@ -438,25 +440,25 @@ public class PlanetGen
             // FRONT SIDE QUAD
             if (currentZ < universeSize / 2) // in the front half of the planet
             {
-                Debug.Log("********* FRONT QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
+        //        Debug.Log("********* FRONT QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
                 subdivideQuad(planetVertices[currentX, currentY, currentZ],
                                planetVertices[currentX, currentY + distanceBetweenVertices - 1, currentZ],
                                planetVertices[currentX + distanceBetweenVertices - 1, currentY, currentZ],
                                planetVertices[currentX + distanceBetweenVertices - 1, currentY + distanceBetweenVertices - 1, currentZ],
                                planetSize,
                                Face.Front);
-                Debug.Log("FRONT SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
+        //        Debug.Log("FRONT SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
             }
             else // BACK SIDE QUAD
             {
-                Debug.Log("********* BACK QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
+    //            Debug.Log("********* BACK QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
                 subdivideQuad(planetVertices[currentX, currentY, currentZ],
                                planetVertices[currentX + distanceBetweenVertices - 1, currentY, currentZ],
                                planetVertices[currentX, currentY + distanceBetweenVertices - 1, currentZ],
                                planetVertices[currentX + distanceBetweenVertices - 1, currentY + distanceBetweenVertices - 1, currentZ],
                                planetSize,
                                Face.Back);
-                Debug.Log("BACK SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
+        //        Debug.Log("BACK SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
             }
         }
 
@@ -473,25 +475,25 @@ public class PlanetGen
             // LEFT SIDE QUAD
             if (currentX < universeSize / 2) // in the left half of the planet
             {
-                Debug.Log("********* LEFT SIDE QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
+        //        Debug.Log("********* LEFT SIDE QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
                 subdivideQuad(planetVertices[currentX, currentY, currentZ],
                                planetVertices[currentX, currentY, currentZ + distanceBetweenVertices - 1],
                                planetVertices[currentX, currentY + distanceBetweenVertices - 1, currentZ],
                                planetVertices[currentX, currentY + distanceBetweenVertices - 1, currentZ + distanceBetweenVertices - 1],
                                planetSize,
                                Face.LeftSide);
-                Debug.Log("LEFT SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
+        //        Debug.Log("LEFT SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
             }
             else // RIGHT SIDE QUAD
             {
-                Debug.Log("********* RIGHT SIDE QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
+        //        Debug.Log("********* RIGHT SIDE QUAD:" + " " + currentX + "," + currentY + "," + currentZ);
                 subdivideQuad(planetVertices[currentX, currentY, currentZ],
                                planetVertices[currentX, currentY + distanceBetweenVertices - 1, currentZ],
                                planetVertices[currentX, currentY, currentZ + distanceBetweenVertices - 1],
                                planetVertices[currentX, currentY + distanceBetweenVertices - 1, currentZ + distanceBetweenVertices - 1],
                                planetSize,
                                Face.RightSide);
-                Debug.Log("RIGHT SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
+         //       Debug.Log("RIGHT SIDE QUAD subdivided: " + currentX + "," + currentY + "," + currentZ);
             }
         }
     }
@@ -520,7 +522,7 @@ public class PlanetGen
                       // IS THERE A VERTEX HERE?
                         if (planetVertices[currentX, currentY, currentZ].x != -1)
                         {
-                            Debug.Log("SUBIVIDE QUADS - Vertex found at: " + currentX + "," + currentY + "," + currentZ + "," + " " + planetVertices[currentX, currentY, currentZ]);
+    //                        Debug.Log("SUBIVIDE QUADS - Vertex found at: " + currentX + "," + currentY + "," + currentZ + "," + " " + planetVertices[currentX, currentY, currentZ]);
                             LocateAndSubdivideQuads(currentY, currentZ, currentX);
                             // can also have a locate and subdivide quads
                         }
@@ -563,7 +565,7 @@ public class PlanetGen
         else if (vectorEquationResult.z < planetCentre.z)
             pushOutVertex.z = vectorEquationResult.z - distance;
 
-        Debug.Log("QUAD CENTRE - Pushed out vertext: " + pushOutVertex);
+ //       Debug.Log("QUAD CENTRE - Pushed out vertext: " + pushOutVertex);
 
         return pushOutVertex;
     }
@@ -638,13 +640,13 @@ public class PlanetGen
         Vector3 verticalMidpoint;
         GetEdgeMidpoint(bottomLeft, topLeft, out verticalMidpoint);
 
-        Debug.Log("QUAD CENTRE - Vertical vertex: " + verticalMidpoint + " *** " + bottomLeft + " *** " + topLeft);
+  //      Debug.Log("QUAD CENTRE - Vertical vertex: " + verticalMidpoint + " *** " + bottomLeft + " *** " + topLeft);
 
         // HORIZONTAL edge
         Vector3 horizontalMidpoint;
         GetEdgeMidpoint(bottomLeft, bottomRight, out horizontalMidpoint);
 
-        Debug.Log("QUAD CENTRE - Horizontal vertex: " + horizontalMidpoint + " *** " + bottomLeft + " *** " + bottomRight);
+  //      Debug.Log("QUAD CENTRE - Horizontal vertex: " + horizontalMidpoint + " *** " + bottomLeft + " *** " + bottomRight);
 
         // Left and Right faces
         if (side == Face.LeftSide || side == Face.RightSide)
@@ -668,7 +670,7 @@ public class PlanetGen
             quadCentre.z = (verticalMidpoint.z > horizontalMidpoint.z) ? quadCentre.z = verticalMidpoint.z : quadCentre.z = horizontalMidpoint.z;
         }
 
-        Debug.Log("QUAD CENTRE pre push out: " + quadCentre);
+ //       Debug.Log("QUAD CENTRE pre push out: " + quadCentre);
 
         // VECTOR or PARAMETRIC EQUATION
         // https://www.youtube.com/watch?v=PyPp4QvQY3Q
@@ -749,7 +751,7 @@ public class PlanetGen
         GetTheCentreOfTheQuad(v0, v1, v2, side, out quadCentre);
 
         // output new vertex
-        Debug.Log("QUAD CENTRE - Pushed out vertext: " + quadCentre + " " + v0 + " " + v1);
+ //       Debug.Log("QUAD CENTRE - Pushed out vertext: " + quadCentre + " " + v0 + " " + v1);
 
         // store the new vertex
         planetVertices[(int)quadCentre.x, (int)quadCentre.y, (int)quadCentre.z] = new Vector3(quadCentre.x, quadCentre.y, quadCentre.z);
@@ -764,21 +766,21 @@ public class PlanetGen
         // SPLIT QUAD's EDGES
         Vector3 edgeCentre;
         //   bottom edge
-        Debug.Log("*** BOTTOM EDGE ***");
+ //       Debug.Log("*** BOTTOM EDGE ***");
         GetTheCentreOfTheEdge(v0, v2, out edgeCentre);
-        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v0 + " " + v2);
+ //       Debug.Log("Pushed out vertex: " + edgeCentre + " " + v0 + " " + v2);
         //   left side edge
-        Debug.Log("*** LEFT SIDE EDGE ***");
+ //       Debug.Log("*** LEFT SIDE EDGE ***");
         GetTheCentreOfTheEdge(v0, v1, out edgeCentre);
-        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v0 + " " + v1);
+ //       Debug.Log("Pushed out vertex: " + edgeCentre + " " + v0 + " " + v1);
         //   left side edge
-        Debug.Log("*** RIGHT SIDE  EDGE ***");
+  //      Debug.Log("*** RIGHT SIDE  EDGE ***");
         GetTheCentreOfTheEdge(v2, v3, out edgeCentre);
-        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v2 + " " + v3);
+ //       Debug.Log("Pushed out vertex: " + edgeCentre + " " + v2 + " " + v3);
         //   top edge
-        Debug.Log("*** TOP EDGE ***");
+ //       Debug.Log("*** TOP EDGE ***");
         GetTheCentreOfTheEdge(v1, v3, out edgeCentre);
-        Debug.Log("Pushed out vertex: " + edgeCentre + " " + v1 + " " + v3);
+ //       Debug.Log("Pushed out vertex: " + edgeCentre + " " + v1 + " " + v3);
     }
 
 
