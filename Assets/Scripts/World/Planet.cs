@@ -6,9 +6,9 @@ public class Planet
 {
     // must always be an odd number, or otherwise subdivision fails
     public int planetSize = 2; // number of chunks
-    public Vector3 planetCentre = new Vector3(1.5f, 1.5f, 1.5f);
-    public int planetRadius = 8; // diameter of 14
-    public int chunkSize = 3; // diameter -  size of chunk 4x4x4 cubes
+    public Vector3 planetCentre = new Vector3(10f, 10f, 10f);
+    public int planetRadius = 7; // diameter of 14
+    public int chunkSize = 10; // diameter -  size of chunk 4x4x4 cubes
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
 
     public static Dictionary<string, PlanetChunk> planetChunks;
@@ -47,24 +47,6 @@ public class Planet
 
         // build the planet
         GenerateWorld();
-    //    BuildThePlanet();
-
-
-
-        // create initial structure (cube)
-        //        generateInitialCubeStructure();
-
-        // store cube's quads
-
-
-        // subdive quads
-    //    subdivideQuads();
-
-        // push vertices out bt 1
-
-        // store quads
-
-        // display quads
     }
 
     // TODO: this might not be needed now
@@ -99,9 +81,7 @@ public class Planet
                                                         planet.transform.position.z + (chunkZIndex * chunkSize));
 
                     Debug.Log("Chunk position: " + chunkPosition);
-                    PlanetChunk c = new PlanetChunk(this, chunkXIndex, chunkYIndex, chunkZIndex, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
-              //      c.planetChunk.transform.parent = planet.transform;
-              //      Debug.Log("Chunk created: " + c.planetChunk.name);
+                    PlanetChunk c = new PlanetChunk(this, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
                     planetChunks.Add(c.planetChunk.name, c);
                 }
             }
@@ -118,189 +98,6 @@ public class Planet
         {
     //        chunk.Value.MakeTerrainLookReal();
         }
-
-    }
-
-
-
-    void BuildThePlanet()
-    {
-        for (int y = 0; y < Universe.universeSize - 1; y++)
-        {
-            for (int z = 0; z < Universe.universeSize - 1; z++)
-            {
-                for (int x = 0; x < Universe.universeSize - 1; x++)
-                {
-                    // generate cube - solid or space/air?
-                    GenerateCube(x, y, z);
-                }
-            }
-        }
-    }
-
-    private void GenerateCube(int X, int Y, int Z)
-    {
-        // Front quad
-        planetVertices[X, Y, Z] = new Vector3(X, Y, Z);
-        planetVertices[X, Y + 1, Z] = new Vector3(X, Y + 1, Z);
-        planetVertices[X + 1, Y, Z] = new Vector3(X + 1, Y, Z);
-        planetVertices[X + 1, Y + 1, Z] = new Vector3(X + 1, Y + 1, Z);
-
-        // Top quad
-        planetVertices[X, Y + 1, Z] = new Vector3(X, Y + 1, Z);
-        planetVertices[X, Y + 1, Z + 1] = new Vector3(X, Y + 1, Z + 1);
-        planetVertices[X + 1, Y + 1, Z] = new Vector3(X + 1, Y + 1, Z);
-        planetVertices[X + 1, Y + 1, Z + 1] = new Vector3(X + 1, Y + 1, Z + 1);
-
-        // Bottom quad
-        planetVertices[X + 1, Y, Z] = new Vector3(X + 1, Y, Z);
-        planetVertices[X + 1, Y, Z + 1] = new Vector3(X + 1, Y, Z + 1);
-        planetVertices[X, Y, Z] = new Vector3(X, Y, Z);
-        planetVertices[X, Y, Z + 1] = new Vector3(X, Y, Z + 1);
-
-        // Back quad
-        planetVertices[X + 1, Y, Z + 1] = new Vector3(X + 1, Y, Z + 1);
-        planetVertices[X + 1, Y + 1, Z + 1] = new Vector3(X + 1, Y + 1, Z + 1);
-        planetVertices[X, Y, Z + 1] = new Vector3(X, Y, Z + 1);
-        planetVertices[X, Y + 1, Z + 1] = new Vector3(X, Y + 1, Z + 1);
-
-        // Left quad
-        planetVertices[X, Y, Z + 1] = new Vector3(X, Y, Z + 1);
-        planetVertices[X, Y + 1, Z + 1] = new Vector3(X, Y + 1, Z + 1);
-        planetVertices[X, Y, Z] = new Vector3(X, Y, Z);
-        planetVertices[X, Y + 1, Z] = new Vector3(X, Y + 1, Z);
-
-        // Right quad
-        planetVertices[X + 1, Y, Z] = new Vector3(X + 1, Y, Z);
-        planetVertices[X + 1, Y + 1, Z] = new Vector3(X + 1, Y + 1, Z);
-        planetVertices[X + 1, Y, Z + 1] = new Vector3(X + 1, Y, Z + 1);
-        planetVertices[X + 1, Y + 1, Z + 1] = new Vector3(X + 1, Y + 1, Z + 1);
-
-        // STORE THE ABOVE AS THE FIRST CUBE
-
-        // create new cube
- //       planetData[X, Y, Z] = new Cube(planetVertices, X, Y, Z,
- //                               CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
- //                               CustomMaterials.rockQuad);
-        // store front quad
-        planetData[X, Y, Z].storeFrontQuadData(planetVertices[X, Y, Z],
-                                            planetVertices[X, Y + 1, Z],
-                                            planetVertices[X + 1, Y, Z],
-                                            planetVertices[X + 1, Y + 1, Z]);
-        // store top quad
-        planetData[X, Y, Z].storeTopQuadData(planetVertices[X, Y + 1, Z],
-                                            planetVertices[X, Y + 1, Z + 1],
-                                            planetVertices[X + 1, Y + 1, Z],
-                                            planetVertices[X + 1, Y + 1, Z + 1]);
-        // store bottom quad
-        planetData[X, Y, Z].storeBottomQuadData(planetVertices[X + 1, Y, Z],
-                                            planetVertices[X + 1, Y, Z + 1],
-                                            planetVertices[X, Y, Z],
-                                            planetVertices[X, Y, Z + 1]);
-        // store back quad
-        planetData[X, Y, Z].storeBackQuadData(planetVertices[X + 1, Y, Z + 1],
-                                            planetVertices[X + 1, Y + 1, Z + 1],
-                                            planetVertices[X, Y, Z + 1],
-                                            planetVertices[X, Y + 1, Z + 1]);
-        // store left quad
-        planetData[X, Y, Z].storeLeftQuadData(planetVertices[X, Y, Z + 1],
-                                            planetVertices[X, Y + 1, Z + 1],
-                                            planetVertices[X, Y, Z],
-                                            planetVertices[X, Y + 1, Z]);
-        // store right quad
-        planetData[X, Y, Z].storeRightQuadData(planetVertices[X + 1, Y, Z],
-                                            planetVertices[X + 1, Y + 1, Z],
-                                            planetVertices[X + 1, Y, Z + 1],
-                                            planetVertices[X + 1, Y + 1, Z + 1]);
-    }
-
-
-    /*
-     * The cube (1x1x1) is the base shape for generating the quad filled sphere/planet
-     */
-    private void generateInitialCubeStructure()
-    {
-        /*
-        // Front quad
-        planetVertices[X, Y, Z] = new Vector3(X, Y, Z);
-        planetVertices[X, Y + planetSize - 1, Z] = new Vector3(X, Y + planetSize - 1, Z);
-        planetVertices[X + planetSize - 1, Y, Z] = new Vector3(X + planetSize - 1, Y, Z);
-        planetVertices[X + planetSize - 1, Y + planetSize - 1, Z] = new Vector3(X + planetSize - 1, Y + planetSize - 1, Z);
-
-        // Top quad
-        planetVertices[X, Y + planetSize - 1, Z] = new Vector3(X, Y + planetSize - 1, Z);
-        planetVertices[X, Y + planetSize - 1, Z + planetSize - 1] = new Vector3(X, Y + planetSize - 1, Z + planetSize - 1);
-        planetVertices[X + planetSize - 1, Y + planetSize - 1, Z] = new Vector3(X + planetSize - 1, Y + planetSize - 1, Z);
-        planetVertices[X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1] = new Vector3(X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1);
-
-        // Bottom quad
-        planetVertices[X + planetSize - 1, Y, Z] = new Vector3(X + planetSize - 1, Y, Z);
-        planetVertices[X + planetSize - 1, Y, Z + planetSize - 1] = new Vector3(X + planetSize - 1, Y, Z + planetSize - 1);
-        planetVertices[X, Y, Z] = new Vector3(X, Y, Z);
-        planetVertices[X, Y, Z + planetSize - 1] = new Vector3(X, Y, Z + planetSize - 1);
-
-        // Back quad
-        planetVertices[X + planetSize - 1, Y, Z + planetSize - 1] = new Vector3(X + planetSize - 1, Y, Z + planetSize - 1);
-        planetVertices[X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1] = new Vector3(X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1);
-        planetVertices[X, Y, Z + planetSize - 1] = new Vector3(X, Y, Z + planetSize - 1);
-        planetVertices[X, Y + planetSize - 1, Z + planetSize - 1] = new Vector3(X, Y + planetSize - 1, Z + planetSize - 1);
-
-        // Left quad
-        planetVertices[X, Y, Z + planetSize - 1] = new Vector3(X, Y, Z + planetSize - 1);
-        planetVertices[X, Y + planetSize - 1, Z + planetSize - 1] = new Vector3(X, Y + planetSize - 1, Z + planetSize - 1);
-        planetVertices[X, Y, Z] = new Vector3(X, Y, Z);
-        planetVertices[X, Y + planetSize - 1, Z] = new Vector3(X, Y + planetSize - 1, Z);
-
-        // Right quad
-        planetVertices[X + planetSize - 1, Y, Z] = new Vector3(X + planetSize - 1, Y, Z);
-        planetVertices[X + planetSize - 1, Y + planetSize - 1, Z] = new Vector3(X + planetSize - 1, Y + planetSize - 1, Z);
-        planetVertices[X + planetSize - 1, Y, Z + planetSize - 1] = new Vector3(X + planetSize - 1, Y, Z + planetSize - 1);
-        planetVertices[X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1] = new Vector3(X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1);
-        
-        // STORE THE ABOVE AS THE FIRST CUBE
-
-        // create new cube
-        planetData[X, Y, Z] = new Cube(planetVertices, X, Y, Z,
-                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
-                                CustomMaterials.rockQuad);
-        // store front quad
-        planetData[X, Y, Z].storeFrontQuadData(planetVertices[X, Y, Z],
-                                            planetVertices[X, Y + planetSize - 1, Z],
-                                            planetVertices[X + planetSize - 1, Y, Z],
-                                            planetVertices[X + planetSize - 1, Y + planetSize - 1, Z]);
-        // store top quad
-        planetData[X, Y, Z].storeTopQuadData(planetVertices[X, Y + planetSize - 1, Z],
-                                            planetVertices[X, Y + planetSize - 1, Z + planetSize - 1],
-                                            planetVertices[X + planetSize - 1, Y + planetSize - 1, Z],
-                                            planetVertices[X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1]);
-        // store bottom quad
-        planetData[X, Y, Z].storeBottomQuadData(planetVertices[X + planetSize - 1, Y, Z],
-                                            planetVertices[X + planetSize - 1, Y, Z + planetSize - 1],
-                                            planetVertices[X, Y, Z],
-                                            planetVertices[X, Y, Z + planetSize - 1]);
-        // store back quad
-        planetData[X, Y, Z].storeBackQuadData(planetVertices[X + planetSize - 1, Y, Z + planetSize - 1],
-                                            planetVertices[X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1],
-                                            planetVertices[X, Y, Z + planetSize - 1],
-                                            planetVertices[X, Y + planetSize - 1, Z + planetSize - 1]);
-        // store left quad
-        planetData[X, Y, Z].storeLeftQuadData(planetVertices[X, Y, Z + planetSize - 1],
-                                            planetVertices[X, Y + planetSize - 1, Z + planetSize - 1],
-                                            planetVertices[X, Y, Z],
-                                            planetVertices[X, Y + planetSize - 1, Z]);
-        // store right quad
-        planetData[X, Y, Z].storeRightQuadData(planetVertices[X + planetSize - 1, Y, Z],
-                                            planetVertices[X + planetSize - 1, Y + planetSize - 1, Z],
-                                            planetVertices[X + planetSize - 1, Y, Z + planetSize - 1],
-                                            planetVertices[X + planetSize - 1, Y + planetSize - 1, Z + planetSize - 1]);
-
-        */
-    }
-
-    private void subdivideQuads()
-    {
-        // subdivide and push out all external surfaces (only external surfaces???)
-        // internal surface should be subdived only
 
     }
 
