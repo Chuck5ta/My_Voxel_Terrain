@@ -52,10 +52,17 @@ public class PlanetChunk
                                                         planetChunk.transform.position.y + y,
                                                         planetChunk.transform.position.z + z);
                     // is cube within planet's area
-                    if (WithinPlanet(cubePosition))
-                        GenerateCube(x, y, z, cubePosition); //TODO: need set this to solid
-    //                else
-    //                    GenerateCube(x, y, z, cubePosition); //TODO: need set this to air
+                    //       if (WithinPlanet(cubePosition))
+                    //           GenerateCube(x, y, z, cubePosition); //TODO: need set this to solid
+                    // create new cube
+                    Debug.Log(" CHUNK NAME : " + planetChunk.name);
+                    chunkData[x, y, z] = new Cube(chunkVertices, x, y, z,
+                                            CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                            CustomMaterials.rockQuad, cubePosition, planetChunk.name);
+
+        //            GenerateCube(x, y, z, cubePosition); //TODO: need set this to solid
+                                                         //                else
+                                                         //                    GenerateCube(x, y, z, cubePosition); //TODO: need set this to air
 
                 }
             }
@@ -83,7 +90,8 @@ public class PlanetChunk
         return false;
     }
 
-    private void GenerateCube(int X, int Y, int Z, Vector3 cubePosition)
+
+    private void GenerateCube2(int X, int Y, int Z, Vector3 cubePosition)
     {
         // Front quad
         chunkVertices[X, Y, Z] = new Vector3(chunkXIndex + X, chunkYIndex + Y, chunkZIndex + Z);

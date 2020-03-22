@@ -48,7 +48,15 @@ public class Cube
         this.currentZ = currentZ;
   //      cube.name = "Cube_" + currentX + "_" + currentY + "_" + currentZ; // actual loacation within the 3D game world as well as in the array
         cube.transform.position = cubeLocation;
+
+        GenerateFrontQuad();
+        GenerateTopQuad();
+        GenerateBottomQuad();
+        GenerateBackQuad();
+        GenerateLeftQuad();
+        GenerateRightQuad();
     }
+    /*
     public Cube(PlanetGen planet, Vector3[,,] planetVertices, int distanceBetweenVertices, int currentX, int currentY, int currentZ, Material material, int terrainType)
     {
         cube = new GameObject("Cube");
@@ -60,6 +68,169 @@ public class Cube
 
         LocateBottomQuad(planetVertices, distanceBetweenVertices);
     }
+    */
+    
+    void GenerateFrontQuad()
+    {
+        // Front quad
+        frontQuadVertices[0] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z);
+        frontQuadVertices[1] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z);
+        frontQuadVertices[2] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z);
+        frontQuadVertices[3] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z);
+
+        DisplayQuad(frontQuadVertices, "_Front_quad");
+    }
+    void GenerateTopQuad()
+    {
+        // Top quad
+        topQuadVertices[0] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z);
+        topQuadVertices[1] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z + 1);
+        topQuadVertices[2] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z);
+        topQuadVertices[3] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z + 1);
+
+        DisplayQuad(topQuadVertices, "_Top_quad");
+    }
+    void GenerateBottomQuad()
+    {
+        // Bottom quad
+        bottomQuadVertices[0] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z);
+        bottomQuadVertices[1] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z + 1);
+        bottomQuadVertices[2] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z);
+        bottomQuadVertices[3] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z + 1);
+
+        DisplayQuad(bottomQuadVertices, "_Bottom_quad");
+    }
+    void GenerateBackQuad()
+    {
+        // Back quad
+        backQuadVertices[0] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z + 1);
+        backQuadVertices[1] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z + 1);
+        backQuadVertices[2] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z + 1);
+        backQuadVertices[3] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z + 1);
+
+        DisplayQuad(backQuadVertices, "_Back_quad");
+    }
+    void GenerateLeftQuad()
+    {
+        // Left quad
+        leftQuadVertices[0] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z + 1);
+        leftQuadVertices[1] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z + 1);
+        leftQuadVertices[2] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z);
+        leftQuadVertices[3] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z);
+
+        DisplayQuad(leftQuadVertices, "_Left_quad");
+    }
+    void GenerateRightQuad()
+    {
+        // Right quad
+        rightQuadVertices[0] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z);
+        rightQuadVertices[1] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z);
+        rightQuadVertices[2] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z + 1);
+        rightQuadVertices[3] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z + 1);
+
+        DisplayQuad(rightQuadVertices, "_Right_quad");
+    }
+    public void DisplayQuad(Vector3[] quadVertices, string quadName)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, quadPosition);
+        newQuad.Draw(cube.name + quadName); // TODO: need to name the quad!!!
+    }
+
+
+
+    public void DisplayRightQuad(Vector3[] quadVertices)
+    {
+        Vector3 quadPosition = new Vector3(cube.transform.position.x,
+                                            cube.transform.position.y,
+                                            cube.transform.position.z);
+        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                CustomMaterials.rockQuad, quadPosition);
+        newQuad.Draw(cube.name + "_Right_quad"); // TODO: need to name the quad!!!
+    }
+
+
+
+    private void GenerateCube(int X, int Y, int Z, Vector3 cubePosition)
+    {
+        /*
+
+        // Front quad
+        chunkVertices[X, Y, Z] = new Vector3(chunkXIndex + X, chunkYIndex + Y, chunkZIndex + Z);
+        chunkVertices[X, Y + 1, Z] = new Vector3(chunkXIndex + X, chunkYIndex + 1 + Y, chunkZIndex + Z);
+        chunkVertices[X + 1, Y, Z] = new Vector3(chunkXIndex + 1 + X, chunkYIndex + Y, chunkZIndex + Z);
+        chunkVertices[X + 1, Y + 1, Z] = new Vector3(chunkXIndex + 1 + X, chunkYIndex + 1 + Y, chunkZIndex + Z);
+
+        // Top quad
+        chunkVertices[X, Y + 1, Z] = new Vector3(chunkXIndex, Y + 1, Z);
+        chunkVertices[X, Y + 1, Z + 1] = new Vector3(chunkXIndex, Y + 1, Z + 1);
+        chunkVertices[X + 1, Y + 1, Z] = new Vector3(chunkXIndex + 1, Y + 1, Z);
+        chunkVertices[X + 1, Y + 1, Z + 1] = new Vector3(chunkXIndex + 1, Y + 1, Z + 1);
+
+        // Bottom quad
+        chunkVertices[X + 1, Y, Z] = new Vector3(X + 1, Y, Z);
+        chunkVertices[X + 1, Y, Z + 1] = new Vector3(X + 1, Y, Z + 1);
+        chunkVertices[X, Y, Z] = new Vector3(X, Y, Z);
+        chunkVertices[X, Y, Z + 1] = new Vector3(X, Y, Z + 1);
+
+        // Back quad
+        chunkVertices[X + 1, Y, Z + 1] = new Vector3(X + 1, Y, Z + 1);
+        chunkVertices[X + 1, Y + 1, Z + 1] = new Vector3(X + 1, Y + 1, Z + 1);
+        chunkVertices[X, Y, Z + 1] = new Vector3(X, Y, Z + 1);
+        chunkVertices[X, Y + 1, Z + 1] = new Vector3(X, Y + 1, Z + 1);
+
+        // Left quad
+        chunkVertices[X, Y, Z + 1] = new Vector3(X, Y, Z + 1);
+        chunkVertices[X, Y + 1, Z + 1] = new Vector3(X, Y + 1, Z + 1);
+        chunkVertices[X, Y, Z] = new Vector3(X, Y, Z);
+        chunkVertices[X, Y + 1, Z] = new Vector3(X, Y + 1, Z);
+
+        // Right quad
+        chunkVertices[X + 1, Y, Z] = new Vector3(X + 1, Y, Z);
+        chunkVertices[X + 1, Y + 1, Z] = new Vector3(X + 1, Y + 1, Z);
+        chunkVertices[X + 1, Y, Z + 1] = new Vector3(X + 1, Y, Z + 1);
+        chunkVertices[X + 1, Y + 1, Z + 1] = new Vector3(X + 1, Y + 1, Z + 1);
+
+        // STORE THE ABOVE AS THE FIRST CUBE
+        // store front quad
+        chunkData[X, Y, Z].storeFrontQuadData(chunkVertices[X, Y, Z],
+                                            chunkVertices[X, Y + 1, Z],
+                                            chunkVertices[X + 1, Y, Z],
+                                            chunkVertices[X + 1, Y + 1, Z]);
+        // store top quad
+        chunkData[X, Y, Z].storeTopQuadData(chunkVertices[X, Y + 1, Z],
+                                            chunkVertices[X, Y + 1, Z + 1],
+                                            chunkVertices[X + 1, Y + 1, Z],
+                                            chunkVertices[X + 1, Y + 1, Z + 1]);
+        // store bottom quad
+        chunkData[X, Y, Z].storeBottomQuadData(chunkVertices[X + 1, Y, Z],
+                                            chunkVertices[X + 1, Y, Z + 1],
+                                            chunkVertices[X, Y, Z],
+                                            chunkVertices[X, Y, Z + 1]);
+        // store back quad
+        chunkData[X, Y, Z].storeBackQuadData(chunkVertices[X + 1, Y, Z + 1],
+                                            chunkVertices[X + 1, Y + 1, Z + 1],
+                                            chunkVertices[X, Y, Z + 1],
+                                            chunkVertices[X, Y + 1, Z + 1]);
+        // store left quad
+        chunkData[X, Y, Z].storeLeftQuadData(chunkVertices[X, Y, Z + 1],
+                                            chunkVertices[X, Y + 1, Z + 1],
+                                            chunkVertices[X, Y, Z],
+                                            chunkVertices[X, Y + 1, Z]);
+        // store right quad
+        chunkData[X, Y, Z].storeRightQuadData(chunkVertices[X + 1, Y, Z],
+                                            chunkVertices[X + 1, Y + 1, Z],
+                                            chunkVertices[X + 1, Y, Z + 1],
+                                            chunkVertices[X + 1, Y + 1, Z + 1]);
+
+        */
+    }
+
 
     // store front quad data
     public void storeFrontQuadData(Vector3 quadVertex0, Vector3 quadVertex1, Vector3 quadVertex2, Vector3 quadVertex3)
@@ -178,16 +349,6 @@ public class Cube
                                 CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
                                 CustomMaterials.rockQuad, quadPosition);
         newQuad.Draw(cube.name + "_Left_quad"); // TODO: need to name the quad!!!
-    }
-    public void DisplayRightQuad(Vector3[] quadVertices)
-    {
-        Vector3 quadPosition = new Vector3(cube.transform.position.x,
-                                            cube.transform.position.y,
-                                            cube.transform.position.z);
-        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
-                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
-                                CustomMaterials.rockQuad, quadPosition);
-        newQuad.Draw(cube.name + "_Right_quad"); // TODO: need to name the quad!!!
     }
 
 

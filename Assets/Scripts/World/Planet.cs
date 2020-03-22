@@ -5,10 +5,10 @@ using UnityEngine;
 public class Planet
 {
     // must always be an odd number, or otherwise subdivision fails
-    public int planetSize = 1; // number of chunks
-    public Vector3 planetCentre = new Vector3(10f, 10f, 10f);
-    public int planetRadius = 30; // diameter of 14
-    public int chunkSize = 20; // diameter -  size of chunk 4x4x4 cubes
+    public int planetSize = 2; // number of chunks
+    public Vector3 planetCentre = new Vector3(1.5f, 1.5f, 1.5f);
+    public int planetRadius = 8; // diameter of 14
+    public int chunkSize = 3; // diameter -  size of chunk 4x4x4 cubes
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
 
     public static Dictionary<string, PlanetChunk> planetChunks;

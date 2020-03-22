@@ -312,9 +312,9 @@ public class PlanetGen
         //     Cube newCube = new Cube(this, planetVertices, distanceBetweenVertices, currentX, currentY, currentZ,
         //                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
         //                             CustomMaterials.rockQuad);
-        planetData[currentX, currentY, currentZ] = new Cube(this, planetVertices, distanceBetweenVertices, currentX, currentY, currentZ,
-                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
-                                CustomMaterials.rockQuad);
+   //     planetData[currentX, currentY, currentZ] = new Cube(this, planetVertices, distanceBetweenVertices, currentX, currentY, currentZ,
+   //                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+   //                             CustomMaterials.rockQuad);
     }
 
     /*
