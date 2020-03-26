@@ -8,6 +8,7 @@ using UnityEngine;
 public class Cube
 {
     public GameObject cube;
+    public PlanetChunk parent;
 
     public Vector3 cubeLocation;
 
@@ -42,9 +43,11 @@ public class Cube
 
 
     // Cube contructor
-    public Cube(Vector3[,,] planetVertices, int currentX, int currentY, int currentZ, Material material, int terrainType, Vector3 cubePosition, string chunkName)
+    public Cube(Vector3[,,] planetVertices, int currentX, int currentY, int currentZ, Material material, 
+        int terrainType, Vector3 cubePosition, string chunkName, PlanetChunk parent)
     {
         cubeLocation = cubePosition;
+        this.parent = parent;
         cubePhysicalState = CubePhysicalState.SOLID; // default state
         cube = new GameObject(chunkName + "_" + "Cube_" + Universe.BuildPlanetChunkName(cubeLocation));
         this.currentX = currentX;
@@ -64,14 +67,34 @@ public class Cube
 
     public void DrawCube()
     {
-        // if neighboring cube is SPACE, then draw the quad
-        GenerateFrontQuad();
-        GenerateTopQuad();
-        GenerateBottomQuad();
-        GenerateBackQuad();
-        GenerateLeftQuad();
-        GenerateRightQuad();
+        // if neighbouring cube is SPACE, then draw the quad
+        if(!HasSolidNeighbour(currentX, currentY, currentZ-1))
+            GenerateFrontQuad();
+        if (!HasSolidNeighbour(currentX, currentY+1, currentZ))
+            GenerateTopQuad();
+        if (!HasSolidNeighbour(currentX, currentY-1, currentZ))
+            GenerateBottomQuad();
+        if (!HasSolidNeighbour(currentX, currentY, currentZ+1))
+            GenerateBackQuad();
+        if (!HasSolidNeighbour(currentX-1, currentY, currentZ))
+            GenerateLeftQuad();
+        if (!HasSolidNeighbour(currentX+1, currentY, currentZ))
+            GenerateRightQuad();
     }
+
+    public bool HasSolidNeighbour(int x, int y, int z)
+    {
+     //   Cube[,,] cube = parent.GetComponent<PlanetChunk>().chunkData;
+        try
+        {
+            if (parent.chunkData[x, y, z].GetPhysicalState() == CubePhysicalState.SOLID)
+                return true;
+        }
+        catch(System.IndexOutOfRangeException ex) { }
+
+        return false; // cube is air, water, or similar
+    }
+
 
     /*
     public Cube(PlanetGen planet, Vector3[,,] planetVertices, int distanceBetweenVertices, int currentX, int currentY, int currentZ, Material material, int terrainType)

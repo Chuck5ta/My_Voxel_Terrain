@@ -49,7 +49,7 @@ public class PlanetChunk
                     Debug.Log(" CHUNK NAME : " + planetChunk.name);
                     chunkData[x, y, z] = new Cube(chunkVertices, x, y, z,
                                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
-                                            CustomMaterials.rockQuad, cubePosition, planetChunk.name);
+                                            CustomMaterials.rockQuad, cubePosition, planetChunk.name, this);
                     // create new cube
                     if (IsOuterLayer(cubePosition))
                     {
