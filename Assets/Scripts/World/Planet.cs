@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Planet
@@ -69,6 +70,8 @@ public class Planet
 
     void GenerateWorld()
     {
+        Thread[] rowOfChunks = new Thread[Universe.chunkSize * Universe.chunkSize * Universe.chunkSize];
+
         for (int chunkYIndex = 0; chunkYIndex < planetSize; chunkYIndex++)
         {
             for (int chunkZIndex = 0; chunkZIndex < planetSize; chunkZIndex++)
@@ -81,6 +84,9 @@ public class Planet
                                                         planet.transform.position.z + (chunkZIndex * chunkSize));
 
                     Debug.Log("Chunk position: " + chunkPosition);
+
+                    // THREADING http://www.albahari.com/threading/
+
                     PlanetChunk c = new PlanetChunk(this, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
                     planetChunks.Add(c.planetChunk.name, c);
                 }

@@ -28,6 +28,9 @@ public class Cube
 
     public enum Side { Front, Back, Top, Bottom, Leftside, Rightside }
     
+    public enum CubePhysicalState { SOLID, SPACE }
+    private CubePhysicalState cubePhysicalState;
+
 
     public Material defaultMaterial = CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad); // default material is dirt
 
@@ -42,13 +45,26 @@ public class Cube
     public Cube(Vector3[,,] planetVertices, int currentX, int currentY, int currentZ, Material material, int terrainType, Vector3 cubePosition, string chunkName)
     {
         cubeLocation = cubePosition;
+        cubePhysicalState = CubePhysicalState.SOLID; // default state
         cube = new GameObject(chunkName + "_" + "Cube_" + Universe.BuildPlanetChunkName(cubeLocation));
         this.currentX = currentX;
         this.currentY = currentY;
         this.currentZ = currentZ;
-  //      cube.name = "Cube_" + currentX + "_" + currentY + "_" + currentZ; // actual loacation within the 3D game world as well as in the array
         cube.transform.position = cubeLocation;
+    }
 
+    public void SetPhysicalState(CubePhysicalState physicalState)
+    {
+        cubePhysicalState = physicalState;
+    }
+    public CubePhysicalState GetPhysicalState()
+    {
+        return cubePhysicalState;
+    }
+
+    public void DrawCube()
+    {
+        // if neighboring cube is SPACE, then draw the quad
         GenerateFrontQuad();
         GenerateTopQuad();
         GenerateBottomQuad();
@@ -56,6 +72,7 @@ public class Cube
         GenerateLeftQuad();
         GenerateRightQuad();
     }
+
     /*
     public Cube(PlanetGen planet, Vector3[,,] planetVertices, int distanceBetweenVertices, int currentX, int currentY, int currentZ, Material material, int terrainType)
     {
