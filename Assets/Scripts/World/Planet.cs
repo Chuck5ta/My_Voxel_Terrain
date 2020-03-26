@@ -83,7 +83,7 @@ public class Planet
                                                         planet.transform.position.y + (chunkYIndex * chunkSize),
                                                         planet.transform.position.z + (chunkZIndex * chunkSize));
 
-                    Debug.Log("Chunk position: " + chunkPosition);
+       //             Debug.Log("Chunk position: " + chunkPosition);
 
                     // THREADING http://www.albahari.com/threading/
 

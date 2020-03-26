@@ -8,7 +8,7 @@ using UnityEngine;
 public class Cube
 {
     public GameObject cube;
-    public PlanetChunk parent;
+    public PlanetChunk parentChunk;
 
     public Vector3 cubeLocation;
 
@@ -47,7 +47,7 @@ public class Cube
         int terrainType, Vector3 cubePosition, string chunkName, PlanetChunk parent)
     {
         cubeLocation = cubePosition;
-        this.parent = parent;
+        this.parentChunk = parent;
         cubePhysicalState = CubePhysicalState.SOLID; // default state
         cube = new GameObject(chunkName + "_" + "Cube_" + Universe.BuildPlanetChunkName(cubeLocation));
         this.currentX = currentX;
@@ -87,7 +87,7 @@ public class Cube
      //   Cube[,,] cube = parent.GetComponent<PlanetChunk>().chunkData;
         try
         {
-            if (parent.chunkData[x, y, z].GetPhysicalState() == CubePhysicalState.SOLID)
+            if (parentChunk.chunkData[x, y, z].GetPhysicalState() == CubePhysicalState.SOLID)
                 return true;
         }
         catch(System.IndexOutOfRangeException ex) { }

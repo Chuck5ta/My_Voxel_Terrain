@@ -25,7 +25,7 @@ public class Quad
     //   Chunk owner; // so that we can access the chunkData array
     public Cube owner; // so that we can access the chunkData array
     public PlanetGen planetOwner; // so that we can access the chunkData array
-    public GameObject parent; // The chunk
+    public Cube parentCube; // The chunk
                        //   Vector3 position; // location within the chunk
                        // this is used to give the quad a unique name
 
@@ -42,10 +42,10 @@ public class Quad
      * vertex0, vertex1, vertex2, vertex3 is the quad's location in the world 
      * 
      */
-    public Quad(Cube.Side locationInCube, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, Cube owner, Material material, int terrainType)
+    public Quad(Cube.Side locationInCube, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Cube parent, Cube owner, Material material, int terrainType)
     {
         this.owner = owner;
-        this.parent = parent;
+        this.parentCube = parent;
         position = locationInCube; // position within the chunk
         this.vertex0 = vertex0;
         this.vertex1 = vertex1;
