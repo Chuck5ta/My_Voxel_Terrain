@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class PlanetChunk
@@ -27,14 +28,14 @@ public class PlanetChunk
         BuildTheChunk();
     }
 
-    void BuildTheChunk()
+    /*
+     * Generate the planet, but do not draw the cubes at this point.
+     * We need generate first, so that we can see where quads need not be
+     * drawn, due to being next to a cube that is or will be drawn during
+     * the initial generation of the planet.
+     */
+    private void SetUpChunk()
     {
-        // holds quad info within the chunk
-        chunkData = new Cube[parentPlanet.chunkSize, parentPlanet.chunkSize, parentPlanet.chunkSize];
-        // holds vertices coordinates within the chunk
-        chunkVertices = new Vector3[parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1];
-
-        // SET THE CHUNK UP
         for (int y = 0; y < parentPlanet.chunkSize; y++)
         {
             for (int z = 0; z < parentPlanet.chunkSize; z++)
@@ -46,14 +47,14 @@ public class PlanetChunk
                                                         planetChunk.transform.position.y + y,
                                                         planetChunk.transform.position.z + z);
 
-           //         Debug.Log(" CHUNK NAME : " + planetChunk.name);
+                    //         Debug.Log(" CHUNK NAME : " + planetChunk.name);
                     chunkData[x, y, z] = new Cube(chunkVertices, x, y, z,
                                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
                                             CustomMaterials.rockQuad, cubePosition, planetChunk.name, this);
                     // create new cube
                     if (IsOuterLayer(cubePosition))
                     {
-              //          Debug.Log(x + "," + y + "," + z + " Cube is SOLID");
+                        //          Debug.Log(x + "," + y + "," + z + " Cube is SOLID");
                         chunkData[x, y, z].SetPhysicalState(Cube.CubePhysicalState.SOLID);
                     }
                     else // set cube to SPACE
@@ -62,6 +63,15 @@ public class PlanetChunk
                 }
             }
         }
+    }
+
+    /*
+     * Draw the cubes that are on the surface of the planet.
+     * Cubes within the planet will be drawn as and when digging/terrain 
+     * manipulation occurs.
+     */
+    private void DrawChunk()
+    {
         // DRAW THE CHUNK
         for (int y = 0; y < parentPlanet.chunkSize; y++)
         {
@@ -78,6 +88,21 @@ public class PlanetChunk
                 }
             }
         }
+    }
+
+    void BuildTheChunk()
+    {
+        // holds quad info within the chunk
+        chunkData = new Cube[parentPlanet.chunkSize, parentPlanet.chunkSize, parentPlanet.chunkSize];
+        // holds vertices coordinates within the chunk
+        chunkVertices = new Vector3[parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1];
+
+        // SET THE CHUNK UP
+        SetUpChunk();
+    //        Thread chunkThread;
+    //        chunkThread = new Thread(DrawChunk);
+    //        chunkThread.Start();
+        DrawChunk();
     }
 
     /*

@@ -1,15 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections.Generic; // Dictionary structure
 using System.Threading;
 using UnityEngine;
 
 public class Planet
 {
     // must always be an odd number, or otherwise subdivision fails
-    public int planetSize = 2; // number of chunks
-    public Vector3 planetCentre = new Vector3(10f, 10f, 10f);
-    public int planetRadius = 7; // diameter of 14
-    public int chunkSize = 10; // diameter -  size of chunk 4x4x4 cubes
+    public int planetSize = 10; // number of chunks
+    public Vector3 planetCentre = new Vector3(25f, 25f, 25f);
+    public int planetRadius = 22; // diameter of 14
+    public int chunkSize = 5; // diameter -  size of chunk 4x4x4 cubes
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
 
     public static Dictionary<string, PlanetChunk> planetChunks;
@@ -70,7 +70,8 @@ public class Planet
 
     void GenerateWorld()
     {
-        Thread[] rowOfChunks = new Thread[Universe.chunkSize * Universe.chunkSize * Universe.chunkSize];
+       // Thread[] rowOfChunks = new Thread[Universe.chunkSize * Universe.chunkSize * Universe.chunkSize];
+       // Thread chunkThread;
 
         for (int chunkYIndex = 0; chunkYIndex < planetSize; chunkYIndex++)
         {
@@ -82,13 +83,18 @@ public class Planet
                     Vector3 chunkPosition = new Vector3(planet.transform.position.x + (chunkXIndex * chunkSize),
                                                         planet.transform.position.y + (chunkYIndex * chunkSize),
                                                         planet.transform.position.z + (chunkZIndex * chunkSize));
-
-       //             Debug.Log("Chunk position: " + chunkPosition);
+                    GenerateChunk(chunkPosition);
+                    //             Debug.Log("Chunk position: " + chunkPosition);
 
                     // THREADING http://www.albahari.com/threading/
 
                     PlanetChunk c = new PlanetChunk(this, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
-                    planetChunks.Add(c.planetChunk.name, c);
+
+                    //           t2 = new Thread(() => Console.WriteLine(text));
+                    Debug.Log("Generating chunk @ " + chunkPosition);
+        //            chunkThread = new Thread(() => GenerateChunk(chunkPosition));
+        //            chunkThread.Start();
+        //            chunkThread.IsBackground = true;
                 }
             }
         }
@@ -105,6 +111,13 @@ public class Planet
     //        chunk.Value.MakeTerrainLookReal();
         }
 
+    }
+
+    private void GenerateChunk(Vector3 chunkPosition)
+    {
+        PlanetChunk c = new PlanetChunk(this, chunkPosition);
+
+        planetChunks.Add(c.planetChunk.name, c);
     }
 
     private void pushVericesOut()
