@@ -109,8 +109,8 @@ public class Cube
         LocateBottomQuad(planetVertices, distanceBetweenVertices);
     }
     */
-    
-    void GenerateFrontQuad()
+
+    public void GenerateFrontQuad()
     {
         // Front quad
         frontQuadVertices[0] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z);
@@ -118,7 +118,7 @@ public class Cube
         frontQuadVertices[2] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z);
         frontQuadVertices[3] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z);
 
-        DisplayQuad(frontQuadVertices, "_Front_quad");
+        DisplayQuad(frontQuadVertices, "_Front_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad));
     }
     void GenerateTopQuad()
     {
@@ -128,7 +128,7 @@ public class Cube
         topQuadVertices[2] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z);
         topQuadVertices[3] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z + 1);
 
-        DisplayQuad(topQuadVertices, "_Top_quad");
+        DisplayQuad(topQuadVertices, "_Top_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.grassQuad));
     }
     void GenerateBottomQuad()
     {
@@ -138,7 +138,7 @@ public class Cube
         bottomQuadVertices[2] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z);
         bottomQuadVertices[3] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z + 1);
 
-        DisplayQuad(bottomQuadVertices, "_Bottom_quad");
+        DisplayQuad(bottomQuadVertices, "_Bottom_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad));
     }
     void GenerateBackQuad()
     {
@@ -148,7 +148,7 @@ public class Cube
         backQuadVertices[2] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z + 1);
         backQuadVertices[3] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z + 1);
 
-        DisplayQuad(backQuadVertices, "_Back_quad");
+        DisplayQuad(backQuadVertices, "_Back_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad));
     }
     void GenerateLeftQuad()
     {
@@ -158,7 +158,7 @@ public class Cube
         leftQuadVertices[2] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z);
         leftQuadVertices[3] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z);
 
-        DisplayQuad(leftQuadVertices, "_Left_quad");
+        DisplayQuad(leftQuadVertices, "_Left_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad));
     }
     void GenerateRightQuad()
     {
@@ -168,15 +168,15 @@ public class Cube
         rightQuadVertices[2] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z + 1);
         rightQuadVertices[3] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z + 1);
 
-        DisplayQuad(rightQuadVertices, "_Right_quad");
+        DisplayQuad(rightQuadVertices, "_Right_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad));
     }
-    public void DisplayQuad(Vector3[] quadVertices, string quadName)
+    public void DisplayQuad(Vector3[] quadVertices, string quadName, Material material)
     {
         Vector3 quadPosition = new Vector3(cube.transform.position.x,
                                             cube.transform.position.y,
                                             cube.transform.position.z);
         Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
-                                CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                material,
                                 CustomMaterials.rockQuad, quadPosition);
         newQuad.Draw(cube.name + quadName); // TODO: need to name the quad!!!
     }
