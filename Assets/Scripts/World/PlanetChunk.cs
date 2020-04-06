@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
+﻿//using System.Collections;
+//using System.Collections.Generic;
+//using System.Threading;
 using UnityEngine;
 
 public class PlanetChunk
@@ -34,7 +34,7 @@ public class PlanetChunk
      * drawn, due to being next to a cube that is or will be drawn during
      * the initial generation of the planet.
      */
-    private void SetUpChunk()
+    public void BuildTheChunk()
     {
         for (int y = 0; y < parentPlanet.chunkSize; y++)
         {
@@ -71,7 +71,7 @@ public class PlanetChunk
      * This is run after the first time the world is built, when we need to
      * initialise the cubes again - e.g. when digging
      */
-    public void ReSetUpChunk()
+    public void ReBuildTheChunk()
     {
         for (int y = 0; y < parentPlanet.chunkSize; y++)
         {
@@ -123,20 +123,6 @@ public class PlanetChunk
         CombineQuads();
     }
 
-    public void BuildTheChunk()
-    {
-        // holds quad info within the chunk
-    //    chunkData = new Cube[parentPlanet.chunkSize, parentPlanet.chunkSize, parentPlanet.chunkSize];
-        // holds vertices coordinates within the chunk
-    //    chunkVertices = new Vector3[parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1];
-
-        // SET THE CHUNK UP
-        SetUpChunk();
-    //        Thread chunkThread;
-    //        chunkThread = new Thread(DrawChunk);
-    //        chunkThread.Start();
-    }
-
     /*
      * Tests to see if the cube is part of the outer layer of the planet. If so
      * then we want to have it visible.
@@ -155,6 +141,7 @@ public class PlanetChunk
     }
 
     /*
+     * TODO: Might not need this anymore
      * Tests to see if the current cube will spawn within the planet
      * If not, then it must not be generated/displayed (or do we set it to space/air?)
      */
@@ -203,42 +190,6 @@ public class PlanetChunk
         {
             Object.Destroy(quad.gameObject);
         }
-    }
-
-
-
-    void CombineQuads(Cube cube)
-    {
-        // combine all children meshes
-        MeshFilter[] meshFilters = cube.cube.GetComponentsInChildren<MeshFilter>();
-        Debug.Log("Meshfilters : " + meshFilters.Length);
-
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-
-        int i = 0;
-        // Total quads = meshFilters.Length
-        while (i < meshFilters.Length)
-        {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-
-            i++;
-        }
-
-        MeshFilter mf = (MeshFilter)cube.cube.gameObject.AddComponent(typeof(MeshFilter));
-        mf.GetComponent<MeshFilter>().mesh = new Mesh();
-        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
-
-        //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        MeshRenderer renderer = cube.cube.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        renderer.material = CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad); 
-        MeshCollider boxCollider2 = cube.cube.AddComponent<MeshCollider>();
-
-        // Delete all children (quad meshes)
-        foreach (Transform quad in cube.cube.transform)
-        {
-            Object.Destroy(quad.gameObject);
-        } 
     }
 
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BlockInteraction : MonoBehaviour
@@ -39,17 +38,11 @@ public class BlockInteraction : MonoBehaviour
 
                 Debug.Log("X Y Z : " + x + "," + y + "," + z);
 
-                //
-                // TODO: THIS WILL NOT WORK!!!
-                //
-
-           //     Debug.Log("TOTAL CHUNKS : " + Universe.planet.planetChunks.Count);
                 foreach (KeyValuePair<string, PlanetChunk> c in Universe.planet.planetChunks)
                 {
                     Debug.Log("Planet chunk is : " + c.Key);
                 }
-       //         Universe.planet.planetChunks.
-                PlanetChunk chunk; // get the chunk, then get the cube
+                PlanetChunk chunk; //retrieve the chunk
                 Debug.Log("Hit object's name : " + hit.collider.gameObject.name);
                 if (Universe.planet.planetChunks.TryGetValue(hit.collider.gameObject.name, out chunk)) //TODO: ?????????????????
                 {
@@ -58,8 +51,8 @@ public class BlockInteraction : MonoBehaviour
                     DestroyImmediate(chunk.planetChunk.GetComponent<MeshRenderer>());
                     DestroyImmediate(chunk.planetChunk.GetComponent<Collider>());
                     // TODO: NEED TO KEEP THE CHANGED STATE!!!!
-                    chunk.ReSetUpChunk();
-                    chunk.CubeIsSolid[x, y, z] = false;
+                    chunk.ReBuildTheChunk();
+                    chunk.CubeIsSolid[x, y, z] = false; // stop the cube from being drawn
                     chunk.DrawChunk();
                 }
                 else

@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿//using System.Collections;
 using System.Collections.Generic; // Dictionary structure
-using System.Threading;
+//using System.Threading;
 using UnityEngine;
 
 public class Planet
@@ -27,7 +27,6 @@ public class Planet
     //    public int Y = 10;
     //    public int Z = 10;
 
-    public Vector3[,,] planetVertices;
     public Cube[,,] planetData; // 3D array to hold information on all of the cubes and their quads in the planet
     public GameObject planet;
 
@@ -44,35 +43,12 @@ public class Planet
     public Planet(Vector3 planetPosition)
     {
         this.planetPosition = planetPosition;
-        planetData = new Cube[Universe.universeSize, Universe.universeSize, Universe.universeSize];
-        planetVertices = new Vector3[Universe.universeSize, Universe.universeSize, Universe.universeSize];
-        planet = new GameObject("Planet_" + Universe.BuildPlanetChunkName(planetPosition));
+        planetData = new Cube[Universe.universeSize, Universe.universeSize, Universe.universeSize];planet = new GameObject("Planet_" + Universe.BuildPlanetChunkName(planetPosition));
         
         planetChunks = new Dictionary<string, PlanetChunk>();
 
-        // initialise planetVertices ??
-        initialiseVerticesArray();
-
         // build the planet
         GenerateWorld();
-    }
-
-    // TODO: this might not be needed now
-    private void initialiseVerticesArray()
-    {
-        // initial planetVertices
-        for (int i = 0; i < Universe.universeSize; i++)
-        {
-            for (int k = 0; k < Universe.universeSize; k++)
-            {
-                for (int l = 0; l < Universe.universeSize; l++)
-                {
-                    planetVertices[i, k, l].x = -1;
-                    planetVertices[i, k, l].y = -1;
-                    planetVertices[i, k, l].z = -1;
-                }
-            }
-        }
     }
 
     void GenerateWorld()
@@ -190,8 +166,6 @@ public class Planet
             pushOutVertex.z = vectorEquationResult.z + distance;
         else if (vectorEquationResult.z < planetCentre.z)
             pushOutVertex.z = vectorEquationResult.z - distance;
-
-        //       Debug.Log("QUAD CENTRE - Pushed out vertext: " + pushOutVertex);
 
         return pushOutVertex;
     }

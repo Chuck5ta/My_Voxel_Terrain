@@ -9,9 +9,9 @@
  * 
  * 
  */
-
+//using System.Collections;
+//using System.Collections.Generic;
 using UnityEngine;
-
 
 public class Quad
 {
@@ -32,16 +32,15 @@ public class Quad
     public GameObject quad;
     public GameObject parent;
     public Cube owner;
-
-
-
+       
     public Vector3 vertex0, vertex1, vertex2, vertex3;
 
     // grass 0, dirt 1, sand 2, rock 4 - bitflags and bitwise operations ?????
     public int terrainType = 0; //Texturing.grassQuad; // default as grass terrain
 
     /* 
-     * Quad constructor
+     * Quad constructor - 
+     * This constructor is used in the cube version of the terrain generator
      * position is the location within the chunk
      * parent is the chunk
      * material is the material (texture)
@@ -61,6 +60,18 @@ public class Quad
         quadMaterial = material;
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
         this.quadLocation = quadPosition;
+    }
+
+    public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3,
+        Material material, int terrainType, Vector3 quadPosition)
+    {
+        this.quadLocation = quadPosition;
+        this.vertex0 = vertex0;
+        this.vertex1 = vertex1;
+        this.vertex2 = vertex2;
+        this.vertex3 = vertex3;
+        quadMaterial = material;
+        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
     }
 
     /*    public Quad(Vector3 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, PlanetGen owner, Material material, int terrainType)
@@ -97,18 +108,6 @@ public class Quad
     }
     */
 
-
-    public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, 
-        Material material, int terrainType, Vector3 quadPosition)
-    {
-        this.quadLocation = quadPosition;
-        this.vertex0 = vertex0;
-        this.vertex1 = vertex1;
-        this.vertex2 = vertex2;
-        this.vertex3 = vertex3;
-        quadMaterial = material;
-        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
-    }
 
     public void CreateQuad(string quadName)
     {

@@ -1,8 +1,8 @@
 ﻿/*
  * The world is made up of cubes, although technically not cubes or even cuboids as not all angles are necessarily right angles. 
  */
-using System.Collections;
-using System.Collections.Generic;
+//using System.Collections;
+//using System.Collections.Generic;
 using UnityEngine;
 
 public class Cube
@@ -35,14 +35,11 @@ public class Cube
     public enum CubePhysicalState { SOLID, SPACE }
     private CubePhysicalState cubePhysicalState;
 
-
     public Material defaultMaterial = CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad); // default material is dirt
 
     public PlanetGen planet;
 
     public int currentX, currentY, currentZ;
-
-    //    public Quad[,,] quadData;
 
 
     // Cube contructor
@@ -61,18 +58,6 @@ public class Cube
         this.currentZ = currentZ;
     //    cube.transform.position = cubeLocation;
     }
- /*   public Cube(Vector3[,,] planetVertices, int currentX, int currentY, int currentZ, Material material,
-        int terrainType, Vector3 cubePosition, string chunkName, PlanetChunk parent)
-    {
-        cubeLocation = cubePosition;
-        this.parentChunk = parent;
-        cubePhysicalState = CubePhysicalState.SOLID; // default state
-        cube = new GameObject(chunkName + "_" + "Cube_" + Universe.BuildPlanetChunkName(cubeLocation));
-        this.currentX = currentX;
-        this.currentY = currentY;
-        this.currentZ = currentZ;
-        cube.transform.position = cubeLocation;
-    } */
 
     public void SetPhysicalState(CubePhysicalState physicalState)
     {
@@ -115,21 +100,6 @@ public class Cube
 
         return false; // cube is air, water, or similar
     }
-
-
-    /*
-    public Cube(PlanetGen planet, Vector3[,,] planetVertices, int distanceBetweenVertices, int currentX, int currentY, int currentZ, Material material, int terrainType)
-    {
-        cube = new GameObject("Cube");
-        this.planet = planet;
-        this.currentX = currentX;
-        this.currentY = currentY;
-        this.currentZ = currentZ;
-        cube.name = "Cube_" + currentX + "_" + currentY + "_" + currentZ; // actual loacation within the 3D game world as well as in the array
-
-        LocateBottomQuad(planetVertices, distanceBetweenVertices);
-    }
-    */
 
     public void GenerateFrontQuad()
     {
@@ -201,63 +171,5 @@ public class Cube
                                 material, CustomMaterials.rockQuad, quadPosition);
         newQuad.Draw(cube.name + quadName); // TODO: need to name the quad!!!
     }
-
-    // Combine all the quads in the chunk
-    void CombineQuads()
-    {
-        // combine all children meshes
-        MeshFilter[] meshFilters = cube.GetComponentsInChildren<MeshFilter>();
-        Debug.Log("Meshfilters : " + meshFilters.Length);
-
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-
-        int i = 0;
-        // Total quads = meshFilters.Length
-        while (i < meshFilters.Length)
-        {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-  //          meshFilters[i].gameObject.SetActive(false);
-
-            i++;
-        }
-
-        MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
-        mf.GetComponent<MeshFilter>().mesh = new Mesh();
-     // TODO: This is causing the the repositioning of the cubes to the wrong location!!!!!
-     // it's adding the 2 meshes together!!!
-        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine, true, true, false);
-        //      mf.gameObject.SetActive(true);
-
-        //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-
-
-        MeshRenderer renderer = cube.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        renderer.material = cubeMaterial;
-        /*
-        MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
-        mf.GetComponent<MeshFilter>().mesh = new Mesh();
-        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
-        mf.gameObject.SetActive(true);
-        
-        // Create a new mesh on the parent object
-    //    MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
-    //    mf.mesh = new Mesh();
-
-    //    mf.mesh.CombineMeshes(combine);
-
-        //4. Create a renderer for the parent
-        MeshRenderer renderer = mf.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        renderer.material = cubeMaterial;
-
-    */
-
-        // Delete all children (quad meshes)
-        //    foreach (Transform quad in cube.transform)
-        //    {
-        //        Object.Destroy(quad.gameObject);
-        //    } 
-    }
-
 
 }
