@@ -17,17 +17,23 @@ public class Quad
 {
     private Material quadMaterial;
 
-    public GameObject quad;
     public Vector3 quadLocation;
 
     public Cube.Side position;
 
     //   Chunk owner; // so that we can access the chunkData array
-    public Cube owner; // so that we can access the chunkData array
+//    public Cube owner; // so that we can access the chunkData array
     public PlanetGen planetOwner; // so that we can access the chunkData array
     public Cube parentCube; // The chunk
-                       //   Vector3 position; // location within the chunk
-                       // this is used to give the quad a unique name
+                            //   Vector3 position; // location within the chunk
+                            // this is used to give the quad a unique name
+
+
+    public GameObject quad;
+    public GameObject parent;
+    public Cube owner;
+
+
 
     public Vector3 vertex0, vertex1, vertex2, vertex3;
 
@@ -42,17 +48,19 @@ public class Quad
      * vertex0, vertex1, vertex2, vertex3 is the quad's location in the world 
      * 
      */
-    public Quad(Cube.Side locationInCube, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Cube parent, Cube owner, Material material, int terrainType)
+    public Quad(GameObject parent, Cube owner,
+        Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3,         
+        Material material, int terrainType, Vector3 quadPosition)
     {
+        this.parent = parent;
         this.owner = owner;
-        this.parentCube = parent;
-        position = locationInCube; // position within the chunk
         this.vertex0 = vertex0;
         this.vertex1 = vertex1;
         this.vertex2 = vertex2;
         this.vertex3 = vertex3;
         quadMaterial = material;
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
+        this.quadLocation = quadPosition;
     }
 
     /*    public Quad(Vector3 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, PlanetGen owner, Material material, int terrainType)
@@ -90,7 +98,8 @@ public class Quad
     */
 
 
-    public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Material material, int terrainType, Vector3 quadPosition)
+    public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, 
+        Material material, int terrainType, Vector3 quadPosition)
     {
         this.quadLocation = quadPosition;
         this.vertex0 = vertex0;
@@ -136,11 +145,12 @@ public class Quad
         //      quad.name = "Quad_" + position.x + "_" + position.y + "_" + position.z;
         quad.name = quadName;
     //    quad.transform.position = quadLocation;
-        //    quad.transform.position = position; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
-        //    quad.transform.parent = this.parent.transform;
+    //    quad.transform.position = position; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
+        quad.transform.parent = parent.transform; // make the quad a child of the cube
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
         MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        MeshCollider boxCollider2 = quad.AddComponent<MeshCollider>();
         renderer.material = quadMaterial;
     }
 

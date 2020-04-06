@@ -8,9 +8,12 @@ using UnityEngine;
 public class Cube
 {
     public GameObject cube;
-    public PlanetChunk parentChunk;
+    public GameObject parent;
+    public PlanetChunk owner;
 
     public Vector3 cubeLocation;
+
+    private Material cubeMaterial = CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
 
     public Vector3[] frontQuadVertices = new Vector3[4];
     public Vector3[] backQuadVertices = new Vector3[4];
@@ -43,7 +46,22 @@ public class Cube
 
 
     // Cube contructor
-    public Cube(Vector3[,,] planetVertices, int currentX, int currentY, int currentZ, Material material, 
+    public Cube(GameObject parent, PlanetChunk owner,
+        int currentX, int currentY, int currentZ, 
+        Material material, int terrainType, 
+        Vector3 cubePosition, string chunkName)
+    {
+        cubeLocation = cubePosition;
+        this.parent = parent;
+        this.owner = owner;
+        cubePhysicalState = CubePhysicalState.SOLID; // default state
+        cube = new GameObject(chunkName + "_" + "Cube_" + Universe.BuildPlanetChunkName(cubeLocation));
+        this.currentX = currentX;
+        this.currentY = currentY;
+        this.currentZ = currentZ;
+    //    cube.transform.position = cubeLocation;
+    }
+ /*   public Cube(Vector3[,,] planetVertices, int currentX, int currentY, int currentZ, Material material,
         int terrainType, Vector3 cubePosition, string chunkName, PlanetChunk parent)
     {
         cubeLocation = cubePosition;
@@ -54,7 +72,7 @@ public class Cube
         this.currentY = currentY;
         this.currentZ = currentZ;
         cube.transform.position = cubeLocation;
-    }
+    } */
 
     public void SetPhysicalState(CubePhysicalState physicalState)
     {
@@ -80,6 +98,9 @@ public class Cube
             GenerateLeftQuad();
         if (!HasSolidNeighbour(currentX+1, currentY, currentZ))
             GenerateRightQuad();
+
+        cube.transform.parent = parent.transform; // make the cube a child of the chunk
+        //    CombineQuads();
     }
 
     public bool HasSolidNeighbour(int x, int y, int z)
@@ -87,7 +108,7 @@ public class Cube
      //   Cube[,,] cube = parent.GetComponent<PlanetChunk>().chunkData;
         try
         {
-            if (parentChunk.chunkData[x, y, z].GetPhysicalState() == CubePhysicalState.SOLID)
+            if (owner.CubeIsSolid[x, y, z])
                 return true;
         }
         catch(System.IndexOutOfRangeException ex) { }
@@ -118,7 +139,7 @@ public class Cube
         frontQuadVertices[2] = new Vector3(cubeLocation.x + 1, cubeLocation.y, cubeLocation.z);
         frontQuadVertices[3] = new Vector3(cubeLocation.x + 1, cubeLocation.y + 1, cubeLocation.z);
 
-        DisplayQuad(frontQuadVertices, "_Front_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad));
+        DisplayQuad(frontQuadVertices, "_Front_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.sandQuad));
     }
     void GenerateTopQuad()
     {
@@ -148,7 +169,7 @@ public class Cube
         backQuadVertices[2] = new Vector3(cubeLocation.x, cubeLocation.y, cubeLocation.z + 1);
         backQuadVertices[3] = new Vector3(cubeLocation.x, cubeLocation.y + 1, cubeLocation.z + 1);
 
-        DisplayQuad(backQuadVertices, "_Back_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad));
+        DisplayQuad(backQuadVertices, "_Back_quad", CustomMaterials.RetrieveMaterial(CustomMaterials.sandQuad));
     }
     void GenerateLeftQuad()
     {
@@ -175,10 +196,67 @@ public class Cube
         Vector3 quadPosition = new Vector3(cube.transform.position.x,
                                             cube.transform.position.y,
                                             cube.transform.position.z);
-        Quad newQuad = new Quad(quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
-                                material,
-                                CustomMaterials.rockQuad, quadPosition);
+        Quad newQuad = new Quad(cube.gameObject, this,
+                                quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+                                material, CustomMaterials.rockQuad, quadPosition);
         newQuad.Draw(cube.name + quadName); // TODO: need to name the quad!!!
+    }
+
+    // Combine all the quads in the chunk
+    void CombineQuads()
+    {
+        // combine all children meshes
+        MeshFilter[] meshFilters = cube.GetComponentsInChildren<MeshFilter>();
+        Debug.Log("Meshfilters : " + meshFilters.Length);
+
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        int i = 0;
+        // Total quads = meshFilters.Length
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+  //          meshFilters[i].gameObject.SetActive(false);
+
+            i++;
+        }
+
+        MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
+        mf.GetComponent<MeshFilter>().mesh = new Mesh();
+     // TODO: This is causing the the repositioning of the cubes to the wrong location!!!!!
+     // it's adding the 2 meshes together!!!
+        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine, true, true, false);
+        //      mf.gameObject.SetActive(true);
+
+        //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+
+
+        MeshRenderer renderer = cube.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        renderer.material = cubeMaterial;
+        /*
+        MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
+        mf.GetComponent<MeshFilter>().mesh = new Mesh();
+        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        mf.gameObject.SetActive(true);
+        
+        // Create a new mesh on the parent object
+    //    MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
+    //    mf.mesh = new Mesh();
+
+    //    mf.mesh.CombineMeshes(combine);
+
+        //4. Create a renderer for the parent
+        MeshRenderer renderer = mf.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        renderer.material = cubeMaterial;
+
+    */
+
+        // Delete all children (quad meshes)
+        //    foreach (Transform quad in cube.transform)
+        //    {
+        //        Object.Destroy(quad.gameObject);
+        //    } 
     }
 
 

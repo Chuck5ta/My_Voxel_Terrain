@@ -5,13 +5,12 @@ using UnityEngine;
 
 public class PlanetChunk
 {
-    public Cube[,,] chunkData; // 2D array to hold information on all of the quads in the chunk
-                              // I may have to build the Universe in blocks, if this quad attempt does not work out,
-                              // then chunkData will become a 3D array
-    public Vector3[,,] chunkVertices; // 2D array to hold all the coordinates of the vertices that make up the terrain in the chunk
+    public Cube[,,] chunkData; // 3D array to hold information on all of the cubes
+//    public Vector3[,,] chunkVertices; // 2D array to hold all the coordinates of the vertices that make up the terrain in the chunk
     public GameObject planetChunk;
     public Vector3 chunkPosition;
     public Planet parentPlanet;
+    public bool[,,] CubeIsSolid; // states if a block/cube is space or a solid 
     
     /*
      * Constructor
@@ -21,11 +20,12 @@ public class PlanetChunk
      */
     public PlanetChunk(Planet planet,  Vector3 position)
     {
-        this.parentPlanet = planet;
-        this.chunkPosition = position;
+        parentPlanet = planet;
+        chunkPosition = position;
         planetChunk = new GameObject("Chunk_" + Universe.BuildPlanetChunkName(position));
         planetChunk.transform.position = position;
-        BuildTheChunk();
+        chunkData = new Cube[parentPlanet.chunkSize, parentPlanet.chunkSize, parentPlanet.chunkSize];
+        CubeIsSolid = new bool[parentPlanet.chunkSize, parentPlanet.chunkSize, parentPlanet.chunkSize];
     }
 
     /*
@@ -48,18 +48,45 @@ public class PlanetChunk
                                                         planetChunk.transform.position.z + z);
 
                     //         Debug.Log(" CHUNK NAME : " + planetChunk.name);
-                    chunkData[x, y, z] = new Cube(chunkVertices, x, y, z,
+                    chunkData[x, y, z] = new Cube(planetChunk.gameObject, this,
+                                            x, y, z,
                                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
-                                            CustomMaterials.rockQuad, cubePosition, planetChunk.name, this);
+                                            CustomMaterials.rockQuad, cubePosition, planetChunk.name);
                     // create new cube
                     if (IsOuterLayer(cubePosition))
                     {
-                        //          Debug.Log(x + "," + y + "," + z + " Cube is SOLID");
-                        chunkData[x, y, z].SetPhysicalState(Cube.CubePhysicalState.SOLID);
+                        CubeIsSolid[x, y, z] = true;
                     }
                     else // set cube to SPACE
-                        chunkData[x, y, z].SetPhysicalState(Cube.CubePhysicalState.SPACE);
+                    {
+                        CubeIsSolid[x, y, z] = false;
+                    }
 
+                }
+            }
+        }
+    }
+
+    /*
+     * This is run after the first time the world is built, when we need to
+     * initialise the cubes again - e.g. when digging
+     */
+    public void ReSetUpChunk()
+    {
+        for (int y = 0; y < parentPlanet.chunkSize; y++)
+        {
+            for (int z = 0; z < parentPlanet.chunkSize; z++)
+            {
+                for (int x = 0; x < parentPlanet.chunkSize; x++)
+                {
+                    Vector3 cubePosition = new Vector3(planetChunk.transform.position.x + x,
+                                                        planetChunk.transform.position.y + y,
+                                                        planetChunk.transform.position.z + z);
+
+                    chunkData[x, y, z] = new Cube(planetChunk.gameObject, this,
+                                            x, y, z,
+                                            CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
+                                            CustomMaterials.rockQuad, cubePosition, planetChunk.name);
                 }
             }
         }
@@ -70,8 +97,9 @@ public class PlanetChunk
      * Cubes within the planet will be drawn as and when digging/terrain 
      * manipulation occurs.
      */
-    private void DrawChunk()
+    public void DrawChunk()
     {
+        Debug.Log("***********************************");
         // DRAW THE CHUNK
         for (int y = 0; y < parentPlanet.chunkSize; y++)
         {
@@ -80,29 +108,33 @@ public class PlanetChunk
                 for (int x = 0; x < parentPlanet.chunkSize; x++)
                 {
                     // display cubes that are set to SOLID (surface area cubes only)
-                    if (chunkData[x, y, z].GetPhysicalState() == Cube.CubePhysicalState.SOLID)
+                    if (CubeIsSolid[x, y, z])
                     {
+                        Debug.Log("SOLID cube @ " + x + "," + y + "," + z);
                         // draw the cube and set it to SOLID
                         chunkData[x, y, z].DrawCube();
+                        // combine quads
+                //        CombineQuads(chunkData[x, y, z]);
                     }
                 }
             }
         }
+
+        CombineQuads();
     }
 
-    void BuildTheChunk()
+    public void BuildTheChunk()
     {
         // holds quad info within the chunk
-        chunkData = new Cube[parentPlanet.chunkSize, parentPlanet.chunkSize, parentPlanet.chunkSize];
+    //    chunkData = new Cube[parentPlanet.chunkSize, parentPlanet.chunkSize, parentPlanet.chunkSize];
         // holds vertices coordinates within the chunk
-        chunkVertices = new Vector3[parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1];
+    //    chunkVertices = new Vector3[parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1, parentPlanet.chunkSize + 1];
 
         // SET THE CHUNK UP
         SetUpChunk();
     //        Thread chunkThread;
     //        chunkThread = new Thread(DrawChunk);
     //        chunkThread.Start();
-        DrawChunk();
     }
 
     /*
@@ -136,6 +168,77 @@ public class PlanetChunk
             return true;
   //      else Debug.Log("***** Cube not within planet!" + cubePosition.x + " : " + cubePosition.y + " : " + cubePosition.z);
         return false;
+    }
+
+
+    void CombineQuads()
+    {
+        // combine all children meshes
+        MeshFilter[] meshFilters = planetChunk.GetComponentsInChildren<MeshFilter>();
+        Debug.Log("Meshfilters : " + meshFilters.Length);
+
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        int i = 0;
+        // Total quads = meshFilters.Length
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+
+            i++;
+        }
+
+        MeshFilter mf = (MeshFilter)planetChunk.gameObject.AddComponent(typeof(MeshFilter));
+        mf.GetComponent<MeshFilter>().mesh = new Mesh();
+        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+
+        //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        MeshRenderer renderer = planetChunk.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        renderer.material = CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
+        MeshCollider boxCollider2 = planetChunk.AddComponent<MeshCollider>();
+
+        // Delete all children (quad meshes)
+        foreach (Transform quad in planetChunk.transform)
+        {
+            Object.Destroy(quad.gameObject);
+        }
+    }
+
+
+
+    void CombineQuads(Cube cube)
+    {
+        // combine all children meshes
+        MeshFilter[] meshFilters = cube.cube.GetComponentsInChildren<MeshFilter>();
+        Debug.Log("Meshfilters : " + meshFilters.Length);
+
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        int i = 0;
+        // Total quads = meshFilters.Length
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+
+            i++;
+        }
+
+        MeshFilter mf = (MeshFilter)cube.cube.gameObject.AddComponent(typeof(MeshFilter));
+        mf.GetComponent<MeshFilter>().mesh = new Mesh();
+        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+
+        //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        MeshRenderer renderer = cube.cube.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        renderer.material = CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad); 
+        MeshCollider boxCollider2 = cube.cube.AddComponent<MeshCollider>();
+
+        // Delete all children (quad meshes)
+        foreach (Transform quad in cube.cube.transform)
+        {
+            Object.Destroy(quad.gameObject);
+        } 
     }
 
 }

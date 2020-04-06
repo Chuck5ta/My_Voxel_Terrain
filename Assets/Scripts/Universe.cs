@@ -46,7 +46,7 @@ using UnityEngine;
  * 
  * Threads
  * https://www.tutorialspoint.com/csharp/csharp_multithreading.htm
- * C# Job System
+ * Unity Job System
  * https://docs.unity3d.com/Manual/JobSystem.html?_ga=2.217102486.185736627.1581613830-307768343.1578037165
  * 
  * 
@@ -60,6 +60,8 @@ public class Universe : MonoBehaviour
     public static int worldSize = 1; // # of chunks in the world
     public static int chunkSize = 20;    // dimensions of a chunk 4x4x4 cubes
     public static Dictionary<string, Chunk> chunks;
+    public static Dictionary<string, Planet> planets;
+    public static Planet planet;
 
     public static string BuildChunkName(Vector3 position)
     {
@@ -117,10 +119,12 @@ public class Universe : MonoBehaviour
                                             this.transform.position.z + (planetZPosition * 10));
         //     Vector3 planetPosition = new Vector3(planetXPosition, planetYPosition, planetZPosition);
 
-        Planet planet = new Planet(planetPosition);
+        planet = new Planet(planetPosition);
+   //     planets.Add(p.planet.name, p);
+
         //    planet.GenerateVertices();
         // Display the planet
-  //      planet.BuildPlanet();
+        //      planet.BuildPlanet();
     }
 
     IEnumerator BuildWorld()
