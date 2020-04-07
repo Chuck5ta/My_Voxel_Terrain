@@ -23,14 +23,14 @@ public class BlockInteraction : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-                Debug.Log("Did Hit");
+    //            Debug.Log("Did Hit");
             }
 
             if (Physics.Raycast(transform.position, transform.forward, out hit, 10))
             {
                 Vector3 hitBlock = hit.point - hit.normal / 2.0f;
 
-                Debug.Log("Hit point: " + hit.point);
+      //          Debug.Log("Hit point: " + hit.point);
 
                 int x = (int)(Mathf.Floor (hitBlock.x) - hit.collider.gameObject.transform.position.x);
                 int y = (int)(Mathf.Floor(hitBlock.y) - hit.collider.gameObject.transform.position.y);
@@ -40,13 +40,13 @@ public class BlockInteraction : MonoBehaviour
 
                 foreach (KeyValuePair<string, PlanetChunk> c in Universe.planet.planetChunks)
                 {
-                    Debug.Log("Planet chunk is : " + c.Key);
+      //              Debug.Log("Planet chunk is : " + c.Key);
                 }
                 PlanetChunk chunk; //retrieve the chunk
-                Debug.Log("Hit object's name : " + hit.collider.gameObject.name);
+      //          Debug.Log("Hit object's name : " + hit.collider.gameObject.name);
                 if (Universe.planet.planetChunks.TryGetValue(hit.collider.gameObject.name, out chunk)) //TODO: ?????????????????
                 {
-                    Debug.Log("DESTROY BLOCK : " + hitBlock);
+         //           Debug.Log("DESTROY BLOCK : " + hitBlock);
                     DestroyImmediate(chunk.planetChunk.GetComponent<MeshFilter>());
                     DestroyImmediate(chunk.planetChunk.GetComponent<MeshRenderer>());
                     DestroyImmediate(chunk.planetChunk.GetComponent<Collider>());

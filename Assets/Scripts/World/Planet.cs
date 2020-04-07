@@ -12,11 +12,10 @@ public class Planet
  //   public int chunkSize = 5; // diameter -  size of chunk 4x4x4 cubes
  //   public Vector3 planetPosition = new Vector3(0, 0, 0); // coordinates of the planet in the universe
 
-    // must always be an odd number, or otherwise subdivision fails
-    public int planetSize = 1; // number of chunks
-    public Vector3 planetCentre = new Vector3(1f, 1f, 1f);
-    public int planetRadius = 3; // diameter of 14
-    public int chunkSize = 2; // diameter -  size of chunk 4x4x4 cubes
+    public int planetSize = 2; // number of chunks
+    public Vector3 planetCentre = new Vector3(6f, 6f, 6f);
+    public int planetRadius = 4; // diameter of 14
+    public int chunkSize = 6; // diameter -  size of chunk 4x4x4 cubes
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
 
     public Dictionary<string, PlanetChunk> planetChunks;
@@ -71,16 +70,16 @@ public class Planet
 
                     // THREADING http://www.albahari.com/threading/
 
-                    PlanetChunk planetChunk = new PlanetChunk(this, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
-                    Debug.Log("Adding chunk to planetChunks : " + planetChunk.planetChunk.name);
+                    PlanetChunk planetChunk = new PlanetChunk(planet.gameObject, this, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
+                    Debug.Log("Adding chunk to planetChunks : " + planetChunk.planetChunk.name + " at coords : " + chunkPosition);
                     planetChunks.Add(planetChunk.planetChunk.name, planetChunk);
                     planetChunk.BuildTheChunk();
                     planetChunk.DrawChunk();
 
                     //           t2 = new Thread(() => Console.WriteLine(text));
-                    Debug.Log("----------------------------");
-                    Debug.Log("Generating chunk @ " + chunkPosition);
-                    Debug.Log("============================");
+            //        Debug.Log("----------------------------");
+            //        Debug.Log("Generating chunk @ " + chunkPosition);
+            //        Debug.Log("============================");
                     //            chunkThread = new Thread(() => GenerateChunk(chunkPosition));
                     //            chunkThread.Start();
                     //            chunkThread.IsBackground = true;
@@ -104,7 +103,7 @@ public class Planet
 
     private void GenerateChunk(Vector3 chunkPosition)
     {
-        PlanetChunk c = new PlanetChunk(this, chunkPosition);
+        PlanetChunk c = new PlanetChunk(planet.gameObject, this, chunkPosition);
 
         planetChunks.Add(c.planetChunk.name, c);
     }

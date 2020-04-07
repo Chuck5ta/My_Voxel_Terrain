@@ -56,7 +56,8 @@ public class Cube
         this.currentX = currentX;
         this.currentY = currentY;
         this.currentZ = currentZ;
-    //    cube.transform.position = cubeLocation;
+        //    cube.transform.position = cubeLocation;
+        cube.transform.parent = parent.transform; // make the quad a child of the cube
     }
 
     public void SetPhysicalState(CubePhysicalState physicalState)
