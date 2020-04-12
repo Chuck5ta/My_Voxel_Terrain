@@ -57,7 +57,7 @@ public class Cube
         this.currentY = currentY;
         this.currentZ = currentZ;
         //    cube.transform.position = cubeLocation;
-        cube.transform.parent = parent.transform; // make the quad a child of the cube
+    //    cube.transform.parent = parent.transform; // make the quad a child of the cube
     }
 
     public void SetPhysicalState(CubePhysicalState physicalState)
@@ -85,8 +85,8 @@ public class Cube
         if (!HasSolidNeighbour(currentX+1, currentY, currentZ))
             GenerateRightQuad();
 
-        cube.transform.parent = parent.transform; // make the cube a child of the chunk
-        //    CombineQuads();
+    //    cube.transform.parent = parent.transform; // make the cube a child of the chunk
+    //    CombineQuads(); //this is doubling the number of cubes!!!
     }
 
     public bool HasSolidNeighbour(int x, int y, int z)
@@ -164,13 +164,109 @@ public class Cube
     }
     public void DisplayQuad(Vector3[] quadVertices, string quadName, Material material)
     {
-        Vector3 quadPosition = new Vector3(cube.transform.position.x,
-                                            cube.transform.position.y,
-                                            cube.transform.position.z);
-        Quad newQuad = new Quad(cube.gameObject, this,
-                                quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
-                                material, CustomMaterials.rockQuad, quadPosition);
-        newQuad.Draw(cube.name + quadName); // TODO: need to name the quad!!!
+        // TODO: need to recreate the cube gameobject after the chunk is destroyed by digging
+  //      Vector3 quadPosition = new Vector3(cube.transform.position.x,
+  //                                          cube.transform.position.y,
+  //                                          cube.transform.position.z);
+  //      Quad newQuad = new Quad(cube.gameObject, this,
+  //                              quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+  //                              material, CustomMaterials.rockQuad);
+        CreateQuad(cube.name + quadName,
+            quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
+            material, CustomMaterials.rockQuad); // TODO: need to name the quad!!!
     }
 
+
+    public void CombineQuads()
+    {
+        Matrix4x4 myTransform = parent.transform.worldToLocalMatrix;
+        // combine all children meshes
+        MeshFilter[] meshFilters = cube.GetComponentsInChildren<MeshFilter>();
+  //      Debug.Log("Meshfilters QUADS : " + meshFilters.Length + " for " + cube.gameObject.name);
+
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        int i = 0;
+        // Total quads = meshFilters.Length
+        while (i < meshFilters.Length)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = myTransform * meshFilters[i].transform.localToWorldMatrix;
+
+            i++;
+        }
+
+        MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
+        mf.GetComponent<MeshFilter>().mesh = new Mesh();
+        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+
+        MeshRenderer renderer = cube.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        //    renderer.material = cubeMaterial;
+
+        // Delete all children (quad meshes)
+        // DELETE CUBES TOO ?
+        int quadCounter = 0;
+        foreach (Transform quad in cube.transform)
+        {
+            Object.Destroy(quad.gameObject);
+            quadCounter++;
+        }
+    //    Debug.Log("QUADS DELETED : " + quadCounter);
+    //    MeshFilter[] meshFilters2 = cube.GetComponentsInChildren<MeshFilter>();
+    //    Debug.Log("Meshfilters QUADS : " + meshFilters2.Length);
+    }
+
+
+
+    /*
+     * Quad related stuff
+     */             
+
+        
+    public void CreateQuad(string quadName,
+            Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3,
+            Material material, int terrainType)
+    {
+        // position = location within the chunk
+        // vertices = location of each vertex of the quad within the game world
+
+        Mesh mesh = new Mesh();
+
+        Vector3[] vertices = new Vector3[4];
+        vertices[0] = vertex0; //top-left
+        vertices[1] = vertex1; //top-right
+        vertices[2] = vertex2; //bottom-left
+        vertices[3] = vertex3; //bottom-right
+
+        mesh.vertices = vertices;
+
+        int[] triangles = new int[6] { 0, 1, 2, 3, 2, 1 };
+        mesh.triangles = triangles;
+
+        Vector2[] uvs = new Vector2[4];
+        uvs[0] = new Vector2(0, 1); //top-left
+        uvs[1] = new Vector2(1, 1); //top-right
+        uvs[2] = new Vector2(0, 0); //bottom-left
+        uvs[3] = new Vector2(1, 0); //bottom-right
+
+        mesh.uv = uvs;
+
+        Vector3[] normals = new Vector3[4] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
+        mesh.normals = normals;
+
+        mesh.RecalculateBounds();
+
+        GameObject quad = new GameObject(quadName);
+        //      quad.name = "Quad_" + position.x + "_" + position.y + "_" + position.z;
+        quad.name = quadName;
+        //    quad.transform.position = quadLocation;
+    //    quad.transform.position = cubeLocation; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
+        quad.transform.parent = parent.transform; // make the quad a child of the cube
+
+        MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
+        meshFilter.mesh = mesh;
+        //    MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        //    MeshCollider boxCollider2 = quad.AddComponent<MeshCollider>();
+        //    renderer.material = quadMaterial;
+    }
 }

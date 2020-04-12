@@ -17,7 +17,7 @@ public class Quad
 {
     private Material quadMaterial;
 
-    public Vector3 quadLocation;
+//    public Vector3 quadLocation;
 
     public Cube.Side position;
 
@@ -49,7 +49,7 @@ public class Quad
      */
     public Quad(GameObject parent, Cube owner,
         Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3,         
-        Material material, int terrainType, Vector3 quadPosition)
+        Material material, int terrainType)
     {
         this.parent = parent;
         this.owner = owner;
@@ -59,13 +59,13 @@ public class Quad
         this.vertex3 = vertex3;
         quadMaterial = material;
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
-        this.quadLocation = quadPosition;
+//        quadLocation = quadPosition;
     }
 
     public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3,
         Material material, int terrainType, Vector3 quadPosition)
     {
-        this.quadLocation = quadPosition;
+    //    quadLocation = quadPosition;
         this.vertex0 = vertex0;
         this.vertex1 = vertex1;
         this.vertex2 = vertex2;
@@ -146,11 +146,12 @@ public class Quad
     //    quad.transform.position = quadLocation;
     //    quad.transform.position = position; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
         quad.transform.parent = parent.transform; // make the quad a child of the cube
+
         MeshFilter meshFilter = (MeshFilter)quad.AddComponent(typeof(MeshFilter));
         meshFilter.mesh = mesh;
-        MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        MeshCollider boxCollider2 = quad.AddComponent<MeshCollider>();
-        renderer.material = quadMaterial;
+    //    MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+    //    MeshCollider boxCollider2 = quad.AddComponent<MeshCollider>();
+    //    renderer.material = quadMaterial;
     }
 
     public void SetMaterial(Material newMaterial)

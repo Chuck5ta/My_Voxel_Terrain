@@ -9,7 +9,7 @@ public class Planet
  //   public int planetSize = 10; // number of chunks
  //   public Vector3 planetCentre = new Vector3(25f, 25f, 25f);
  //   public int planetRadius = 22; // diameter of 14
- //   public int chunkSize = 5; // diameter -  size of chunk 4x4x4 cubes
+ //   public int chunkSize = 4; // diameter -  size of chunk 4x4x4 cubes
  //   public Vector3 planetPosition = new Vector3(0, 0, 0); // coordinates of the planet in the universe
 
     public int planetSize = 2; // number of chunks
@@ -38,11 +38,14 @@ public class Planet
 
     public int vertexPushDistance = 1; // distance to increase vertex location by after vector equation calculated
 
+    private Material chunkMaterial;
+
     // generate globe 
     public Planet(Vector3 planetPosition)
     {
         this.planetPosition = planetPosition;
-        planetData = new Cube[Universe.universeSize, Universe.universeSize, Universe.universeSize];planet = new GameObject("Planet_" + Universe.BuildPlanetChunkName(planetPosition));
+        // planetData = new Cube[Universe.universeSize, Universe.universeSize, Universe.universeSize];
+        planet = new GameObject("Planet_" + Universe.BuildPlanetChunkName(planetPosition));
         
         planetChunks = new Dictionary<string, PlanetChunk>();
 
@@ -50,11 +53,35 @@ public class Planet
         GenerateWorld();
     }
 
+    Material GetNextMaterial(int cubeCount)
+    {
+        switch (cubeCount)
+        {
+            case 1:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
+            case 2:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.sandQuad);
+            case 3:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.grassQuad);
+            case 4:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
+            case 5:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.sandQuad);
+            case 6:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.grassQuad);
+            case 7:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
+            default:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad);
+        }
+    }
+
+
     void GenerateWorld()
     {
-       // Thread[] rowOfChunks = new Thread[Universe.chunkSize * Universe.chunkSize * Universe.chunkSize];
-       // Thread chunkThread;
-
+        // Thread[] rowOfChunks = new Thread[Universe.chunkSize * Universe.chunkSize * Universe.chunkSize];
+        // Thread chunkThread;
+        int cubeCount = 1;
         for (int chunkYIndex = 0; chunkYIndex < planetSize; chunkYIndex++)
         {
             for (int chunkZIndex = 0; chunkZIndex < planetSize; chunkZIndex++)
@@ -65,21 +92,26 @@ public class Planet
                     Vector3 chunkPosition = new Vector3(planet.transform.position.x + (chunkXIndex * chunkSize),
                                                         planet.transform.position.y + (chunkYIndex * chunkSize),
                                                         planet.transform.position.z + (chunkZIndex * chunkSize));
-        //            GenerateChunk(chunkPosition);
+                    //            GenerateChunk(chunkPosition);
                     //             Debug.Log("Chunk position: " + chunkPosition);
 
                     // THREADING http://www.albahari.com/threading/
+                    chunkMaterial = GetNextMaterial(cubeCount);
 
-                    PlanetChunk planetChunk = new PlanetChunk(planet.gameObject, this, chunkPosition); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
+                    PlanetChunk planetChunk = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
                     Debug.Log("Adding chunk to planetChunks : " + planetChunk.planetChunk.name + " at coords : " + chunkPosition);
+                    planetChunk.planetChunk.transform.parent = planet.transform;
+
                     planetChunks.Add(planetChunk.planetChunk.name, planetChunk);
                     planetChunk.BuildTheChunk();
                     planetChunk.DrawChunk();
 
+                    cubeCount++;
+
                     //           t2 = new Thread(() => Console.WriteLine(text));
-            //        Debug.Log("----------------------------");
-            //        Debug.Log("Generating chunk @ " + chunkPosition);
-            //        Debug.Log("============================");
+                    //        Debug.Log("----------------------------");
+                    //        Debug.Log("Generating chunk @ " + chunkPosition);
+                    //        Debug.Log("============================");
                     //            chunkThread = new Thread(() => GenerateChunk(chunkPosition));
                     //            chunkThread.Start();
                     //            chunkThread.IsBackground = true;
@@ -103,7 +135,7 @@ public class Planet
 
     private void GenerateChunk(Vector3 chunkPosition)
     {
-        PlanetChunk c = new PlanetChunk(planet.gameObject, this, chunkPosition);
+        PlanetChunk c = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial);
 
         planetChunks.Add(c.planetChunk.name, c);
     }

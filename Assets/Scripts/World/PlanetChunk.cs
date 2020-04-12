@@ -12,6 +12,8 @@ public class PlanetChunk
     public Planet owner;
     public Vector3 chunkPosition;
     public bool[,,] CubeIsSolid; // states if a block/cube is space or a solid 
+
+    private Material chunkMaterial;
     
     /*
      * Constructor
@@ -19,18 +21,23 @@ public class PlanetChunk
      * 
      * e.g. chunk 0 will be based at 0,0,0 in the Universe
      */
-    public PlanetChunk(GameObject parent, Planet owner,  Vector3 position)
+    public PlanetChunk(GameObject parent, Planet owner,  Vector3 position, Material material)
     {
         this.parent = parent;
         this.owner = owner;
         chunkPosition = position;
+        chunkMaterial = material;
         planetChunk = new GameObject("Chunk_" + Universe.BuildPlanetChunkName(position));
+
         // TODO: THIS IS NOT PLACING THE CHUNK IN THE RIGHT LOCATION!!!!
     //    planetChunk.transform.position = position;
         Debug.Log("Chunk location : " + planetChunk.transform.position);
+
         chunkData = new Cube[owner.chunkSize, owner.chunkSize, owner.chunkSize];
         CubeIsSolid = new bool[owner.chunkSize, owner.chunkSize, owner.chunkSize];
-        planetChunk.transform.parent = parent.transform; // make the planetChunk a child of the planet
+
+     //   planetChunk.transform.parent = parent.transform; // make the planetChunk a child of the planet
+
     }
 
     /*
@@ -57,6 +64,8 @@ public class PlanetChunk
                                             x, y, z,
                                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
                                             CustomMaterials.rockQuad, cubePosition, planetChunk.name);
+
+                    chunkData[x, y, z].cube.transform.parent = planetChunk.transform; // make the quad a child of the cube
                     // create new cube
                     if (IsOuterLayer(cubePosition))
                     {
@@ -71,6 +80,12 @@ public class PlanetChunk
                 }
             }
         }
+
+    //    MeshFilter[] meshFilters = planetChunk.GetComponentsInChildren<MeshFilter>();
+    //    Debug.Log("******** BUILDCHUNK Meshfilters CUBES : " + meshFilters.Length + " for chunk : " + planetChunk.name);
+        // this gives 0 meshes, which it should do
+
+        // planetChunk.transform.parent = parent.transform; // make the planetChunk a child of the planet
     }
 
     /*
@@ -85,17 +100,22 @@ public class PlanetChunk
             {
                 for (int x = 0; x < owner.chunkSize; x++)
                 {
-                    Vector3 cubePosition = new Vector3(planetChunk.transform.position.x + x,
-                                                        planetChunk.transform.position.y + y,
-                                                        planetChunk.transform.position.z + z);
+                    //         Vector3 cubePosition = new Vector3(planetChunk.transform.position.x + x,
+                    //                                             planetChunk.transform.position.y + y,
+                    //                                             planetChunk.transform.position.z + z);
 
+                    Vector3 cubePosition = new Vector3(x, y, z);
                     chunkData[x, y, z] = new Cube(planetChunk.gameObject, this,
                                             x, y, z,
                                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
                                             CustomMaterials.rockQuad, cubePosition, planetChunk.name);
+
+                    chunkData[x, y, z].cube.transform.parent = planetChunk.transform; // make the quad a child of the cube
                 }
             }
         }
+
+      //  planetChunk.transform.parent = parent.transform; // make the planetChunk a child of the planet
     }
 
     /*
@@ -105,7 +125,11 @@ public class PlanetChunk
      */
     public void DrawChunk()
     {
-  //      Debug.Log("***********************************");
+        MeshFilter[] meshFilters = planetChunk.GetComponentsInChildren<MeshFilter>();
+        Debug.Log("******** PRE DRAW Meshfilters CUBES : " + meshFilters.Length + " for chunk : " + planetChunk.name);
+        // ZERO CUBES HERE - CORRECT
+
+        int cubeCounter = 0;
         // DRAW THE CHUNK
         for (int y = 0; y < owner.chunkSize; y++)
         {
@@ -116,17 +140,61 @@ public class PlanetChunk
                     // display cubes that are set to SOLID (surface area cubes only)
                     if (CubeIsSolid[x, y, z])
                     {
-            //            Debug.Log("SOLID cube @ " + x + "," + y + "," + z);
+                        cubeCounter++;
                         // draw the cube and set it to SOLID
                         chunkData[x, y, z].DrawCube();
-                        // combine quads
-                //        CombineQuads(chunkData[x, y, z]);
+
+     //                   MeshFilter[] meshFilters9 = planetChunk.GetComponentsInChildren<MeshFilter>();
+     //                   Debug.Log("DRAWING CUBES  : " + x + "." + y + "." + z + "." + " - CUBES CREATED: " +
+     //                       meshFilters9.Length + " for chunk : " + planetChunk.name);
+
                     }
                 }
             }
         }
+   //     Debug.Log("----====== CUBES : " + cubeCounter);
 
-        CombineQuads();
+        meshFilters = planetChunk.GetComponentsInChildren<MeshFilter>();
+        Debug.Log("******** PRE COMBINE Meshfilters CUBES : " + meshFilters.Length + " for chunk : " + planetChunk.name);
+
+        CombineCubes();
+        MeshCollider collider = planetChunk.gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
+        collider.sharedMesh = planetChunk.transform.GetComponent<MeshFilter>().mesh;
+
+        // TODO: BuildTheChunk and DrawChunk are both creating cubes!!!!!!!
+        // that's why there are double the amount of cubes!!!
+
+     //   MeshFilter[] meshFilters = planetChunk.GetComponentsInChildren<MeshFilter>();
+     //   Debug.Log("******** POST COMBINE Meshfilters CUBES : " + meshFilters.Length + " for chunk : " + planetChunk.name);
+
+    }
+
+    /*
+     * Draw the cubes that are on the surface of the planet.
+     * Cubes within the planet will be drawn as and when digging/terrain 
+     * manipulation occurs.
+     */
+    public void ReDrawChunk()
+    {
+        // DRAW THE CHUNK
+        for (int y = 0; y < owner.chunkSize; y++)
+        {
+            for (int z = 0; z < owner.chunkSize; z++)
+            {
+                for (int x = 0; x < owner.chunkSize; x++)
+                {
+                    // display cubes that are set to SOLID (surface area cubes only)
+                    if (CubeIsSolid[x, y, z])
+                    {
+                        // draw the cube and set it to SOLID
+                        chunkData[x, y, z].DrawCube();
+                    }
+                }
+            }
+        }
+        CombineCubes(); // this is fucking things up!!!!! moving the chunk!!!!
+        MeshCollider collider = planetChunk.gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
+        collider.sharedMesh = planetChunk.transform.GetComponent<MeshFilter>().mesh;
     }
 
     /*
@@ -164,11 +232,15 @@ public class PlanetChunk
     }
 
 
-    void CombineQuads()
+    public void CombineCubes() // https://answers.unity.com/questions/231249/instanced-meshes-are-being-offset-to-weird-positio.html
     {
+        Matrix4x4 myTransform = parent.transform.worldToLocalMatrix;
+     //   Quaternion oldRot = parent.transform.rotation;
+     //   Vector3 oldPos = parent.transform.position;
+
         // combine all children meshes
         MeshFilter[] meshFilters = planetChunk.GetComponentsInChildren<MeshFilter>();
-        Debug.Log("Meshfilters : " + meshFilters.Length);
+        Debug.Log("-----===== COMBINE : Meshfilters CUBES : " + meshFilters.Length + " for chunk : " + planetChunk.name);
 
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
@@ -177,27 +249,40 @@ public class PlanetChunk
         while (i < meshFilters.Length)
         {
             combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            combine[i].transform = myTransform * meshFilters[i].transform.localToWorldMatrix;
 
             i++;
         }
+        // https://answers.unity.com/questions/231249/instanced-meshes-are-being-offset-to-weird-positio.html
+    //    planetChunk.transform.position = chunkPosition;
 
         MeshFilter mf = (MeshFilter)planetChunk.gameObject.AddComponent(typeof(MeshFilter));
-        mf.GetComponent<MeshFilter>().mesh = new Mesh();
-        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        mf.mesh = new Mesh();
+        mf.mesh.CombineMeshes(combine);
 
-        //   MeshRenderer renderer = quad.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+        planetChunk.GetComponent<MeshFilter>().sharedMesh = mf.mesh;
+
         MeshRenderer renderer = planetChunk.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-    //    renderer.material = CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
-        MeshCollider boxCollider2 = planetChunk.AddComponent<MeshCollider>();
+        renderer.material = chunkMaterial;
+
 
         planetChunk.transform.position = chunkPosition;
 
         // Delete all children (quad meshes)
-        foreach (Transform quad in planetChunk.transform)
+        // DELETE CUBES TOO ?
+        int cubeCounter = 0;
+        foreach (Transform cube in planetChunk.transform)
         {
-            Object.Destroy(quad.gameObject);
+           Object.Destroy(cube.gameObject);
+            cubeCounter++;
         }
+    //    Debug.Log("CUBES DELETED : " + cubeCounter);
+
+        //    MeshFilter[] meshFilters2 = planetChunk.GetComponentsInChildren<MeshFilter>();
+        //    Debug.Log("Meshfilters CUBES : " + meshFilters2.Length);
+
+     //       planetChunk.transform.rotation = oldRot; //this is not helping  :(
+     //       planetChunk.transform.position = oldPos; //this is not helping  :(
     }
 
 }
