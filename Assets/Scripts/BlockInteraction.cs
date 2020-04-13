@@ -17,8 +17,12 @@ public class BlockInteraction : MonoBehaviour
         {
             Debug.Log("************ Mouse button pressed ***************");
             RaycastHit hit;
+
+            // TODO: Remove when no longer required
+            // - this is used to see where the ray is travelling
             Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity);
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.black);
+
             // Does the ray intersect any objects excluding the player layer
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
             {
@@ -53,7 +57,7 @@ public class BlockInteraction : MonoBehaviour
                     // TODO: NEED TO KEEP THE CHANGED STATE!!!!
                     chunk.ReBuildTheChunk();
                     chunk.CubeIsSolid[x, y, z] = false; // stop the cube from being drawn
-                    chunk.ReDrawChunk();
+                    chunk.DrawChunk();
                 }
                 else
                     Debug.Log("Failed to find: " + hit.collider.gameObject.name); // TODO: name NOT being saved to the Dictionary????

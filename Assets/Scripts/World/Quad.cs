@@ -21,7 +21,7 @@ public class Quad
 
     public Cube.Side position;
 
-    //   Chunk owner; // so that we can access the chunkData array
+//   Chunk owner; // so that we can access the chunkData array
 //    public Cube owner; // so that we can access the chunkData array
     public PlanetGen planetOwner; // so that we can access the chunkData array
     public Cube parentCube; // The chunk
@@ -73,40 +73,6 @@ public class Quad
         quadMaterial = material;
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
     }
-
-    /*    public Quad(Vector3 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, GameObject parent, PlanetGen owner, Material material, int terrainType)
-    {
-        this.planetOwner = owner;
-        this.parent = parent;
-        position = locationInChunk; // position within the chunk
-        this.vertex0 = vertex0;
-        this.vertex1 = vertex1;
-        this.vertex2 = vertex2;
-        this.vertex3 = vertex3;
-        quadMaterial = material;
-        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
-    }
-    public Quad(Vector3 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Material material, int terrainType)
-    {
-        position = locationInChunk; // position within the chunk
-        this.vertex0 = vertex0;
-        this.vertex1 = vertex1;
-        this.vertex2 = vertex2;
-        this.vertex3 = vertex3;
-        quadMaterial = material;
-        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
-    }
-    public Quad(Vector3 locationInChunk, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, Material material, int terrainType)
-    {
-   //     position = locationInChunk; // position within the chunk
-        this.vertex0 = vertex0;
-        this.vertex1 = vertex1;
-        this.vertex2 = vertex2;
-        this.vertex3 = vertex3;
-        quadMaterial = material;
-        this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
-    }
-    */
 
 
     public void CreateQuad(string quadName)

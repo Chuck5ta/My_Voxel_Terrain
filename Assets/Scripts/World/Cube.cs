@@ -164,64 +164,10 @@ public class Cube
     }
     public void DisplayQuad(Vector3[] quadVertices, string quadName, Material material)
     {
-        // TODO: need to recreate the cube gameobject after the chunk is destroyed by digging
-  //      Vector3 quadPosition = new Vector3(cube.transform.position.x,
-  //                                          cube.transform.position.y,
-  //                                          cube.transform.position.z);
-  //      Quad newQuad = new Quad(cube.gameObject, this,
-  //                              quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
-  //                              material, CustomMaterials.rockQuad);
         CreateQuad(cube.name + quadName,
             quadVertices[0], quadVertices[1], quadVertices[2], quadVertices[3],
             material, CustomMaterials.rockQuad); // TODO: need to name the quad!!!
     }
-
-
-    public void CombineQuads()
-    {
-        Matrix4x4 myTransform = parent.transform.worldToLocalMatrix;
-        // combine all children meshes
-        MeshFilter[] meshFilters = cube.GetComponentsInChildren<MeshFilter>();
-  //      Debug.Log("Meshfilters QUADS : " + meshFilters.Length + " for " + cube.gameObject.name);
-
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-
-        int i = 0;
-        // Total quads = meshFilters.Length
-        while (i < meshFilters.Length)
-        {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = myTransform * meshFilters[i].transform.localToWorldMatrix;
-
-            i++;
-        }
-
-        MeshFilter mf = (MeshFilter)cube.gameObject.AddComponent(typeof(MeshFilter));
-        mf.GetComponent<MeshFilter>().mesh = new Mesh();
-        mf.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
-
-        MeshRenderer renderer = cube.gameObject.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-        //    renderer.material = cubeMaterial;
-
-        // Delete all children (quad meshes)
-        // DELETE CUBES TOO ?
-        int quadCounter = 0;
-        foreach (Transform quad in cube.transform)
-        {
-            Object.Destroy(quad.gameObject);
-            quadCounter++;
-        }
-    //    Debug.Log("QUADS DELETED : " + quadCounter);
-    //    MeshFilter[] meshFilters2 = cube.GetComponentsInChildren<MeshFilter>();
-    //    Debug.Log("Meshfilters QUADS : " + meshFilters2.Length);
-    }
-
-
-
-    /*
-     * Quad related stuff
-     */             
-
         
     public void CreateQuad(string quadName,
             Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3,
@@ -259,7 +205,7 @@ public class Cube
         GameObject quad = new GameObject(quadName);
         //      quad.name = "Quad_" + position.x + "_" + position.y + "_" + position.z;
         quad.name = quadName;
-        //    quad.transform.position = quadLocation;
+    //    quad.transform.position = quadLocation;
     //    quad.transform.position = cubeLocation; // set the quad's location in the chunk | Do not undrawing quadcomment!!! it will override the coordinates we want the quad to have!
         quad.transform.parent = parent.transform; // make the quad a child of the cube
 
