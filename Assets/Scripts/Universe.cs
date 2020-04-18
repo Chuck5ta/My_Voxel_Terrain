@@ -63,7 +63,7 @@ public class Universe : MonoBehaviour
     public static Dictionary<string, Planet> planets;
     public static Planet planet;
 
-    public static string BuildChunkName(Vector3 position)
+    public static string BuildChunkName(Vector3 position) // for a 2D plane terrain
     {
         return (int)position.x + "_" +
                (int)position.z;
@@ -72,14 +72,14 @@ public class Universe : MonoBehaviour
         //              (int)position.z;
     }
 
-    public static string BuildPlanetChunkName(Vector3 position)
+    public static string BuildPlanetChunkName(Vector3 position) // for a 3D terrain
     {
         return (int)position.x + "_" +   // leave this, as we may need to implement a cubish world, instead of the quad one we have
                 (int)position.y + "_" +
                 (int)position.z;
     }
 
-    void GenerateFlatWorld()
+    void GenerateFlatWorld() // Plane
     {
         for (int chunkZIndex = 0; chunkZIndex < worldSize; chunkZIndex++)
         {

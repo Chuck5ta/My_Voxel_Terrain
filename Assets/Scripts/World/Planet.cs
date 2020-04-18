@@ -5,13 +5,6 @@ using UnityEngine;
 
 public class Planet
 {
-
- //   public int planetSize = 10; // number of chunks
- //   public Vector3 planetCentre = new Vector3(25f, 25f, 25f);
- //   public int planetRadius = 22; // diameter of 14
- //   public int chunkSize = 4; // diameter -  size of chunk 4x4x4 cubes
- //   public Vector3 planetPosition = new Vector3(0, 0, 0); // coordinates of the planet in the universe
-
     public int planetSize = 2; // number of chunks
     public Vector3 planetCentre = new Vector3(6f, 6f, 6f);
     public int planetRadius = 4; // diameter of 14
@@ -40,6 +33,7 @@ public class Planet
 
     private Material chunkMaterial;
 
+
     // generate globe 
     public Planet(Vector3 planetPosition)
     {
@@ -53,6 +47,11 @@ public class Planet
         GenerateWorld();
     }
 
+
+    /*
+     * This is used to give the chunks each a different material.
+     * TODO: Delete this when no longer requred - when evrything works
+     */
     Material GetNextMaterial(int cubeCount)
     {
         switch (cubeCount)
@@ -133,12 +132,14 @@ public class Planet
 
     }
 
+    /* TODO: DELETE THIS?
     private void GenerateChunk(Vector3 chunkPosition)
     {
         PlanetChunk c = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial);
 
         planetChunks.Add(c.planetChunk.name, c);
     }
+    /*
 
     private void pushVericesOut()
     {
@@ -156,7 +157,7 @@ public class Planet
     /*
      * This is the vector equation used to acquire the direction (in 3D space) the vertex is to be pushed out along
      * 
-     * TODO: Put this in its own class?
+     * TODO: Put this in its own class? (Math class)
      */
     private Vector3 CalculateVector(Vector3 newVector)
     {

@@ -15,11 +15,8 @@ using UnityEngine;
 
 public class Quad
 {
-    private Material quadMaterial;
-
 //    public Vector3 quadLocation;
-
-    public Cube.Side position;
+//    public Cube.Side position;
 
 //   Chunk owner; // so that we can access the chunkData array
 //    public Cube owner; // so that we can access the chunkData array
@@ -37,6 +34,7 @@ public class Quad
 
     // grass 0, dirt 1, sand 2, rock 4 - bitflags and bitwise operations ?????
     public int terrainType = 0; //Texturing.grassQuad; // default as grass terrain
+    private Material quadMaterial; // TODO: get this to work for unique materials on each quad of the cube
 
     /* 
      * Quad constructor - 
@@ -59,13 +57,13 @@ public class Quad
         this.vertex3 = vertex3;
         quadMaterial = material;
         this.terrainType = terrainType; // grass, dirt, sand, rock, etc.
-//        quadLocation = quadPosition;
+    //  quadLocation = quadPosition; // TODO: No longer required?
     }
 
     public Quad(Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3,
         Material material, int terrainType, Vector3 quadPosition)
     {
-    //    quadLocation = quadPosition;
+    //    quadLocation = quadPosition; // TODO: No longer required?
         this.vertex0 = vertex0;
         this.vertex1 = vertex1;
         this.vertex2 = vertex2;

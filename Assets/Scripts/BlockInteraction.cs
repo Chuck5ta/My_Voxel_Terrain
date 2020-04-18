@@ -19,6 +19,9 @@ public class BlockInteraction : MonoBehaviour
         DestroyImmediate(chunk.planetChunk.GetComponent<Collider>());
     }
 
+    /*
+     * Used for digging the terrain
+     */
     private void RemoveCube(int x, int y, int z, PlanetChunk chunk)
     {
         DestroyChunk(chunk);
@@ -28,6 +31,9 @@ public class BlockInteraction : MonoBehaviour
         chunk.DrawChunk();
     }
 
+    /*
+     * Used for building the terrain
+     */
     private void AddCube(int x, int y, int z, PlanetChunk chunk)
     {
         DestroyChunk(chunk);
@@ -38,7 +44,9 @@ public class BlockInteraction : MonoBehaviour
         chunk.DrawChunk();
     }
 
-    // checks to see if we can add a cube to the game world
+    /*
+     * checks to see if we can add a cube to the game world
+     */
     bool NotAtEndOfWorld(int x, int y, int z)
     {
         if ((x >= 0 && x <= 5) && // change this to match the values in Planet!
@@ -55,22 +63,25 @@ public class BlockInteraction : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            Debug.Log("************ Mouse button pressed!!! ***************");
-            RaycastHit hit;
+    /*
+                    Debug.Log("************ Mouse button pressed!!! ***************");
 
-            // TODO: ********** Remove when no longer required ******************
-            // - this is used to see where the ray is travelling
-            Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity);
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.black);
+                    // TODO: ********** Remove when no longer required ******************
+                    // - this is used to see where the ray is travelling
+                    Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity);
+                    Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.black);
 
-            // Does the ray intersect any objects excluding the player layer
-            if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
-            {
-                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-    //            Debug.Log("Did Hit");
-            }
+                    // Does the ray intersect any objects excluding the player layer
+                    if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
+                    {
+                        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+
+                        Debug.Log("Did Hit");
+                    }
+    */
             // *************** REMOVE THE ABOVE ***************
 
+            RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 10))
             {
                 Debug.Log("RAY CAST!!!! " + transform.position);
@@ -110,7 +121,7 @@ public class BlockInteraction : MonoBehaviour
                 }  
             }
             else
-                Debug.Log("BALLS!");
+                Debug.Log("BALLS, nothing to hit!");
         }
     }
 }

@@ -14,10 +14,13 @@ public class PlanetChunk
     public bool[,,] CubeIsSolid; // states if a block/cube is space or a solid 
 
     private Material chunkMaterial;
-    
+
     /*
      * Constructor
-     * chunkZIndex, chunkXIndex is the location of the chunk we are currently working on
+     * parent, is the GameObject of the parent object (planet, in this case)
+     * owner, is the owner class (Planet, in this case)
+     * position is the location of the chunk we are currently working on
+     * material, is the material that will cover the chunk - TODO: make it so that there is a material for each cube/quad
      * 
      * e.g. chunk 0 will be based at 0,0,0 in the Universe
      */
@@ -29,14 +32,10 @@ public class PlanetChunk
         chunkMaterial = material;
         planetChunk = new GameObject("Chunk_" + Universe.BuildPlanetChunkName(position));
 
-        // TODO: THIS IS NOT PLACING THE CHUNK IN THE RIGHT LOCATION!!!!
-    //    planetChunk.transform.position = position;
-        Debug.Log("Chunk location : " + planetChunk.transform.position);
+    //    Debug.Log("Chunk location : " + planetChunk.transform.position);
 
         chunkData = new Cube[owner.chunkSize, owner.chunkSize, owner.chunkSize];
         CubeIsSolid = new bool[owner.chunkSize, owner.chunkSize, owner.chunkSize];
-
-     //   planetChunk.transform.parent = parent.transform; // make the planetChunk a child of the planet
 
     }
 
@@ -108,8 +107,6 @@ public class PlanetChunk
                 }
             }
         }
-
-      //  planetChunk.transform.parent = parent.transform; // make the planetChunk a child of the planet
     }
 
     /*
@@ -182,7 +179,7 @@ public class PlanetChunk
 
         // combine all children meshes
         MeshFilter[] meshFilters = planetChunk.GetComponentsInChildren<MeshFilter>();
-        Debug.Log("-----===== COMBINE : Meshfilters CUBES : " + meshFilters.Length + " for chunk : " + planetChunk.name);
+    //    Debug.Log("-----===== COMBINE : Meshfilters CUBES : " + meshFilters.Length + " for chunk : " + planetChunk.name);
 
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
@@ -207,7 +204,7 @@ public class PlanetChunk
 
         planetChunk.transform.position = chunkPosition;
 
-        // Delete all children (quad meshes)
+        // Delete all children
         int cubeCounter = 0;
         foreach (Transform cube in planetChunk.transform)
         {

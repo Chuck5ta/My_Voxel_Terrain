@@ -28,7 +28,7 @@ public class Cube
     // Bottom quad
     // Leftside quad
     // Rightside quad
-    Quad frontQuad, backQuad, topQuad, bottomQuad, leftQuad, rightQuad;
+    Quad frontQuad, backQuad, topQuad, bottomQuad, leftQuad, rightQuad; // TODO: Delete when no longer required
 
     public enum Side { Front, Back, Top, Bottom, Leftside, Rightside }
     
@@ -56,8 +56,6 @@ public class Cube
         this.currentX = currentX;
         this.currentY = currentY;
         this.currentZ = currentZ;
-        //    cube.transform.position = cubeLocation;
-    //    cube.transform.parent = parent.transform; // make the quad a child of the cube
     }
 
     public void SetPhysicalState(CubePhysicalState physicalState)
@@ -84,9 +82,6 @@ public class Cube
             GenerateLeftQuad();
         if (!HasSolidNeighbour(currentX+1, currentY, currentZ))
             GenerateRightQuad();
-
-    //    cube.transform.parent = parent.transform; // make the cube a child of the chunk
-    //    CombineQuads(); //this is doubling the number of cubes!!!
     }
 
     public bool HasSolidNeighbour(int x, int y, int z)
