@@ -66,9 +66,10 @@ public class CameraController : MonoBehaviour
     void LateUpdate()
     {
         // If Control and Alt and Middle button ZOOM!
-        if (Input.GetMouseButton(0) && Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetMouseButton(2) && Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.LeftControl))
         {
-            desiredDistance -= Input.GetAxis("Mouse Y") * Time.deltaTime * zoomRate * 0.125f * Mathf.Abs(desiredDistance);
+       //     desiredDistance -= Input.GetAxis("Mouse Y") * Time.deltaTime * zoomRate * 0.125f * Mathf.Abs(desiredDistance);
+            desiredDistance -= Input.GetAxis("Mouse Y") * 100;
         }
         // If middle mouse and left alt are selected ORBIT
         else if (Input.GetMouseButton(2) && Input.GetKey(KeyCode.LeftAlt))
@@ -94,7 +95,7 @@ public class CameraController : MonoBehaviour
             target.rotation = transform.rotation;
             target.Translate(Vector3.right * -Input.GetAxis("Mouse X") * panSpeed);
             target.Translate(transform.up * -Input.GetAxis("Mouse Y") * panSpeed, Space.World);
-        }
+        } 
 
         ////////Orbit Position
 
