@@ -22,7 +22,7 @@ public class MeController : MonoBehaviour
 
     private void LateUpdate()
     {
-        MovePlayer();
+        ChangeDirection();
     }
 
     /*
@@ -30,7 +30,7 @@ public class MeController : MonoBehaviour
      */
     private void ChangeDirection()
     {
-        if (Input.GetKey(KeyCode.Mouse1)) // right mouse button pressed
+        if (Input.GetKey(KeyCode.Mouse1))
         {
             // rotations - character looking around
             euler.y += Input.GetAxis("Mouse X") * sensitivity;
@@ -40,6 +40,7 @@ public class MeController : MonoBehaviour
         }
     }
 
+    // https://docs.unity3d.com/ScriptReference/Transform-right.html
     private void MovePlayer()
     {
         // MOVE FORWARDS
@@ -55,6 +56,7 @@ public class MeController : MonoBehaviour
         // MOVE LEFT (strafe)
         else if (Input.GetKey(KeyCode.A))
         {
+            //    transform.Translate(-transform.right * Time.deltaTime * moveSpeed);
             rigidBody.velocity = -transform.right * moveSpeed;
         }
         // MOVE RIGHT (strafe)
