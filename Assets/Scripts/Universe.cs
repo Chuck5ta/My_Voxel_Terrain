@@ -79,6 +79,13 @@ public class Universe : MonoBehaviour
                 (int)position.z;
     }
 
+    public static string BuildPlanetChunkName(float X, float Y, float Z) // for a 3D terrain
+    {
+        return (int)X + "_" +   // leave this, as we may need to implement a cubish world, instead of the quad one we have
+                (int)Y + "_" +
+                (int)Z;
+    }
+
     void GenerateFlatWorld() // Plane
     {
         for (int chunkZIndex = 0; chunkZIndex < worldSize; chunkZIndex++)

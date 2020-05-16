@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Planet
 {
-    public int planetSize = 2; // number of chunks
-    public Vector3 planetCentre = new Vector3(6f, 6f, 6f);
-    public int planetRadius = 4; // diameter of 14
-    public int chunkSize = 6; // diameter -  size of chunk 4x4x4 cubes
+    public int planetSize = 3; // number of chunks
+    public Vector3 planetCentre = new Vector3(15f, 15f, 15f);
+    public int planetRadius = 12; // diameter of 14
+    public int chunkSize = 10; // diameter -  size of chunk in cubes
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
 
     public Dictionary<string, PlanetChunk> planetChunks;
@@ -92,12 +92,12 @@ public class Planet
                                                         planet.transform.position.y + (chunkYIndex * chunkSize),
                                                         planet.transform.position.z + (chunkZIndex * chunkSize));
                     //            GenerateChunk(chunkPosition);
-                    //             Debug.Log("Chunk position: " + chunkPosition);
+                    //            Debug.Log("Chunk position: " + chunkPosition);
 
                     // THREADING http://www.albahari.com/threading/
                     chunkMaterial = GetNextMaterial(cubeCount);
 
-                    PlanetChunk planetChunk = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
+                    PlanetChunk planetChunk = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial, chunkXIndex, chunkYIndex, chunkZIndex); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
                     Debug.Log("Adding chunk to planetChunks : " + planetChunk.planetChunk.name + " at coords : " + chunkPosition);
                     planetChunk.planetChunk.transform.parent = planet.transform;
 

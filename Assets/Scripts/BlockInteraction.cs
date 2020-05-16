@@ -84,7 +84,7 @@ public class BlockInteraction : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 10))
             {
-                Debug.Log("RAY CAST!!!! " + transform.position);
+    //            Debug.Log("RAY CAST!!!! " + transform.position);
                 PlanetChunk chunk; //retrieve the chunk
                 if (!Universe.planet.planetChunks.TryGetValue(hit.collider.gameObject.name, out chunk)) return;
 
@@ -104,7 +104,7 @@ public class BlockInteraction : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
                     // remove cube
-                    Debug.Log("REMOVE CUBE");
+                //    Debug.Log("REMOVE CUBE");
                     RemoveCube(x, y, z, chunk);
                 }
                 else
@@ -113,7 +113,7 @@ public class BlockInteraction : MonoBehaviour
                     // check if coords are within the planet's build area
                     if (NotAtEndOfWorld(x, y, z))
                     {
-                        Debug.Log("Adding cube");
+                //        Debug.Log("Adding cube");
                         AddCube(x, y, z, chunk);
                     }
                     else
