@@ -1,5 +1,4 @@
-﻿//using System.Collections;
-using System.Collections.Generic; // Dictionary structure
+﻿using System.Collections.Generic; // Dictionary structure
 //using System.Threading;
 using UnityEngine;
 
@@ -59,19 +58,9 @@ public class Planet
             case 1:
                 return CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
             case 2:
-                return CustomMaterials.RetrieveMaterial(CustomMaterials.sandQuad);
-            case 3:
-                return CustomMaterials.RetrieveMaterial(CustomMaterials.grassQuad);
-            case 4:
-                return CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
-            case 5:
-                return CustomMaterials.RetrieveMaterial(CustomMaterials.sandQuad);
-            case 6:
-                return CustomMaterials.RetrieveMaterial(CustomMaterials.grassQuad);
-            case 7:
-                return CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad);
-            default:
                 return CustomMaterials.RetrieveMaterial(CustomMaterials.dirtQuad);
+            default:
+                return CustomMaterials.RetrieveMaterial(CustomMaterials.grassQuad);
         }
     }
 
@@ -106,6 +95,8 @@ public class Planet
                     planetChunk.DrawChunk();
 
                     cubeCount++;
+                    if (cubeCount > 3)
+                        cubeCount = 1;
 
                     //           t2 = new Thread(() => Console.WriteLine(text));
                     //        Debug.Log("----------------------------");

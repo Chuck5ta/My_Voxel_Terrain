@@ -127,7 +127,7 @@ public class Universe : MonoBehaviour
         //     Vector3 planetPosition = new Vector3(planetXPosition, planetYPosition, planetZPosition);
 
         planet = new Planet(planetPosition);
-   //     planets.Add(p.planet.name, p);
+   //     planets.Add(p.planet.name, p); // This will be needed when we create more than one planet
 
         //    planet.GenerateVertices();
         // Display the planet

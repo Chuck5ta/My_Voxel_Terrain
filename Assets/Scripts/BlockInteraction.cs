@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BlockInteraction : MonoBehaviour
 {
@@ -63,28 +62,9 @@ public class BlockInteraction : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-    /*
-                    Debug.Log("************ Mouse button pressed!!! ***************");
-
-                    // TODO: ********** Remove when no longer required ******************
-                    // - this is used to see where the ray is travelling
-                    Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity);
-                    Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.black);
-
-                    // Does the ray intersect any objects excluding the player layer
-                    if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
-                    {
-                        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-
-                        Debug.Log("Did Hit");
-                    }
-    */
-            // *************** REMOVE THE ABOVE ***************
-
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 10))
             {
-    //            Debug.Log("RAY CAST!!!! " + transform.position);
                 PlanetChunk chunk; //retrieve the chunk
                 if (!Universe.planet.planetChunks.TryGetValue(hit.collider.gameObject.name, out chunk)) return;
 
@@ -100,11 +80,9 @@ public class BlockInteraction : MonoBehaviour
                 int y = (int)(Mathf.Floor(hitBlock.y) - hit.collider.gameObject.transform.position.y);
                 int z = (int)(Mathf.Floor(hitBlock.z) - hit.collider.gameObject.transform.position.z);
 
-                //     bool update = false;
                 if (Input.GetMouseButton(0))
                 {
                     // remove cube
-                //    Debug.Log("REMOVE CUBE");
                     RemoveCube(x, y, z, chunk);
                 }
                 else
@@ -113,7 +91,6 @@ public class BlockInteraction : MonoBehaviour
                     // check if coords are within the planet's build area
                     if (NotAtEndOfWorld(x, y, z))
                     {
-                //        Debug.Log("Adding cube");
                         AddCube(x, y, z, chunk);
                     }
                     else

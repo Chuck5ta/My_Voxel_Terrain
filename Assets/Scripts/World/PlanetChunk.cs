@@ -11,7 +11,9 @@ public class PlanetChunk
     public GameObject parent;
     public Planet owner;
     public Vector3 chunkPosition;
-    public float chunkXIndex, chunkYIndex, chunkZIndex;
+    public float chunkXIndex, chunkYIndex, chunkZIndex; // chunk location in the world, where 1st chunk is 0,0,0 next chunk along the X axis is 1,0,0 and next is 2,0,0
+                                                        // next chunk from 0,0,0 along the Y axis is 0,1,0 and the next is 0,2,0 etc.
+                                                        // These are required for calculating which parts of the chunk to draw for the planet
     public bool[,,] CubeIsSolid; // states if a block/cube is space or a solid 
 
     private Material chunkMaterial;
@@ -35,13 +37,8 @@ public class PlanetChunk
         this.chunkYIndex = chunkYIndex;
         this.chunkZIndex = chunkZIndex;
         planetChunk = new GameObject("Chunk_" + Universe.BuildPlanetChunkName(chunkXIndex, chunkYIndex, chunkZIndex));
-    //    planetChunk = new GameObject("Chunk_" + Universe.BuildPlanetChunkName(position));
-
-        //    Debug.Log("Chunk location : " + planetChunk.transform.position);
-
         chunkData = new Cube[owner.chunkSize, owner.chunkSize, owner.chunkSize];
         CubeIsSolid = new bool[owner.chunkSize, owner.chunkSize, owner.chunkSize];
-
     }
 
     /*
@@ -150,31 +147,16 @@ public class PlanetChunk
     {
         // d is the distance from the cube's location to the centre of the planet
         // d = ((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)^1/2  
-        /*     float d = Mathf.Sqrt(((cubePosition.x - owner.planetCentre.x) * (cubePosition.x - owner.planetCentre.x)) +
-                         ((cubePosition.y - owner.planetCentre.y) * (cubePosition.y - owner.planetCentre.y)) +
-                         ((cubePosition.z - owner.planetCentre.z) * (cubePosition.z - owner.planetCentre.z)));
-
-        float d = Mathf.Sqrt(((cubePosition.x + chunkPosition.x - (owner.planetCentre.x)) * (cubePosition.x + chunkPosition.x - owner.planetCentre.x)) +
-                    ((cubePosition.y + chunkPosition.y - owner.planetCentre.y) * (cubePosition.y + chunkPosition.y - owner.planetCentre.y)) +
-                    ((cubePosition.z + chunkPosition.z - owner.planetCentre.z) * (cubePosition.z + chunkPosition.z - owner.planetCentre.z))); */
-
-        // THIS IS ON THE RIGHT TRACKS
-        float d = Mathf.Sqrt(
-                                ((cubePosition.x + chunkXIndex * owner.chunkSize - owner.planetCentre.x) * (cubePosition.x + chunkXIndex * owner.chunkSize - owner.planetCentre.x)) +
-                                ((cubePosition.y + chunkYIndex * owner.chunkSize - owner.planetCentre.y) * (cubePosition.y + chunkYIndex * owner.chunkSize - owner.planetCentre.y)) +
-                                ((cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z) * (cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z))
-                           );
-
-   /*     float d = Mathf.Sqrt(((cubePosition.x - owner.planetCentre.x) * (cubePosition.x - owner.planetCentre.x)) +
-                    ((cubePosition.y - owner.planetCentre.y) * (cubePosition.y - owner.planetCentre.y)) +
-                    ((cubePosition.z - owner.planetCentre.z) * (cubePosition.z - owner.planetCentre.z))); */
+        float d = Mathf.Sqrt( ((cubePosition.x + chunkXIndex * owner.chunkSize - owner.planetCentre.x) * (cubePosition.x + chunkXIndex * owner.chunkSize - owner.planetCentre.x)) +
+                              ((cubePosition.y + chunkYIndex * owner.chunkSize - owner.planetCentre.y) * (cubePosition.y + chunkYIndex * owner.chunkSize - owner.planetCentre.y)) +
+                              ((cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z) * (cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z))
+                            );
 
         Debug.Log("D is " + d + " : " + "Planet radius: " + owner.planetRadius + " - centre: " + owner.planetCentre);
         Debug.Log("Chunk size is " + owner.chunkSize);
         Debug.Log("Chunk position is " + chunkPosition);
         Debug.Log("Cube position is " + cubePosition);
 
-        //     if (d < owner.planetRadius) // ensures that only the surface cubes are generated
         if (d < owner.planetRadius && owner.planetRadius - d < 2) // ensures that only the surface cubes are generated
                 return true;
 
