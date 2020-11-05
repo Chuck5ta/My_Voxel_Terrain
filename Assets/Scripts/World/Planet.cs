@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Planet
 {
-    public int planetSize = 3; // number of chunks
-    public Vector3 planetCentre = new Vector3(15f, 15f, 15f);
-    public int planetRadius = 12; // diameter of 14
-    public int chunkSize = 10; // diameter -  size of chunk in cubes
+    public int planetSize = 3; // number of chunks (e.g. size of 3 means 3x3x3 = 27 chunks in total)
+    public int chunkSize = 2; // diameter -  size of chunk in cubes (e.g. size of 10 = 10x10x10 = 1000 cubes in total)
+    public int planetRadius = 5; // number of cubes (e.g. size if 12 = radius of 12 and therefore a diameter of 24)
+    public float fPlanetCentreXYZValue = 0;
+    public Vector3 planetCentre; // calculate this based on the other values : (planetSize * chunkSize) / 2
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
 
     public Dictionary<string, PlanetChunk> planetChunks;
@@ -37,6 +38,10 @@ public class Planet
     public Planet(Vector3 planetPosition)
     {
         this.planetPosition = planetPosition;
+
+        fPlanetCentreXYZValue = planetSize * chunkSize / 2;
+        planetCentre = new Vector3(fPlanetCentreXYZValue, fPlanetCentreXYZValue, fPlanetCentreXYZValue);
+
         // planetData = new Cube[Universe.universeSize, Universe.universeSize, Universe.universeSize];
         planet = new GameObject("Planet_" + Universe.BuildPlanetChunkName(planetPosition));
         
@@ -49,7 +54,7 @@ public class Planet
 
     /*
      * This is used to give the chunks each a different material.
-     * TODO: Delete this when no longer requred - when evrything works
+     * TODO: Delete this when no longer requred - when everything works
      */
     Material GetNextMaterial(int cubeCount)
     {

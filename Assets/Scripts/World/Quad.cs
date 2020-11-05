@@ -7,7 +7,7 @@
  * 
  * https://answers.unity.com/questions/154324/how-do-uvs-work.html
  * 
- * 
+ *   // TODO: Not used????
  */
 //using System.Collections;
 //using System.Collections.Generic;
@@ -20,7 +20,7 @@ public class Quad
 
 //   Chunk owner; // so that we can access the chunkData array
 //    public Cube owner; // so that we can access the chunkData array
-    public PlanetGen planetOwner; // so that we can access the chunkData array
+    public PlanetGen planetOwner; // so that we can access the chunkData array // TODO: Not used????
     public Cube parentCube; // The chunk
                             //   Vector3 position; // location within the chunk
                             // this is used to give the quad a unique name
