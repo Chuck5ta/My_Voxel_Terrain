@@ -152,10 +152,10 @@ public class PlanetChunk
                               ((cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z) * (cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z))
                             );
 
-        Debug.Log("D is " + d + " : " + "Planet radius: " + owner.planetRadius + " - centre: " + owner.planetCentre);
-        Debug.Log("Chunk size is " + owner.chunkSize);
-        Debug.Log("Chunk position is " + chunkPosition);
-        Debug.Log("Cube position is " + cubePosition);
+     //   Debug.Log("D is " + d + " : " + "Planet radius: " + owner.planetRadius + " - centre: " + owner.planetCentre);
+     //   Debug.Log("Chunk size is " + owner.chunkSize);
+     //   Debug.Log("Chunk position is " + chunkPosition);
+     //   Debug.Log("Cube position is " + cubePosition);
 
         if (d < owner.planetRadius && owner.planetRadius - d < 2) // ensures that only the surface cubes are generated
                 return true;

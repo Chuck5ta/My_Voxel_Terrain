@@ -18,6 +18,7 @@ public class SimplePlayerController : MonoBehaviour
     void Update()
     {
         MovePlayer();
+        // Debug.Log("MOVE PLAYER CHECK!");
     }
 
     private void LateUpdate()

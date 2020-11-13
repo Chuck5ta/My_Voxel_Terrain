@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic; // Dictionary structure
+﻿using System;
+using System.Collections.Generic; // Dictionary structure
 //using System.Threading;
 using UnityEngine;
 
 public class Planet
 {
-    public int planetSize = 3; // number of chunks (e.g. size of 3 means 3x3x3 = 27 chunks in total)
+    public int planetSize = 2; // number of chunks (e.g. size of 3 means 3x3x3 = 27 chunks in total)
     public int chunkSize = 2; // diameter -  size of chunk in cubes (e.g. size of 10 = 10x10x10 = 1000 cubes in total)
-    public int planetRadius = 5; // number of cubes (e.g. size if 12 = radius of 12 and therefore a diameter of 24)
+    public int planetRadius = 3; // number of cubes (e.g. size if 12 = radius of 12 and therefore a diameter of 24)
     public float fPlanetCentreXYZValue = 0;
-    public Vector3 planetCentre; // calculate this based on the other values : (planetSize * chunkSize) / 2
+    public Vector3 planetCentre; // X, Y, Z coordinates - calculate this based on the other values : (planetSize * chunkSize) / 2
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
 
     public Dictionary<string, PlanetChunk> planetChunks;
@@ -96,6 +97,7 @@ public class Planet
                     planetChunk.planetChunk.transform.parent = planet.transform;
 
                     planetChunks.Add(planetChunk.planetChunk.name, planetChunk);
+
                     planetChunk.BuildTheChunk();
                     planetChunk.DrawChunk();
 
@@ -128,14 +130,6 @@ public class Planet
 
     }
 
-    /* TODO: DELETE THIS?
-    private void GenerateChunk(Vector3 chunkPosition)
-    {
-        PlanetChunk c = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial);
-
-        planetChunks.Add(c.planetChunk.name, c);
-    }
-    /*
 
     private void pushVericesOut()
     {
