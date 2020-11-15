@@ -275,7 +275,8 @@ public class BlockInteraction : MonoBehaviour
     // https://docs.unity3d.com/ScriptReference/Physics.Raycast.html
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+        // Left mouse button or middle mouse button
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(2))
         {
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 10))
