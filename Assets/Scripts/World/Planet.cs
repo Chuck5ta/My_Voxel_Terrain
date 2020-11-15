@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class Planet
 {
-    public int planetSize = 2; // number of chunks (e.g. size of 3 means 3x3x3 = 27 chunks in total)
-    public int chunkSize = 2; // diameter -  size of chunk in cubes (e.g. size of 10 = 10x10x10 = 1000 cubes in total)
-    public int planetRadius = 3; // number of cubes (e.g. size if 12 = radius of 12 and therefore a diameter of 24)
+    public int planetSize = 5; // number of chunks (e.g. size of 3 means 3x3x3 = 27 chunks in total)
+    public int chunkSize = 5; // diameter -  size of chunk in cubes (e.g. size of 10 = 10x10x10 = 1000 cubes in total)
+    public int planetRadius = 8; // number of cubes (e.g. size if 12 = radius of 12 and therefore a diameter of 24)
     public float fPlanetCentreXYZValue = 0;
     public Vector3 planetCentre; // X, Y, Z coordinates - calculate this based on the other values : (planetSize * chunkSize) / 2
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
@@ -93,7 +93,7 @@ public class Planet
                     chunkMaterial = GetNextMaterial(cubeCount);
 
                     PlanetChunk planetChunk = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial, chunkXIndex, chunkYIndex, chunkZIndex); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
-                    Debug.Log("Adding chunk to planetChunks : " + planetChunk.planetChunk.name + " at coords : " + chunkPosition);
+                //    Debug.Log("Adding chunk to planetChunks : " + planetChunk.planetChunk.name + " at coords : " + chunkPosition);
                     planetChunk.planetChunk.transform.parent = planet.transform;
 
                     planetChunks.Add(planetChunk.planetChunk.name, planetChunk);
