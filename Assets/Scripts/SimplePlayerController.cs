@@ -17,13 +17,8 @@ public class SimplePlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MovePlayer();
-        // Debug.Log("MOVE PLAYER CHECK!");
-    }
-
-    private void LateUpdate()
-    {
         ChangeDirection();
+        MovePlayer();
     }
 
     /*
@@ -40,6 +35,7 @@ public class SimplePlayerController : MonoBehaviour
             rigidBody.transform.rotation = Quaternion.Euler(euler);
             rigidBody.velocity = transform.forward * Input.GetAxis("Vertical") * moveSpeed;
         }
+       // MovePlayer();
     }
 
     // https://docs.unity3d.com/ScriptReference/Transform-right.html
@@ -58,7 +54,6 @@ public class SimplePlayerController : MonoBehaviour
         // MOVE LEFT (strafe)
         else if (Input.GetKey(KeyCode.A))
         {
-            //    transform.Translate(-transform.right * Time.deltaTime * moveSpeed);
             rigidBody.velocity = -transform.right * moveSpeed;
         }
         // MOVE RIGHT (strafe)
