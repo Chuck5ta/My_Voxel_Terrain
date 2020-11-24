@@ -28,9 +28,9 @@ public class Cube
     // Bottom quad
     // Leftside quad
     // Rightside quad
-    Quad frontQuad, backQuad, topQuad, bottomQuad, leftQuad, rightQuad; // TODO: Delete when no longer required
+ //   Quad frontQuad, backQuad, topQuad, bottomQuad, leftQuad, rightQuad; // TODO: Delete when no longer required
 
-    public enum Side { Front, Back, Top, Bottom, Leftside, Rightside }
+//    public enum Side { Front, Back, Top, Bottom, Leftside, Rightside }
     
     public enum CubePhysicalState { SOLID, SPACE }
     private CubePhysicalState cubePhysicalState;
@@ -173,26 +173,25 @@ public class Cube
 
         Mesh mesh = new Mesh();
 
-        Vector3[] vertices = new Vector3[4];
-        vertices[0] = vertex0; //top-left
-        vertices[1] = vertex1; //top-right
-        vertices[2] = vertex2; //bottom-left
-        vertices[3] = vertex3; //bottom-right
+        Vector3[] vertices = { vertex0,   //top-left
+                               vertex1,   //top-right
+                               vertex2,   //bottom-left
+                               vertex3 }; //bottom-right
 
         mesh.vertices = vertices;
 
         int[] triangles = new int[6] { 0, 1, 2, 3, 2, 1 };
         mesh.triangles = triangles;
 
-        Vector2[] uvs = new Vector2[4];
-        uvs[0] = new Vector2(0, 1); //top-left
-        uvs[1] = new Vector2(1, 1); //top-right
-        uvs[2] = new Vector2(0, 0); //bottom-left
-        uvs[3] = new Vector2(1, 0); //bottom-right
+        Vector2[] uvs = { new Vector2(0f, 1f),   //top-left
+                          new Vector2(1f, 1f),   //top-right
+                          new Vector2(0f, 0f),   //bottom-left
+                          new Vector2(1f, 0f) }; //bottom-right
 
         mesh.uv = uvs;
 
-        Vector3[] normals = new Vector3[4] { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
+        Vector3[] normals = new Vector3[4] 
+            { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
         mesh.normals = normals;
 
         mesh.RecalculateBounds();

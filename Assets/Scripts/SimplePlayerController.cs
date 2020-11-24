@@ -4,7 +4,7 @@ public class SimplePlayerController : MonoBehaviour
 {
     Rigidbody rigidBody;
     public float moveSpeed = 5;
-    public float sensitivity = 1;
+    public float turningSpeed = 1;
     Vector3 euler; // (oiler) used in the calculation for rotating the player character
 
     // Start is called before the first frame update
@@ -30,12 +30,11 @@ public class SimplePlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.Mouse1))
         {
             // rotations - character looking around
-            euler.y += Input.GetAxis("Mouse X") * sensitivity;
-            euler.x -= Input.GetAxis("Mouse Y") * sensitivity;
+            euler.y += Input.GetAxis("Mouse X") * turningSpeed;
+            euler.x -= Input.GetAxis("Mouse Y") * turningSpeed;
             rigidBody.transform.rotation = Quaternion.Euler(euler);
             rigidBody.velocity = transform.forward * Input.GetAxis("Vertical") * moveSpeed;
         }
-       // MovePlayer();
     }
 
     // https://docs.unity3d.com/ScriptReference/Transform-right.html
