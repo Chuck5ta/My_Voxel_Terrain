@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 /*
- * The World class controls the building of the world in chunks
- * Each chunk is made up of quads. Each quad is made up of 2 triangles.
+ * The Universe class controls the building of the Universe in planets.
+ * Each planet is made up of chunks.
+ * Each chunk is made up of cubes. 
+ * Each cube is made up of quads.
+ * And each quad is made up of 2 triangles.
  * 
  * 19 Feb 2020 - Multi chunk construction implemented
  * 
@@ -86,6 +89,10 @@ public class Universe : MonoBehaviour
                 (int)Z;
     }
 
+    /*
+     * This is used to generate a plane terrain instead of a planet
+     * At this point in time, this is not implemented!
+     */
     void GenerateFlatWorld() // Plane
     {
         for (int chunkZIndex = 0; chunkZIndex < worldSize; chunkZIndex++)
@@ -116,7 +123,11 @@ public class Universe : MonoBehaviour
 
     }
 
-    void GeneratePlanetWorld()
+
+    /*
+     * This kicks off the building of a single planet
+     */
+    void GeneratePlanet()
     {
         int planetXPosition = 0;
         int planetYPosition = 0;
@@ -127,17 +138,21 @@ public class Universe : MonoBehaviour
         //     Vector3 planetPosition = new Vector3(planetXPosition, planetYPosition, planetZPosition);
 
         planet = new Planet(planetPosition);
-   //     planets.Add(p.planet.name, p); // This will be needed when we create more than one planet
+        //     planets.Add(p.planet.name, p); // This will be needed when we create more than one planet
 
         //    planet.GenerateVertices();
         // Display the planet
         //      planet.BuildPlanet();
     }
 
-    IEnumerator BuildWorld()
+    /*
+     * This will be used to kick off the building of planets (1 or more)
+     * 
+     */
+    IEnumerator BuildUniverse()
     {
         // GenerateFlatWorld();
-        GeneratePlanetWorld();
+        GeneratePlanet();
 
         yield return null;
 
@@ -150,7 +165,7 @@ public class Universe : MonoBehaviour
         chunks = new Dictionary<string, Chunk>();
         this.transform.position = Vector3.zero;
         this.transform.rotation = Quaternion.identity;
-        StartCoroutine(BuildWorld());
+        StartCoroutine(BuildUniverse());
     } 
 
     // Update is called once per frame

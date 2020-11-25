@@ -1,6 +1,6 @@
 # My_Voxel_Terrain (UNITY)
 
-This is used to generate a terrain made up of manipulatable voxels. 
+This is my Unity game engine version of a tool to generate a terrain made up of manipulatable voxels. 
 
 This is the first part of a greater project to create a voxel world where I can bring to life my creations (3D models, 2D art, AI, etc.) 
 
