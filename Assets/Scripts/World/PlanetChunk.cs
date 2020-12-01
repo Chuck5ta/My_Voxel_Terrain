@@ -9,7 +9,7 @@ public class PlanetChunk
                                //    public Vector3[,,] chunkVertices; // 2D array to hold all the coordinates of the vertices that make up the terrain in the chunk
     public GameObject planetChunk;
     public GameObject parent;
-    public Planet owner;
+    public Planet planet;
     public Vector3 chunkPosition;
     public float chunkXIndex, chunkYIndex, chunkZIndex; // chunk location in the world, where 1st chunk is 0,0,0 next chunk along the X axis is 1,0,0 and next is 2,0,0
                                                         // next chunk from 0,0,0 along the Y axis is 0,1,0 and the next is 0,2,0 etc.
@@ -27,11 +27,11 @@ public class PlanetChunk
      * 
      * e.g. chunk 0 will be based at 0,0,0 in the Universe
      */
-    public PlanetChunk(GameObject parent, Planet owner,  Vector3 position, Material material, float chunkXIndex, float chunkYIndex, float chunkZIndex)
+    public PlanetChunk(GameObject parent, Planet owner,  Vector3 chunkPosition, Material material, float chunkXIndex, float chunkYIndex, float chunkZIndex)
     {
         this.parent = parent;
-        this.owner = owner;
-        chunkPosition = position;
+        planet = owner;
+        this.chunkPosition = chunkPosition;
         chunkMaterial = material;
         this.chunkXIndex = chunkXIndex;
         this.chunkYIndex = chunkYIndex;
@@ -49,16 +49,18 @@ public class PlanetChunk
      */
     public void BuildTheChunk()
     {
-        for (int y = 0; y < owner.chunkSize; y++)
+        for (int y = 0; y < planet.chunkSize; y++)
         {
-            for (int z = 0; z < owner.chunkSize; z++)
+            for (int z = 0; z < planet.chunkSize; z++)
             {
-                for (int x = 0; x < owner.chunkSize; x++)
+                for (int x = 0; x < planet.chunkSize; x++)
                 {
                     // generate cube - solid or space/air?
-                    Vector3 cubePosition = new Vector3(planetChunk.transform.position.x + x,
-                                                        planetChunk.transform.position.y + y,
-                                                        planetChunk.transform.position.z + z);
+               //     Vector3 cubePosition = new Vector3(planetChunk.transform.position.x + x,
+               //                                         planetChunk.transform.position.y + y,
+               //                                         planetChunk.transform.position.z + z);
+
+                    Vector3 cubePosition = new Vector3(x, y, z);
 
                     //         Debug.Log(" CHUNK NAME : " + planetChunk.name);
                     chunkData[x, y, z] = new Cube(planetChunk.gameObject, this,
@@ -88,11 +90,11 @@ public class PlanetChunk
      */
     public void ReBuildTheChunk()
     {
-        for (int y = 0; y < owner.chunkSize; y++)
+        for (int y = 0; y < planet.chunkSize; y++)
         {
-            for (int z = 0; z < owner.chunkSize; z++)
+            for (int z = 0; z < planet.chunkSize; z++)
             {
-                for (int x = 0; x < owner.chunkSize; x++)
+                for (int x = 0; x < planet.chunkSize; x++)
                 {
                     //         Vector3 cubePosition = new Vector3(planetChunk.transform.position.x + x,
                     //                                             planetChunk.transform.position.y + y,
@@ -104,7 +106,7 @@ public class PlanetChunk
                                             CustomMaterials.RetrieveMaterial(CustomMaterials.rockQuad),
                                             CustomMaterials.rockQuad, cubePosition, planetChunk.name);
 
-                    chunkData[x, y, z].cube.transform.parent = planetChunk.transform; // make the quad a child of the cube
+                    chunkData[x, y, z].cube.transform.parent = planetChunk.transform; // make the cube a child of the chunk
                 }
             }
         }
@@ -118,11 +120,11 @@ public class PlanetChunk
     public void DrawChunk()
     {
         // DRAW THE CHUNK
-        for (int y = 0; y < owner.chunkSize; y++)
+        for (int y = 0; y < planet.chunkSize; y++)
         {
-            for (int z = 0; z < owner.chunkSize; z++)
+            for (int z = 0; z < planet.chunkSize; z++)
             {
-                for (int x = 0; x < owner.chunkSize; x++)
+                for (int x = 0; x < planet.chunkSize; x++)
                 {
                     // display cubes that are set to SOLID (surface area cubes only)
                     if (CubeIsSolid[x, y, z])
@@ -147,9 +149,9 @@ public class PlanetChunk
     {
         // d is the distance from the cube's location to the centre of the planet
         // d = ((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)^1/2  
-        float d = Mathf.Sqrt( ((cubePosition.x + chunkXIndex * owner.chunkSize - owner.planetCentre.x) * (cubePosition.x + chunkXIndex * owner.chunkSize - owner.planetCentre.x)) +
-                              ((cubePosition.y + chunkYIndex * owner.chunkSize - owner.planetCentre.y) * (cubePosition.y + chunkYIndex * owner.chunkSize - owner.planetCentre.y)) +
-                              ((cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z) * (cubePosition.z + chunkZIndex * owner.chunkSize - owner.planetCentre.z))
+        float d = Mathf.Sqrt( ((cubePosition.x + chunkXIndex * planet.chunkSize - planet.planetCentre.x) * (cubePosition.x + chunkXIndex * planet.chunkSize - planet.planetCentre.x)) +
+                              ((cubePosition.y + chunkYIndex * planet.chunkSize - planet.planetCentre.y) * (cubePosition.y + chunkYIndex * planet.chunkSize - planet.planetCentre.y)) +
+                              ((cubePosition.z + chunkZIndex * planet.chunkSize - planet.planetCentre.z) * (cubePosition.z + chunkZIndex * planet.chunkSize - planet.planetCentre.z))
                             );
 
      //   Debug.Log("D is " + d + " : " + "Planet radius: " + owner.planetRadius + " - centre: " + owner.planetCentre);
@@ -157,7 +159,7 @@ public class PlanetChunk
      //   Debug.Log("Chunk position is " + chunkPosition);
      //   Debug.Log("Cube position is " + cubePosition);
 
-        if (d < owner.planetRadius && owner.planetRadius - d < 2) // ensures that only the surface cubes are generated
+        if (d < planet.planetRadius && planet.planetRadius - d < 2) // ensures that only the surface cubes are generated
                 return true;
 
         return false;
@@ -170,11 +172,11 @@ public class PlanetChunk
      */
     private bool WithinPlanet(Vector3 cubePosition)
     {   
-        float d = Mathf.Sqrt(((cubePosition.x - owner.planetCentre.x) * (cubePosition.x - owner.planetCentre.x)) +
-                    ((cubePosition.y - owner.planetCentre.y) * (cubePosition.y - owner.planetCentre.y)) +
-                    ((cubePosition.z - owner.planetCentre.z) * (cubePosition.z - owner.planetCentre.z))); 
+        float d = Mathf.Sqrt(((cubePosition.x - planet.planetCentre.x) * (cubePosition.x - planet.planetCentre.x)) +
+                    ((cubePosition.y - planet.planetCentre.y) * (cubePosition.y - planet.planetCentre.y)) +
+                    ((cubePosition.z - planet.planetCentre.z) * (cubePosition.z - planet.planetCentre.z))); 
 
-        if (d < owner.planetRadius)
+        if (d < planet.planetRadius)
             return true;
 
         return false;
@@ -217,7 +219,7 @@ public class PlanetChunk
         int cubeCounter = 0;
         foreach (Transform cube in planetChunk.transform)
         {
-           Object.Destroy(cube.gameObject);
+            Object.Destroy(cube.gameObject);
             cubeCounter++;
         }
     }

@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class Planet
 {
-    public int planetSize = 5; // number of chunks (e.g. size of 3 means 3x3x3 = 27 chunks in total)
+    public int planetSize = 10; // number of chunks (e.g. size of 3 means 3x3x3 = 27 chunks in total)
     public int chunkSize = 5; // diameter -  size of chunk in cubes (e.g. size of 10 = 10x10x10 = 1000 cubes in total)
-    public int planetRadius = 8; // number of cubes (e.g. size if 12 = radius of 12 and therefore a diameter of 24)
+    public int planetRadius = 17; // number of cubes (e.g. size if 12 = radius of 12 and therefore a diameter of 24)
     public float fPlanetCentreXYZValue = 0;
     public Vector3 planetCentre; // X, Y, Z coordinates - calculate this based on the other values : (planetSize * chunkSize) / 2
     public Vector3 planetPosition = new Vector3(0,0,0); // coordinates of the planet in the universe
+           // this will be significant when we have more than one planet
 
     public Dictionary<string, PlanetChunk> planetChunks;
 
@@ -20,7 +21,9 @@ public class Planet
     //    public int Y = 10;
     //    public int Z = 10;
 
-    public Cube[,,] planetData; // 3D array to hold information on all of the cubes and their quads in the planet
+    // 3D array to hold information on all of the cubes and their quads in the planet
+    // used in the terreforming of the terrain - change the shape of the cube
+    public Cube[,,] planetData; 
     public GameObject planet;
 
     // The faces of the cube
@@ -49,7 +52,7 @@ public class Planet
         planetChunks = new Dictionary<string, PlanetChunk>();
 
         // build the planet
-        GenerateWorld();
+        GeneratePlanet();
     }
 
 
@@ -71,7 +74,7 @@ public class Planet
     }
 
 
-    void GenerateWorld()
+    void GeneratePlanet()
     {
         // Thread[] rowOfChunks = new Thread[Universe.chunkSize * Universe.chunkSize * Universe.chunkSize];
         // Thread chunkThread;
@@ -94,7 +97,7 @@ public class Planet
 
                     PlanetChunk planetChunk = new PlanetChunk(planet.gameObject, this, chunkPosition, chunkMaterial, chunkXIndex, chunkYIndex, chunkZIndex); // CHANGE THIS!!! include parameter stating biome (desert, jungle, etc.)
                 //    Debug.Log("Adding chunk to planetChunks : " + planetChunk.planetChunk.name + " at coords : " + chunkPosition);
-                    planetChunk.planetChunk.transform.parent = planet.transform;
+            //        planetChunk.planetChunk.transform.parent = planet.transform; // TODO: This is not used/needed!!! tested in game and not used!
 
                     planetChunks.Add(planetChunk.planetChunk.name, planetChunk);
 
